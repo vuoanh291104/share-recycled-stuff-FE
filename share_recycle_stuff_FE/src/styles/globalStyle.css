@@ -1,0 +1,28 @@
+:root {
+  --color-primary: #048C73;
+  --color-secondary: #52D967;
+  --color-accent: #3DC9D9;
+  --color-highlight: #7EF2DD;
+  --color-success: #88F28F;
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector {
+    border-radius: 0.625rem;
+}
+
+.ant-form-item-explain-error {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  font-size: 0.625rem;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
