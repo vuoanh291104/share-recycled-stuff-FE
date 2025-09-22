@@ -1,11 +1,13 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
+import Auth from '../pages/public/Auth'
 
 const PublicLayout = () => {
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
   return (
     <>
-      <div>PublicLayout</div>
       <main>
-        <Outlet />
+        {isAuthPage ? <Auth /> : <Outlet />}
       </main>
     </>
   )
