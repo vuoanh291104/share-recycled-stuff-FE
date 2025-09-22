@@ -1,0 +1,88 @@
+
+.btnLogin, .btnGG {
+  width: 25.25rem !important;
+  height: 2rem !important;
+  border-radius: 10px !important;
+  background: var(--color-primary) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+.btnGG {
+  background: #fff !important;
+  color: #000 !important;
+  border: 1px solid #ccc !important;
+}
+
+/* Hover */
+.btnLogin:hover, .btnLogin:focus, .btnLogin:active,
+.btnGG:hover, .btnGG:focus, .btnGG:active {
+  background: var(--color-primary) !important;
+  opacity: 0.8 !important;
+  color: #fff !important;
+  border: none !important;
+  outline: none !important; 
+}
+
+.btnGG:hover, .btnGG:focus, .btnGG:active {
+  background: #eee !important;
+  color: #000 !important;
+  border: 1px solid #ccc !important;
+}
+
+
+/* Disabled */
+.btnLogin:disabled {
+  background: #ccc !important;
+  color: #666 !important;
+  border: none !important;
+  cursor: not-allowed;
+}
+
+.auth_container {
+  display: flex;
+  flex-direction: row;
+  height: 41.563rem; 
+  justify-content: space-around ;
+  border: 3px solid var(--color-primary);
+  border-radius: 30px;
+}
+
+
+.with_form {
+  width: 29.375rem !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.with_form_ml {
+  margin-left: 3rem;
+}
+.with_form_mr {
+  margin-right: 3rem;
+}
+
+.banner_img {
+  width: 29.375rem;
+  object-fit: cover;
+}
+
+.banner_img_ml {
+  margin-left: 3rem;
+}
+.banner_img_mr {
+  margin-right: 3rem;
+}
+
+.mgt_16 {
+  margin-top: 1rem;
+}
+
+.text_title {
+  font-size: 24px;
+  font-weight: 1.5rem;
+}
+
+
