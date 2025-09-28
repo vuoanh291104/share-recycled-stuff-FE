@@ -1,0 +1,45 @@
+.feed {
+  flex: 1;
+  padding: 0px 32px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 80px);
+}
+
+.postsContainer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loadingIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: #666;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e0e0e0;
+  border-top: 2px solid #1e1e1e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.endMessage {
+  text-align: center;
+  padding: 32px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: #999;
+  font-style: italic;
+}

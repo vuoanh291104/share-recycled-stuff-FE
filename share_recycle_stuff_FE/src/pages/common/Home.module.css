@@ -1,0 +1,81 @@
+.homeLayout {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #ffffff;
+  position: relative;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 275px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+.scrollIndicator {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 11px;
+  height: 100vh;
+  background-color: #eeeeee;
+  z-index: 1000;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .homeLayout {
+    flex-direction: column;
+  }
+  
+  .mainContent {
+    margin-left: 0;
+  }
+  
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.messagesSection {
+  position: fixed;
+  bottom: 24px;           /* cách mép dưới 24px */
+  right: 24px;            /* cách mép phải 24px */
+  z-index: 1000; 
+}
+
+.messagesButton {
+  background-color: #fffafa;
+  border: none;
+  border-radius: 1000px;
+  box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.25);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.messagesButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.messageIcon {
+  width: 24px;
+  height: 24px;
+  color: #000000;
+}
+
+.messagesText {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #000000;
+}
