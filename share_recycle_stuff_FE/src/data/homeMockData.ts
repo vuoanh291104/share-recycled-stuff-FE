@@ -29,7 +29,9 @@ export const mockRootProps = {
       category: "Gấu",
       price: 3000,
       content: "Đi mưa gặp gấu bắt về nuôi",
-      hasMoreImages: true
+      hasMoreImages: true,
+      update_at: new Date(),
+      delete_at: null
     },
     {
       id: "post_2", 
@@ -50,7 +52,9 @@ export const mockRootProps = {
       category: "Ô",
       price: 0,
       content: "Con gấu này nó ngoo...more",
-      hasMoreImages: false
+      hasMoreImages: false,
+      update_at: new Date(),
+      delete_at: null
     },
     {
       id: "post_3",
@@ -71,7 +75,9 @@ export const mockRootProps = {
       category: "",
       price: 0,
       content: "Ô màu hồng che mưa rất ổn, anh em cần mua ib mình.",
-      hasMoreImages: true
+      hasMoreImages: true,
+      update_at: new Date(),
+      delete_at: null
     }
   ]
 };

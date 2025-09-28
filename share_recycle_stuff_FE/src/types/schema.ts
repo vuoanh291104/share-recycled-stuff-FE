@@ -22,7 +22,7 @@ export interface Post {
   like_count: number;
   create_at: Date;
   update_at: Date;
-  delete_at: Date;
+  delete_at: Date| null;
   images: string[];
   currentImageIndex: number;
   hasMoreImages: boolean;
