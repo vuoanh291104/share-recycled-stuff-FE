@@ -16,8 +16,8 @@ export interface Post {
   category: string;
   price: number;
   purpose: PostPurpose;
-  status: string
-  admin_review_comment: string
+  status: string;
+  admin_review_comment: string;
   view_count: number;
   like_count: number;
   create_at: Date;
