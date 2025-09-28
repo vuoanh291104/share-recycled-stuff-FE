@@ -7,6 +7,7 @@ import Home from '../pages/common/Home'
 import Profile from '../pages/common/Profile'
 import AdminLayout from '../layouts/AdminLayout'
 import Dashboard from '../pages/admin/Dashboard'
+import { mockRootProps } from '../data/homeMockData'
 
 
 const router = createBrowserRouter([
@@ -20,7 +21,10 @@ const router = createBrowserRouter([
     {
         element: <PrivateLayout />,  //Customer + Proxy_seller use
         children: [
-            {path: '/', element: <Home />},
+            {path: '/', element: <Home
+            currentUser={mockRootProps.currentUser}
+            posts={mockRootProps.posts}
+          />},
             {path: '/profile', element: <Profile />}
         ]
     },
@@ -36,5 +40,6 @@ const router = createBrowserRouter([
     }
 ])
 const Routes = () => <RouterProvider router={router} />
+
 
 export default Routes
