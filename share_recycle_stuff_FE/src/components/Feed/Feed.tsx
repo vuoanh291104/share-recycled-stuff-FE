@@ -54,7 +54,7 @@ const Feed = ({ posts  = []}: FeedProps) => {
     <div className={styles.feed}>
       <div className={styles.postsContainer}>
         {displayedPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard key={post.id} post={post}/>
         ))}
         
         {isLoading && (

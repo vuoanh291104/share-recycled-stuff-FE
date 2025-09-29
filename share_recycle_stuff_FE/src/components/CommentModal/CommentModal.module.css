@@ -1,0 +1,230 @@
+.commentModal :global(.ant-modal-content) {
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 12px !important;
+}
+
+.commentModal :global(.ant-modal-body) {
+  padding: 0 !important;
+  height: 80vh !important;
+}
+
+.modalContent {
+  display: flex;
+  height: 80vh;
+}
+
+.postSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+}
+
+.postHeader {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.authorAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.authorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.authorName {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+}
+
+.timestamp {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+}
+
+.imageSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+  min-height: 300px;
+}
+
+.postActions {
+  display: flex;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.actionButton {
+  background: none;
+  border: 2px solid #1e1e1e;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.05);
+}
+
+.actionButton.liked .actionIcon {
+  color: #ff4757;
+}
+
+.actionIcon {
+  width: 20px;
+  height: 20px;
+  color: #1e1e1e;
+}
+
+.postStats {
+  padding: 0 24px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.statsText {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000000;
+  line-height: 1.3;
+}
+
+.postContent {
+  padding: 16px 24px;
+}
+
+.postTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 8px 0;
+}
+
+.postDetails {
+  margin-bottom: 12px;
+}
+
+.detailText {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+  margin: 2px 0;
+}
+
+.description {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #000000;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.commentsSection {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.commentsHeader {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.commentsTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 4px 0;
+}
+
+.commentsCount {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+}
+
+.commentsList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px;
+  max-height: calc(80vh - 200px);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #666;
+}
+
+.noComments {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+}
+
+.commentInputSection {
+  border-top: 1px solid #f0f0f0;
+  background-color: #ffffff;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .modalContent {
+    flex-direction: column;
+  }
+  
+  .postSection {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    max-height: 50vh;
+  }
+  
+  .commentsSection {
+    width: 100%;
+    flex: 1;
+  }
+}

@@ -32,3 +32,36 @@ export type HomePageProps = {
   currentUser: User;
   posts: Post[];
 }
+export interface Comment {
+  id: string;
+  post_id: string
+  account_id: User;
+  parent_comment_id: string | null;
+  content: string;
+  is_edited: boolean;
+  created_at: Date;
+  updated_at: Date | null;
+  deleted_at: Date | null;
+}
+
+// Comment modal props
+export interface CommentModalProps {
+  isOpen: boolean;
+  post: Post;
+  comments: Comment[];
+  currentUser: User;
+  onClose: () => void;
+  onAddComment: (content: string) => void;
+  onReplyToComment: (commentId: string, content: string) => void;
+  onDeleteComment: (commentId: string) => void;
+  onEditComment: (commentId: string, newContent: string) => void;
+}
+
+// Comment item props
+export interface CommentItemProps {
+  comment: Comment;
+  onReply: (parentCommentId: string, content: string) => void;
+  onDelete: (commentId: string) => void;
+  onEdit: (commentId: string, newContent: string) => void;
+  isReply?: boolean;
+}

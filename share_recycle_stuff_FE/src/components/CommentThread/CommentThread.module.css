@@ -1,0 +1,18 @@
+.commentThread {
+  margin-bottom: 16px;
+}
+
+.repliesContainer {
+  margin-left: 32px;
+  margin-top: 8px;
+  border-left: 2px solid #f0f0f0;
+  padding-left: 16px;
+}
+
+.repliesContainer .commentItem {
+  margin-bottom: 12px;
+}
+
+.repliesContainer .commentItem:last-child {
+  margin-bottom: 0;
+}

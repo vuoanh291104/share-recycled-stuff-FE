@@ -1,4 +1,3 @@
-
 import {PostPurposeValues, type PostPurpose } from '../types/enums';
 // Data passed as props to the root component
 export const mockRootProps = {
@@ -48,9 +47,11 @@ export const mockRootProps = {
       like_count: 100909,
       view_count: 29,
       title: "OKOK",
+      admin_review_comment: "",
       purpose: PostPurposeValues.FREE as PostPurpose,
       category: "Ô",
       price: 0,
+      status:"Approved",
       content: "Con gấu này nó ngoo...more",
       hasMoreImages: false,
       update_at: new Date(),
@@ -73,6 +74,8 @@ export const mockRootProps = {
       title: "",
       purpose: PostPurposeValues.FREE as PostPurpose,
       category: "",
+      status:"Approved",
+      admin_review_comment: "",
       price: 0,
       content: "Ô màu hồng che mưa rất ổn, anh em cần mua ib mình.",
       hasMoreImages: true,

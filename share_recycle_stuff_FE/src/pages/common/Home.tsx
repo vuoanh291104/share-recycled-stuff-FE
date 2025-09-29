@@ -14,7 +14,6 @@ const Home = ({ currentUser, posts }: HomePageProps) => {
       
       <div className={styles.mainContent}>
         <Header currentUser={currentUser} />
-        {/* Messages Button */}
       <div className={styles.messagesSection}>
         <button className={styles.messagesButton}>
           <Icon 
@@ -24,7 +23,7 @@ const Home = ({ currentUser, posts }: HomePageProps) => {
           <span className={styles.messagesText}>Messages</span>
         </button>
       </div>
-        <Feed posts={posts} />
+        <Feed posts={posts}/>
         
       </div>
     </div>

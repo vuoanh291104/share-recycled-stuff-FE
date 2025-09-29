@@ -12,7 +12,7 @@ type HeaderProps = {
 
 const Header = ({ currentUser }: HeaderProps) => {
   const [searchValue, setSearchValue] = useState('');
-  const navigate = useNavigate(); // 🧭 dùng để điều hướng trang
+  const navigate = useNavigate(); // dùng để điều hướng trang
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +20,7 @@ const Header = ({ currentUser }: HeaderProps) => {
   };
 
   const handleGoToProfile = () => {
-    navigate('/profile'); // 👉 chuyển sang trang /profile
+    navigate('/profile'); // chuyển sang trang /profile
   };
 
   return (

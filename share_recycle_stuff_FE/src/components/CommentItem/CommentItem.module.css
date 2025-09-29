@@ -1,0 +1,175 @@
+.commentItem {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.commentItem:last-child {
+  border-bottom: none;
+}
+
+.commentHeader {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.commentContent {
+  flex: 1;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.authorName {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.timestamp {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #666;
+}
+
+.commentText {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #000000;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.editSection {
+  margin-bottom: 8px;
+}
+
+.editTextarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.editTextarea:focus {
+  outline: none;
+  border-color: #1e1e1e;
+}
+
+.editActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.commentActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.actionButton:hover {
+  color: #333;
+}
+
+.actionButton.liked {
+  color: #ff4757;
+}
+
+.actionIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.actionCount {
+  font-size: 12px;
+}
+
+.moreButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: #666;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.moreButton:hover {
+  background-color: #f0f0f0;
+}
+
+.replyInputSection {
+  margin-top: 12px;
+  margin-left: 52px;
+}
+
+/* Styles for reply comments */
+.replyItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.replyItem:last-child {
+  border-bottom: none;
+}
+
+.replyItem .avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.replyItem .authorName {
+  font-size: 13px;
+  font-weight: 650;
+
+}
+
+.replyItem .timestamp {
+  font-size: 11px;
+}
+
+.replyItem .commentText {
+  font-size: 13px;
+  margin: 0 0 6px 0;
+}
+
+.replyItem .actionButton {
+  font-size: 11px;
+}
