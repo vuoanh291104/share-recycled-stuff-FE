@@ -7,6 +7,7 @@ import ImageCarousel from '../ImageCarousel/ImageCarousel';
 import { formatLikes, formatViews, formatTimeAgo, formatPrice } from '../../utils/formatters';
 import type { Post } from '../../types/schema';
 import styles from './PostCard.module.css';
+import CommentModal from '../CommentModal/CommentModal';
 
 interface PostCardProps {
   post: Post;
@@ -16,7 +17,7 @@ const PostCard = ({ post }: PostCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
-
+  const [showCommentModal, setShowCommentModal] = useState(false);
   const handleLike = () => {
     setIsLiked(!isLiked);
   };
@@ -28,6 +29,15 @@ const PostCard = ({ post }: PostCardProps) => {
   const handleDescriptionToggle = () => {
     setShowFullDescription(!showFullDescription);
   };
+
+  const handleOpenComments = () => {
+    setShowCommentModal(true);
+  };
+
+  const handleCloseComments = () => {
+    setShowCommentModal(false);
+  };
+
 
   const truncatedDescription = post.content.length > 50 
     ? `${post.content.substring(0, 50)}...more`
@@ -91,7 +101,7 @@ const PostCard = ({ post }: PostCardProps) => {
           />
         </button>
         
-        <button className={styles.actionButton}>
+        <button className={styles.actionButton} onClick={handleOpenComments}>
           <Icon 
             component={CommentIcon} 
             className={styles.actionIcon}
@@ -135,16 +145,17 @@ const PostCard = ({ post }: PostCardProps) => {
           )}
         </p>
       </div>
-
-      
-
         {/* View Comments */}
-        <p 
-          className={styles.viewCommentsButton} 
-          onClick={() => console.log("Mở danh sách comment")}
-        >
-          View all comments
-        </p>
+        <button className={styles.viewCommentsButton} onClick={handleOpenComments}>
+        View all comment
+      </button>
+      {/* Comment Modal */}
+      <CommentModal
+        isOpen={showCommentModal}
+        
+        post={post}
+        onClose={handleCloseComments}
+      />
 
     </article>
   );

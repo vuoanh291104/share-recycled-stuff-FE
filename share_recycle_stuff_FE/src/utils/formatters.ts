@@ -38,3 +38,35 @@ export const formatTimeAgo = (timestamp: Date): string => {
 export const formatPrice = (price: number): string => {
   return `${price.toLocaleString()}VNĐ`;
 };
+
+export const formatCommentTime = (timestamp: Date): string => {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - timestamp.getTime()) / 1000);
+  
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds}s`;
+  }
+  
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m`;
+  }
+  
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}h`;
+  }
+  
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7) {
+    return `${diffInDays}d`;
+  }
+  
+  return timestamp.toLocaleDateString('vi-VN');
+};
+
+export const formatReplyCount = (count: number): string => {
+  if (count === 0) return '';
+  if (count === 1) return '1 reply';
+  return `${count} replies`;
+};
