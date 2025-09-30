@@ -1,0 +1,136 @@
+.profileHeader {
+  margin-top: 50px;
+  background: white;
+  padding: 2rem;
+
+  margin-bottom: 2rem;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.avatarSection {
+  flex-shrink: 0;
+  padding-left: 3rem;
+}
+
+.profileAvatar {
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: none;
+}
+
+.userDetails {
+  flex: 1;
+  padding-top: 1rem;
+}
+
+.userName {
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: #000000;
+  margin: 0 0 1rem 0;
+  text-align: left;
+}
+
+.userBio {
+  font-family: 'Inria Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: #000000;
+  margin: 0 0 1rem 0;
+  line-height: 1.1;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.ratingSection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ratingText {
+  font-family: 'Inria Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.starIcon {
+  color: #1d1b20;
+  font-size: 18px;
+}
+
+.reviewCount {
+  font-family: 'Inria Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.editButton {
+  background-color: #e4e2db;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 6px 16px;
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-right: 5rem;
+  transition: 0.3s ease;
+}
+
+.editButton:hover {
+  background-color: #bab8ae;
+}
+
+.editButton:hover {
+  background: transparent;
+  color: #000000;
+}
+
+.tabNavigation {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.tab {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #060606;
+  background: none;
+  border: none;
+  padding: 1rem 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.tab:hover {
+  color: #000000;
+}
+
+.activeTab {
+  font-weight: 700;
+}
+
+.activeTab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #000000;
+}

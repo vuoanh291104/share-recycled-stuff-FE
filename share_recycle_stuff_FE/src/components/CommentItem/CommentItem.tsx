@@ -61,14 +61,14 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
     <div className={`${styles.commentItem} ${isReply ? styles.replyItem : ''}`}>
       <div className={styles.commentHeader}>
         <img
-          src={comment.account_id.avatar}
-          alt={comment.account_id.name}
+          src={comment.account_id.avatar_url}
+          alt={comment.account_id.full_name}
           className={`${styles.avatar} ${isReply ? styles.replyAvatar : ''}`}
         />
         <div className={styles.commentContent}>
           <div className={styles.authorInfo}>
             <span className={`${styles.authorName} ${isReply ? styles.replyAuthor : ''}`}>
-              {comment.account_id.name}
+              {comment.account_id.full_name}
             </span>
             <span className={`${styles.timestamp} ${isReply ? styles.replyTimestamp : ''}`}>
               {formatCommentTime(comment.created_at)}

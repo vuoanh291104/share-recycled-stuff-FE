@@ -3,9 +3,20 @@ import type { PostPurpose } from './enums';
 // Props types (data passed to components)
 export interface User {
   id: string;
-  name: string;
-  avatar: string;
-
+  account_id: number;
+  full_name: string;
+  phone: string;
+  address: string;
+  ward: string;
+  district: string;
+  city: string;
+  id_card?: string;
+  avatar_url: string;
+  bio: string;
+  rating_average: number;
+  total_ratings: number;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface Post {
@@ -29,6 +40,10 @@ export interface Post {
 }
 
 export type HomePageProps = {
+  currentUser: User;
+  posts: Post[];
+}
+export type ProfilePageProps = {
   currentUser: User;
   posts: Post[];
 }

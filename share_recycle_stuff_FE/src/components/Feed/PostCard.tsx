@@ -49,12 +49,12 @@ const PostCard = ({ post }: PostCardProps) => {
       <div className={styles.postHeader}>
         <div className={styles.authorInfo}>
           <img
-            src={post.account_id.avatar}
-            alt={post.account_id.name}
+            src={post.account_id.avatar_url}
+            alt={post.account_id.full_name}
             className={styles.authorAvatar}
           />
           <div className={styles.authorDetails}>
-            <h3 className={styles.authorName}>{post.account_id.name}</h3>
+            <h3 className={styles.authorName}>{post.account_id.full_name}</h3>
             <div className={styles.timeIndicator}>
               <div className={styles.timeDot}></div>
             </div>
