@@ -56,11 +56,11 @@ const Header = ({ currentUser }: HeaderProps) => {
           style={{ cursor: 'pointer' }}
         >
           <img
-            src={currentUser?.avatar || "/avatars/default.png"}
-            alt={currentUser?.name || "Người dùng"}
+            src={currentUser?.avatar_url || "/avatars/default.png"}
+            alt={currentUser?.full_name || "Người dùng"}
             className={styles.userAvatar}
           />
-          <span className={styles.userName}>{currentUser?.name || "Guest"}</span>
+          <span className={styles.userName}>{currentUser?.full_name || "Guest"}</span>
         </div>
       </div>
     </header>

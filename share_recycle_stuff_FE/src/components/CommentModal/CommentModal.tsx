@@ -85,7 +85,7 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
   const comment = comments.find(c => c.id === commentId);
   if (!comment) return;
 
-  // ✅ Kiểm tra quyền
+  //Kiểm tra quyền
   if (comment.account_id.id !== currentUser.id) {
     return;
   }
@@ -118,12 +118,12 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
           <div className={styles.postHeader}>
             <div className={styles.authorInfo}>
               <img
-                src={post.account_id.avatar}
-                alt={post.account_id.name}
+                src={post.account_id.avatar_url}
+                alt={post.account_id.full_name}
                 className={styles.authorAvatar}
               />
               <div className={styles.authorDetails}>
-                <h3 className={styles.authorName}>{post.account_id.name}</h3>
+                <h3 className={styles.authorName}>{post.account_id.full_name}</h3>
                 <span className={styles.timestamp}>
                   {formatTimeAgo(post.create_at)}
                 </span>

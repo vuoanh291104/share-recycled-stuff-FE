@@ -1,6 +1,6 @@
 .postCard {
-    background-color: #ffffff;
-  margin: 24px auto;           /* ✅ căn giữa theo chiều ngang */
+  background-color: #ffffff;
+  margin: 15px auto;
   padding: 0;
   position: relative;
   max-width: 600px;
