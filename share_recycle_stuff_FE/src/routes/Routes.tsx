@@ -7,6 +7,7 @@ import Home from '../pages/common/Home'
 import Profile from '../pages/common/Profile'
 import AdminLayout from '../layouts/AdminLayout'
 import Dashboard from '../pages/admin/Dashboard'
+import RequestProxySeller from '../pages/customer/RequestProxySeller/RequestProxySeller'
 import { mockRootProps } from '../data/homeMockData'
 
 
@@ -25,7 +26,8 @@ const router = createBrowserRouter([
             currentUser={mockRootProps.currentUser}
             posts={mockRootProps.posts}
           />},
-            {path: '/profile', element: <Profile />}
+            {path: '/profile', element: <Profile />},
+            {path: '/upgrade', element: <RequestProxySeller />}
         ]
     },
     {

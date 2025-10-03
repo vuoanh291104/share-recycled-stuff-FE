@@ -13,7 +13,7 @@ const Profile = () => {
   const { currentUser, posts } = mockRootProps;
   return (
     <div className={styles.homeLayout}>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <Header currentUser={currentUser} />
 
       <div className={styles.mainContent}>

@@ -21,8 +21,9 @@
 a {
   color: var(--color-primary);
   text-decoration: none;
+  cursor: pointer;
 }
 
 a:hover {
-  text-decoration: underline;
+  cursor: pointer;
 }
