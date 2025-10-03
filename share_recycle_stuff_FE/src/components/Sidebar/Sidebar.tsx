@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import Icon from '@ant-design/icons';
-import { MdNotifications, MdTextSnippet, MdCurrencyExchange, MdHandshake, MdAccountBox, MdReportGmailerrorred,} from 'react-icons/md';
+import { MdNotifications, MdTextSnippet, MdCurrencyExchange, MdHandshake, MdAccountBox, MdReportGmailerrorred } from 'react-icons/md';
+import { TbArrowBigUpLines } from "react-icons/tb";
+
+
 
 import HomeIcon from '../icons/HomeIcon';
 import LanguageIcon from '../icons/LanguageIcon';
@@ -26,6 +29,7 @@ const Sidebar = () => {
     { id: 'profile', label: 'Profile', icon: () => <MdAccountBox size={24} /> },
     { id: 'reports', label: 'Khiếu nại & Báo cáo', icon: () => <MdReportGmailerrorred size={24} /> },
     { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon },
+    { id: 'upgrade', label: 'Nâng cấp tài khoản',  icon: () => <TbArrowBigUpLines size={24} /> },
     { id: 'logout', label: 'Đăng xuất', icon: LogoutIcon }
   ];
 

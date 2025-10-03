@@ -1,0 +1,73 @@
+.title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 70px;
+}
+.container {
+    margin-left: 450px;
+    margin-top: 100px;
+    height: 100vh;
+    width: 80%;
+    text-align: left;
+    
+}
+
+.request_list {
+    margin-top: 52px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 20px;
+    border: 1px solid black;
+    padding: 40px;
+    width: 780px;
+}
+
+.request_button, .request_button:hover, .request_button:focus,
+.request_button:active {
+    background-color:  var(--color-accent) !important;
+    color: black !important;
+    font-size: 24px;
+    font-weight: regular !important;
+    width: 224px;
+    height: 50px;
+    border-radius: 30px;
+    border: none !important;
+    outline: none !important;
+}
+.request_button:hover {
+    opacity: 0.7;
+}
+
+.text {
+    margin: 16px 0;
+}
+
+.modal_buttons {
+  display: flex;
+  justify-content: center; 
+  gap: 64px;  /* khoảng cách giữa các nút */
+  margin-top: 40px;
+}
+
+.btn_general {
+    width: 160px;
+    height: 40px;
+    border-radius: 10px;
+}
+
+.btn_submit, .btn_submit:hover, .btn_submit:focus,
+.btn_submit:active {
+    background-color: var(--color-accent) !important;
+    color: black !important;
+    font-weight: 500;
+    border: none !important;
+    outline: none !important;
+}
+
+.img {
+    width: 246px;
+    height: 137px;
+}
+
+

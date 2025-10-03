@@ -48,3 +48,11 @@ export const ModalStateValues = {
   CLOSED: "closed" as const,
   LOADING: "loading" as const
 } as const
+
+export type RequestProxyStatus = "APPROVED" | "REJECTED" | "PENDING";
+
+export const RequestProxyStatusText: Record<RequestProxyStatus, string> = {
+  APPROVED: "Đã duyệt",
+  REJECTED: "Bị từ chối",
+  PENDING: "Đang xét duyệt",
+};

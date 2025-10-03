@@ -1,4 +1,4 @@
-import type { PostPurpose } from './enums';
+import type { PostPurpose, RequestProxyStatus } from './enums';
 
 // Props types (data passed to components)
 export interface User {
@@ -79,4 +79,14 @@ export interface CommentItemProps {
   onDelete: (commentId: string) => void;
   onEdit: (commentId: string, newContent: string) => void;
   isReply?: boolean;
+}
+
+// Request Upgrade to become Proxy Seller
+export interface RequestProxySellerItemProps {
+  id?: number;         //Tạm để ? đây, sau bao giờ sửa API thì bỏ đi
+  createDate?: string;
+  status: RequestProxyStatus;
+  processedDate?: string;
+  listCCCDImages?: string[];
+  reasonReject?: string;
 }

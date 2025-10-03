@@ -10,7 +10,7 @@ import Icon from '@ant-design/icons';
 const Home = ({ currentUser, posts }: HomePageProps) => {
   return (
     <div className={styles.homeLayout}>
-      <Sidebar />
+      {/* <Sidebar /> */}
       
       <div className={styles.mainContent}>
         <Header currentUser={currentUser} />
