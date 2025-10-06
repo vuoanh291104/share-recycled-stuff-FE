@@ -1,0 +1,48 @@
+.editContainer {
+    margin-top: 100px;
+    margin-left: 20%;
+}
+.editHeader {
+    width: 620px;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 50px;
+}
+.selectTypeEdit {
+    cursor: pointer;
+}
+.active {
+    color: var(--color-accent);
+}
+
+.editTypeBody {
+    width: 640px;
+}
+
+.changePhoto,
+.editHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+.img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.update, .update:hover, .update:active,
+.update:focus, .update:focus-within, .update:focus-visible {
+    background-color: var(--color-accent) !important;
+    color:  black !important;
+    outline: none;
+    border: #fff;
+}
+.update:hover {
+    opacity: 0.7;
+}

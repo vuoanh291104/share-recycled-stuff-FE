@@ -8,20 +8,30 @@ import { mockRootProps } from '../../data/homeMockData';
 import PostCreation from '../../components/Profile/PostCreation';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import feedStyles from '../../components/Feed/Feed.module.css';
+import { Outlet, useLocation } from 'react-router-dom';
 
 const Profile = () => {
   const { currentUser, posts } = mockRootProps;
+  const location = useLocation ();
+  const isEditing = location.pathname.includes('/profile/edit')
   return (
     <div className={styles.homeLayout}>
       {/* <Sidebar /> */}
       <Header currentUser={currentUser} />
 
       <div className={styles.mainContent}>
-        <ProfileHeader user={currentUser} />
-        <div className = {feedStyles.postsContainer}>
-          <PostCreation user={currentUser} />
-          <Feed posts={posts}/>
-        </div>
+        {
+          isEditing?<Outlet/>:
+          <>
+            <ProfileHeader user={currentUser} />
+            <div className = {feedStyles.postsContainer}>
+              <PostCreation user={currentUser} />
+              <Feed posts={posts}/>
+            </div>
+          </>
+        }
+        
+        
       <div className={styles.messagesSection}>
         <button className={styles.messagesButton}>
           <Icon 
