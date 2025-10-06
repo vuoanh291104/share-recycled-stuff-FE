@@ -1,0 +1,103 @@
+.reviewSection {
+  width: 100%;
+  max-width: 616px;
+  margin: 0 auto;
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.reviewCard {
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 15px;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-left: 33px;
+  width: 550px;
+}
+
+.reviewHeader {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.reviewerAvatar {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+  display: block;
+  margin-right: 10px;
+}
+
+.reviewerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.reviewerName {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+}
+
+.reviewComment {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #000000;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.reviewRating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.ratingText {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.starIcon {
+  font-size: 20px;
+  color: #FFD700;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 48px 24px;
+  color: #8c8c8c;
+  margin-left: 33px;
+}
+
+.emptyState p {
+  font-size: 16px;
+  margin: 0;
+}

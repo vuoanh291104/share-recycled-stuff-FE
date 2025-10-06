@@ -3,6 +3,7 @@
   padding: 0px 32px;
   background-color: #f8f9fa;
   min-height: calc(100vh - 80px);
+  margin-top: 60px;
 }
 
 .postsContainer {

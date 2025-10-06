@@ -3,14 +3,15 @@ import Icon from '@ant-design/icons';
 import StarIcon from '../icons/StarIcon';
 import type { User } from '../../types/schema';
 import styles from './ProfileHeader.module.css';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileHeaderProps {
   user: User;
+  activeTab: 'posts' | 'reviews';
+  onTabChange: (tab: 'posts' | 'reviews') => void;
 }
 
-const ProfileHeader = ({ user }: ProfileHeaderProps) => {
-
+const ProfileHeader = ({ user, activeTab, onTabChange }: ProfileHeaderProps) => {
   const navigate = useNavigate();
   return (
     <div className={styles.profileHeader}>
@@ -52,10 +53,16 @@ const ProfileHeader = ({ user }: ProfileHeaderProps) => {
       </div>
       
       <div className={styles.tabNavigation}>
-        <button className={`${styles.tab} ${styles.activeTab}`}>
+        <button 
+          className={`${styles.tab} ${activeTab === 'posts' ? styles.activeTab : ''}`}
+          onClick={() => onTabChange('posts')}
+        >
           Bài đăng
         </button>
-        <button className={styles.tab}>
+        <button 
+          className={`${styles.tab} ${activeTab === 'reviews' ? styles.activeTab : ''}`}
+          onClick={() => onTabChange('reviews')}
+        >
           Đánh giá
         </button>
       </div>
