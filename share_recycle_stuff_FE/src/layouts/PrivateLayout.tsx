@@ -4,7 +4,7 @@ import type { User } from '../types/schema';
 import Header from '../components/Header/Header';
 
 type PrivateLayoutProps = {
-  currentUser:User;
+  currentUser: User;
 }
 
 const PrivateLayout = ({currentUser} : PrivateLayoutProps) => {

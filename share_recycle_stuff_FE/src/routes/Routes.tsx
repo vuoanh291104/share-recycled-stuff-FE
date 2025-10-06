@@ -9,6 +9,7 @@ import AdminLayout from '../layouts/AdminLayout'
 import Dashboard from '../pages/admin/Dashboard'
 import RequestProxySeller from '../pages/customer/RequestProxySeller/RequestProxySeller'
 import { mockRootProps } from '../data/homeMockData'
+import EditProfile from '../pages/common/EditProfile/EditProfile'
 
 
 const router = createBrowserRouter([
@@ -20,13 +21,15 @@ const router = createBrowserRouter([
         ]
     },
     {
-        element: <PrivateLayout />,  //Customer + Proxy_seller use
+        element: <PrivateLayout currentUser={mockRootProps.currentUser} />,  //Customer + Proxy_seller use
         children: [
             {path: '/', element: <Home
             currentUser={mockRootProps.currentUser}
             posts={mockRootProps.posts}
           />},
-            {path: '/profile', element: <Profile />},
+            {path: '/profile', element: <Profile />, children: [
+                {path:'edit',element: <EditProfile />}
+            ]},
             {path: '/upgrade', element: <RequestProxySeller />}
         ]
     },

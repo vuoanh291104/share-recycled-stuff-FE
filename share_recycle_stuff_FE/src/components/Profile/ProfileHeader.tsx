@@ -3,12 +3,15 @@ import Icon from '@ant-design/icons';
 import StarIcon from '../icons/StarIcon';
 import type { User } from '../../types/schema';
 import styles from './ProfileHeader.module.css';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 interface ProfileHeaderProps {
   user: User;
 }
 
 const ProfileHeader = ({ user }: ProfileHeaderProps) => {
+
+  const navigate = useNavigate();
   return (
     <div className={styles.profileHeader}>
       <div className={styles.profileInfo}>
@@ -37,12 +40,15 @@ const ProfileHeader = ({ user }: ProfileHeaderProps) => {
             <span className={styles.reviewCount}>{user.total_ratings} reviews</span>
           </div>
         </div>
-        <Button 
-          className={styles.editButton}
-          type="default"
-        >
-          Edit Profile
-        </Button>
+        
+          <Button 
+            className={styles.editButton}
+            type="default"
+            onClick={() => navigate ('/profile/edit')}
+          >
+            Edit Profile
+          </Button>
+        
       </div>
       
       <div className={styles.tabNavigation}>
