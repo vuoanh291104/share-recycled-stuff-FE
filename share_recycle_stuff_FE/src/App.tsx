@@ -1,6 +1,7 @@
 import Routes from './routes/Routes'
 import './App.css'
 import { ConfigProvider } from 'antd'
+import { MessageProvider } from './context/MessageProvider'
 
 function App() {
   return (
@@ -11,7 +12,9 @@ function App() {
         },
       }}
     >
-      <Routes />
+      <MessageProvider>
+        <Routes />
+      </MessageProvider>
     </ConfigProvider>
   )
 }
