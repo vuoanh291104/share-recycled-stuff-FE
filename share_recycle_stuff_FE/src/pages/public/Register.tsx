@@ -2,13 +2,14 @@ import { Button, Form, Input, Checkbox } from 'antd';
 import type { CheckboxProps } from 'antd';
 import '/src/styles/GlobalStyle.css';
 import styles from './auth.module.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoginGG from '../../components/LoginGG/LoginGG';
 import clsx from "clsx";
 import AddressSelect from '../../components/AddressSelect/AddressSelect';
 import { useState } from 'react';
 import {postData} from '../../api/api';
 import type { ErrorResponse } from '../../api/api';
+import { useMessage } from '../../context/MessageProvider';
 
 interface RegisterResponse {
   result: {
@@ -18,15 +19,28 @@ interface RegisterResponse {
   message: string;
 }
 const Register = () => {
+  const {showMessage} =  useMessage();
   const [isAccepted, setIsAccepted] =  useState(false);
 
+  const [loading, setLoading] = useState (false); 
+
+  const navigate = useNavigate();
+
   const onFinish = async (values: any) => {
+    setLoading(true);
     try {
       const res = await postData<RegisterResponse>("/api/auth/register", values);
-      console.log("Đăng ký thành công:", res.result.email , res.message);
+      showMessage({type: "success", message: res.message });
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err: any) {
       const errorData: ErrorResponse = err;
-      console.error("Lỗi:", errorData.message, "Status:", errorData.status);
+      showMessage({
+        type: "error",
+        message: errorData.message,
+        code: errorData.status
+      })
+    } finally {
+      setLoading (false);
     }
   };
 
@@ -51,7 +65,7 @@ const Register = () => {
       >
         <Form.Item
           label="Tên"
-          name="name"
+          name="fullName"
           rules={[
             { required: true, message: 'Nhập tên của bạn!' }
           ]}
@@ -99,7 +113,7 @@ const Register = () => {
         <div >
           <Checkbox onChange={onChange}>
             <span>Chấp nhận</span>
-            <Link to=""> Chính sách và điều khoản cộng đồng</Link>
+            <Link to="#"> Chính sách và điều khoản cộng đồng</Link>
           </Checkbox>
           
         </div>
@@ -107,7 +121,8 @@ const Register = () => {
         <Form.Item style={{marginInlineStart:0}} >
           <Button className={clsx(styles.btnLogin, styles.mgt_16)}  
             htmlType="submit"
-            disabled={!isAccepted}>
+            disabled={!isAccepted}
+            loading = {loading}>
             Đăng ký
           </Button>
         </Form.Item>

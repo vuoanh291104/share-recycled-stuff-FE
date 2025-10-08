@@ -1,18 +1,64 @@
 import { Button, Form, Input } from 'antd';
 import '/src/styles/GlobalStyle.css';
 import styles from './auth.module.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoginGG from '../../components/LoginGG/LoginGG';
 import clsx from 'clsx';
+import { postData } from '../../api/api';
+import type { ErrorResponse } from '../../api/api';
+import { useState } from 'react';
+import { useMessage } from '../../context/MessageProvider';
 
+interface LoginResponse {
+  result: {
+    accessToken: string,
+    refreshToken: string,
+    expiresIn: number,
+    userInfo: []
+  };
+  code: number;
+  message: string;
+}
 const Login = () => {
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+
+  const [loading, setLoading] = useState (false); 
+
+  const {showMessage} = useMessage();
+
+  const navigate  = useNavigate();
+
+  
+
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+      const res = await postData<LoginResponse>("/api/auth/login", values);
+      console.log(res);
+      localStorage.setItem('accessToken', res.result.accessToken);
+      localStorage.setItem('refreshToken', res.result.refreshToken);
+      localStorage.setItem('userInfo', JSON.stringify(res.result.userInfo));
+
+      const expiresAt = Date.now() + res.result.expiresIn * 1000;
+      localStorage.setItem("expiresAt", expiresAt.toString());
+
+      showMessage({ type: "success", message: res.message });
+      setTimeout(() => navigate("/"), 1500);
+    } catch (err : any) {
+      const errorData: ErrorResponse = err;
+      showMessage({
+        type: "error",
+        message: errorData.message || "Login failed",
+        code: errorData.status,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+
   return (
     <>
       <div className={styles.text_title}>CHÀO MỪNG TRỞ LẠI</div>
@@ -49,7 +95,9 @@ const Login = () => {
         </div>
 
         <Form.Item style={{marginInlineStart:0}} >
-          <Button className={clsx(styles.btnLogin, styles.mgt_16)} htmlType="submit">
+          <Button className={clsx(styles.btnLogin, styles.mgt_16)} htmlType="submit"
+                  loading = {loading}
+          >
             Đăng nhập
           </Button>
         </Form.Item>
