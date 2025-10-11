@@ -13,6 +13,7 @@ interface MenuItem {
   id: string;
   label: string;
   icon: React.ComponentType<any>;
+  path?: string;
 }
 
 const Sidebar = () => {
@@ -20,33 +21,59 @@ const Sidebar = () => {
   const location = useLocation();
   const [activeItem, setActiveItem] = useState('home');
 
-  const menuItems: MenuItem[] = [
-    { id: 'home', label: 'Trang chủ', icon: HomeIcon },
-    { id: 'notifications', label: 'Thông báo', icon: () => <MdNotifications size={24} /> },
-    { id: 'posts', label: 'Quản lí bài đăng', icon: () => <MdTextSnippet size={24} /> },
-    { id: 'transactions', label: 'Quản lí giao dịch', icon: () => <MdCurrencyExchange size={24} /> },
-    { id: 'delegation', label: 'Ủy thác', icon: () => <MdHandshake size={24} /> },
-    { id: 'profile', label: 'Profile', icon: () => <MdAccountBox size={24} /> },
-    { id: 'reports', label: 'Khiếu nại & Báo cáo', icon: () => <MdReportGmailerrorred size={24} /> },
-    { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon },
-    { id: 'upgrade', label: 'Nâng cấp tài khoản',  icon: () => <TbArrowBigUpLines size={24} /> },
-    { id: 'logout', label: 'Đăng xuất', icon: LogoutIcon }
-  ];
+  const userInfo = localStorage.getItem("userInfo");
+  const user = userInfo? JSON.parse(userInfo) : null;
+  const role = user?.role ?? null; 
 
-  const menuPaths: Record<string, string> = {
-    home: '/',
-    notifications: '/notifications',
-    posts: '/profile',
-    transactions: '/transactions',
-    delegation: '/delegation',
-    profile: '/profile',
-    reports: '/reports',
-    language: '/language',
-    upgrade: '/upgrade',
-    logout: '/logout',
-  };
+  const commonItems: MenuItem [] = [
+    { id: 'logout', label: 'Đăng xuất', icon: LogoutIcon },
+  ]
+
+  const roleItems : Record <string, MenuItem []> = {
+    ADMIN: [
+      { id: 'notificationsMana', label: 'Thông báo', icon: () => <MdNotifications size={24} />, path: '/admin/notifications' },
+      { id: 'accountMana', label: 'Quản lí tài khoản', icon: () => <MdTextSnippet size={24} />, path: '/admin/accounts' },
+      { id: 'postsMana', label: 'Kiểm duyệt bài đăng', icon: () => <MdTextSnippet size={24} />, path: '/admin/posts' },
+      { id: 'reportsMana', label: 'Quản lí khiếu nại', icon: () => <MdReportGmailerrorred size={24} />, path: '/admin/reports' },
+      { id: 'statisticalMana', label: 'Báo cáo & thống kê', icon: () => <MdCurrencyExchange size={24} />, path: '/admin/statisticals' },
+      { id: 'revenueMana', label: 'Quản lý doanh thu', icon: () => <MdHandshake size={24} />, path: '/admin/revenues' },
+      { id: 'upgradeMana', label: 'Yêu cầu nâng cấp',  icon: () => <TbArrowBigUpLines size={24} />, path: '/admin/upgradeRequests' },
+      { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon, path: '/language' },
+
+    ],
+    CUSTOMER: [
+      { id: 'home', label: 'Trang chủ', icon: HomeIcon, path: '/' },
+      { id: 'notifications', label: 'Thông báo', icon: () => <MdNotifications size={24} />, path: '/notifications' },
+      { id: 'posts', label: 'Quản lí bài đăng', icon: () => <MdTextSnippet size={24} />, path: '/posts' },
+      { id: 'transactions', label: 'Quản lí giao dịch', icon: () => <MdCurrencyExchange size={24} />, path: '/transactions' },
+      { id: 'delegation', label: 'Ủy thác', icon: () => <MdHandshake size={24} />, path: '/delegation' },
+      { id: 'profile', label: 'Profile', icon: () => <MdAccountBox size={24} />, path: '/profile' },
+      { id: 'reports', label: 'Khiếu nại & Báo cáo', icon: () => <MdReportGmailerrorred size={24} />, path: '/reports' },
+      { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon, path: '/language' },
+      { id: 'upgrade', label: 'Nâng cấp tài khoản',  icon: () => <TbArrowBigUpLines size={24} />, path: '/upgrade' },
+    ],
+
+    PROXY_SELLER: [
+
+    ]
+  }
+
+  const menuItems = [...(roleItems[role] ?? []), ...commonItems];
+
+  const menuPaths: Record<string, string> = {};
+    menuItems.forEach(item => {
+      if (item.path) menuPaths[item.id] = item.path;
+  });
 
   const handleMenuClick = (itemId: string) => {
+    if (itemId === 'logout') {
+      if (window.confirm('Bạn có chắc muốn đăng xuất?')) {
+        localStorage.removeItem('userInfo');
+        navigate('/login');
+      }
+      return;
+    }
+
     setActiveItem(itemId);
     const path = menuPaths[itemId];
     if (path) navigate(path);

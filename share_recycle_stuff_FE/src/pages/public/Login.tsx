@@ -42,7 +42,22 @@ const Login = () => {
       localStorage.setItem("expiresAt", expiresAt.toString());
 
       showMessage({ type: "success", message: res.message });
-      setTimeout(() => navigate("/"), 1500);
+
+      const user = JSON.parse(localStorage.getItem('userInfo')!) as { role: string };
+
+      setTimeout(() => {
+        switch (user.role) {
+          case 'CUSTOMER':
+          case 'PROXY_SELLER':
+            navigate("/"); // về trang home
+            break;
+          case 'ADMIN':
+            navigate("/admin"); // về trang admin
+            break;
+          default:
+            navigate("/"); // fallback về home nếu role lạ
+        }
+      }, 1500);
     } catch (err : any) {
       const errorData: ErrorResponse = err;
       showMessage({

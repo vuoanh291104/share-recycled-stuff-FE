@@ -6,13 +6,30 @@ import SearchIcon from '../icons/SearchIcon';
 import type { User } from '../../types/schema';
 import styles from "./Header.module.css";
 
-type HeaderProps = {
-  currentUser: User;
-};
 
-const Header = ({ currentUser }: HeaderProps) => {
+const Header = () => {
+
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate(); // dùng để điều hướng trang
+
+  const userInfo = localStorage.getItem("userInfo");
+
+  type BasicUser = Pick<User, "account_id" | "full_name" | "avatar_url">;
+
+  let currentUser: BasicUser | null = null;
+
+    if (userInfo) {
+    try {
+      const parsed = JSON.parse(userInfo);
+      currentUser = {
+        account_id: parsed.accountId ?? 0,
+        full_name: parsed.fullName ?? "",
+        avatar_url: parsed.avatarUrl ?? "",
+      };
+    } catch (err) {
+      console.error("Lỗi parse userInfo:", err);
+    }
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

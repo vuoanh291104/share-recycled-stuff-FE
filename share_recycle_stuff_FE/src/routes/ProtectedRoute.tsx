@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { Result, Button } from "antd";
 
 interface ProtectedRouteProps {
@@ -9,6 +9,9 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
     const token = localStorage.getItem("accessToken");
     const userInfo = localStorage.getItem("userInfo");
     const expiresAt = localStorage.getItem("expiresAt");
+
+    console.log(userInfo)
+    const navigate = useNavigate();
 
   // chưa login
     if (!token || !userInfo || !expiresAt) {
@@ -36,7 +39,18 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
                 title="403"
                 subTitle="Xin lỗi, bạn không có quyền truy cập vào trang này."
                 extra={
-                    <Button type="primary" onClick={() => (window.location.href = "/")}>
+                    <Button type="primary" onClick={() => {
+                        switch (user.role) {
+                        case "ADMIN":
+                            navigate("/admin");  //fix sau
+                            break;
+                        case "CUSTOMER":
+                        case "PROXY_SELLER":
+                        default:
+                            navigate("/");
+                            break;
+                    }
+                    }}>
                     Về trang chủ
                     </Button>
                 }

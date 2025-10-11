@@ -13,7 +13,7 @@ const Home = ({ currentUser, posts }: HomePageProps) => {
       {/* <Sidebar /> */}
       
       <div className={styles.mainContent}>
-        <Header currentUser={currentUser} />
+        <Header />
       <div className={styles.messagesSection}>
         <button className={styles.messagesButton}>
           <Icon 
