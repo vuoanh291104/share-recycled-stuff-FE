@@ -1,6 +1,6 @@
 import Routes from './routes/Routes'
 import './App.css'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, App as AntApp } from 'antd'
 import { MessageProvider } from './context/MessageProvider'
 
 function App() {
@@ -12,9 +12,11 @@ function App() {
         },
       }}
     >
-      <MessageProvider>
-        <Routes />
-      </MessageProvider>
+      <AntApp>
+        <MessageProvider>
+          <Routes />
+        </MessageProvider>
+      </AntApp>
     </ConfigProvider>
   )
 }

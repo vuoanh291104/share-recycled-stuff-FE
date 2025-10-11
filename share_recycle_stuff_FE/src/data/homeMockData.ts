@@ -22,9 +22,9 @@ export const mockRootProps = {
     {
       id: "post_1",
       account_id: {
-        id: "user_1",
+        id: "user_12",
         account_id: 1,
-        full_name: "Vũ Thành Dương",
+        full_name: "Vũ Thành Dươngaa",
         avatar_url: "/avatars/user-avatar-1.jpg",
         phone: "0123456789",
         address: "123 Đường A",
