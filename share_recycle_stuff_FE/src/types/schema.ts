@@ -90,3 +90,17 @@ export interface RequestProxySellerItemProps {
   listCCCDImages?: string[];
   reasonReject?: string;
 }
+
+//Admin see Upgrade Request
+export interface RequestUpgradeDataProps {
+  requestId: number;
+  fullName: string;
+  email: string;
+  idCard: string;
+  cardFront?: string;
+  cardBack?: string;
+  addressDetail: string;
+  status: string;
+  createdAt: number[];
+}
+

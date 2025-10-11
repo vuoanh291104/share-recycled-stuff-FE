@@ -1,13 +1,14 @@
 import { Outlet } from 'react-router-dom'
+import Sidebar from '../components/Sidebar/Sidebar'
 
 const AdminLayout = () => {
   return (
-    <>
-        <div>AdminLayout</div>
+    <div style={{display: 'flex'}}>
+        <Sidebar />
         <main>
-            <Outlet></Outlet>
-        </main>  
-    </>
+            <Outlet />
+        </main>
+    </div>
     )
 }
 

@@ -13,7 +13,7 @@ const PrivateLayout = ({currentUser} : PrivateLayoutProps) => {
     <>
     
         <Sidebar />
-        <Header currentUser={currentUser}/>
+        <Header />
       <main>
         <Outlet />
       </main>
