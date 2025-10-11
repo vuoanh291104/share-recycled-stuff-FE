@@ -6,11 +6,10 @@ import styles from "./Feed.module.css";
 interface FeedProps {
   posts: Post[];
   currentUser?: User;
-  onEditPost?: (postId: string, updatedData: Partial<Post>) => void;
-  onDeletePost?: (postId: string) => void;
+  onActionSuccess?: () => void;
 }
 
-const Feed = ({ posts = [], currentUser, onEditPost, onDeletePost }: FeedProps) => {
+const Feed = ({ posts = [], currentUser, onActionSuccess }: FeedProps) => {
   const [displayedPosts, setDisplayedPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -61,8 +60,7 @@ const Feed = ({ posts = [], currentUser, onEditPost, onDeletePost }: FeedProps) 
             key={post.id} 
             post={post}
             currentUser={currentUser}
-            onEdit={onEditPost}
-            onDelete={onDeletePost}
+            onActionSuccess={onActionSuccess}
           />
         ))}
         

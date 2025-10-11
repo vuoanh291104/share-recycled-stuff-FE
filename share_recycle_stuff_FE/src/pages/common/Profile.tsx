@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Header from '../../components/Header/Header';
 import Feed from '../../components/Feed/Feed';
 import styles from './Home.module.css';
@@ -20,23 +20,10 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState<'posts' | 'reviews'>('posts');
   const [posts, setPosts] = useState<Post[]>(initialPosts);
 
-  const handleEditPost = (postId: string, updatedData: Partial<Post>) => {
-    console.log('Edit post:', postId, updatedData);
-    // Update post in state
-    setPosts(prevPosts => 
-      prevPosts.map(post => 
-        post.id === postId ? { ...post, ...updatedData } : post
-      )
-    );
-    // TODO: Call API to update post
-  };
-
-  const handleDeletePost = (postId: string) => {
-    console.log('Delete post:', postId);
-    // Remove post from state
-    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-    // TODO: Call API to delete post
-  };
+  const handleActionSuccess = useCallback(() => {
+    console.log('Action was successful, refetching posts for profile...');
+    // TODO: Implement logic to refetch posts from the API for the profile page
+  }, []);
 
   const handleCreatePost = (postData: {
     title: string;
@@ -69,7 +56,6 @@ const Profile = () => {
       hasMoreImages: postData.images.length > 1,
     };
 
-    // Add new post to the beginning of the list
     setPosts(prevPosts => [newPost, ...prevPosts]);
     console.log('Post mới đã tạo:', newPost);
     // TODO: Call API to create post
@@ -99,8 +85,7 @@ const Profile = () => {
                   <Feed 
                     posts={posts}
                     currentUser={currentUser}
-                    onEditPost={handleEditPost}
-                    onDeletePost={handleDeletePost}
+                    onActionSuccess={handleActionSuccess}
                   />
                 </>
               ) : (

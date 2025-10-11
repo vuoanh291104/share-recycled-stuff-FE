@@ -10,16 +10,16 @@ import type { Post, User } from '../../types/schema';
 import styles from './PostCard.module.css';
 import CommentModal from '../CommentModal/CommentModal';
 import EditPostModal from '../Profile/EditPostModal';
+import { deleteData, putData } from '../../api/api';
 
 interface PostCardProps {
   post: Post;
   currentUser?: User;
-  onEdit?: (postId: string, updatedData: Partial<Post>) => void;
-  onDelete?: (postId: string) => void;
+  onActionSuccess?: () => void;
 }
 
-const PostCard = ({ post, currentUser, onEdit, onDelete }: PostCardProps) => {
-  const { modal } = App.useApp();
+const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
+  const { modal, message } = App.useApp();
   const [isLiked, setIsLiked] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -55,21 +55,26 @@ const PostCard = ({ post, currentUser, onEdit, onDelete }: PostCardProps) => {
   const isOwner = currentUser && currentUser.id === post.account_id.id;
 
   const handleEdit = () => {
-    setShowMoreMenu(false);
     setShowEditModal(true);
   };
 
   const handleDelete = () => {
-    setShowMoreMenu(false);
     modal.confirm({
       title: 'Xóa bài viết',
       content: 'Bạn có chắc chắn muốn xóa bài viết này?',
       okText: 'Xóa',
       cancelText: 'Hủy',
       okButtonProps: { danger: true },
-      onOk: () => {
-        if (onDelete) {
-          onDelete(post.id);
+      onOk: async () => {
+        try {
+          await deleteData(`/post/${post.id}`);
+          message.success('Xóa bài viết thành công!');
+          if (onActionSuccess) {
+            onActionSuccess();
+          }
+        } catch (error) {
+          console.error('Failed to delete post:', error);
+          message.error('Xóa bài viết thất bại. Vui lòng thử lại.');
         }
       }
     });
@@ -81,11 +86,19 @@ const PostCard = ({ post, currentUser, onEdit, onDelete }: PostCardProps) => {
     console.log('Report post:', post.id);
   };
 
-  const handleEditSubmit = (postId: string, updatedData: Partial<Post>) => {
-    if (onEdit) {
-      onEdit(postId, updatedData);
+  const handleEditSubmit = async (postId: string, updatedData: Partial<Post>) => {
+    try {
+      await putData(`/post/${postId}`, updatedData);
+      message.success('Cập nhật bài viết thành công!');
+      if (onActionSuccess) {
+        onActionSuccess();
+      }
+    } catch (error) {
+      console.error('Failed to update post:', error);
+      message.error('Cập nhật bài viết thất bại. Vui lòng thử lại.');
+    } finally {
+      setShowEditModal(false);
     }
-    setShowEditModal(false);
   };
 
   const handleDescriptionToggle = () => {
