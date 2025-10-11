@@ -1,13 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import PostCard from "./PostCard";
-import type { Post } from '../../types/schema';
+import type { Post, User } from '../../types/schema';
 import styles from "./Feed.module.css";
 
 interface FeedProps {
   posts: Post[];
+  currentUser?: User;
+  onEditPost?: (postId: string, updatedData: Partial<Post>) => void;
+  onDeletePost?: (postId: string) => void;
 }
 
-const Feed = ({ posts  = []}: FeedProps) => {
+const Feed = ({ posts = [], currentUser, onEditPost, onDeletePost }: FeedProps) => {
   const [displayedPosts, setDisplayedPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -54,7 +57,13 @@ const Feed = ({ posts  = []}: FeedProps) => {
     <div className={styles.feed}>
       <div className={styles.postsContainer}>
         {displayedPosts.map((post) => (
-          <PostCard key={post.id} post={post}/>
+          <PostCard 
+            key={post.id} 
+            post={post}
+            currentUser={currentUser}
+            onEdit={onEditPost}
+            onDelete={onDeletePost}
+          />
         ))}
         
         {isLoading && (

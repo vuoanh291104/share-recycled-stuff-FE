@@ -1,29 +1,91 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Icon from '@ant-design/icons';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { App } from 'antd';
 import HeartIcon from '../icons/HeartIcon';
 import CommentIcon from '../icons/CommentIcon';
 import ImageCarousel from '../ImageCarousel/ImageCarousel';
 import { formatLikes, formatViews, formatTimeAgo, formatPrice } from '../../utils/formatters';
-import type { Post } from '../../types/schema';
+import type { Post, User } from '../../types/schema';
 import styles from './PostCard.module.css';
 import CommentModal from '../CommentModal/CommentModal';
+import EditPostModal from '../Profile/EditPostModal';
 
 interface PostCardProps {
   post: Post;
+  currentUser?: User;
+  onEdit?: (postId: string, updatedData: Partial<Post>) => void;
+  onDelete?: (postId: string) => void;
 }
 
-const PostCard = ({ post }: PostCardProps) => {
+const PostCard = ({ post, currentUser, onEdit, onDelete }: PostCardProps) => {
+  const { modal } = App.useApp();
   const [isLiked, setIsLiked] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const handleLike = () => {
     setIsLiked(!isLiked);
   };
 
   const handleMoreMenuToggle = () => {
     setShowMoreMenu(!showMoreMenu);
+  };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMoreMenu(false);
+      }
+    };
+
+    if (showMoreMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMoreMenu]);
+
+  // Check if current user is the post owner
+  const isOwner = currentUser && currentUser.id === post.account_id.id;
+
+  const handleEdit = () => {
+    setShowMoreMenu(false);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = () => {
+    setShowMoreMenu(false);
+    modal.confirm({
+      title: 'Xóa bài viết',
+      content: 'Bạn có chắc chắn muốn xóa bài viết này?',
+      okText: 'Xóa',
+      cancelText: 'Hủy',
+      okButtonProps: { danger: true },
+      onOk: () => {
+        if (onDelete) {
+          onDelete(post.id);
+        }
+      }
+    });
+  };
+
+  const handleReport = () => {
+    setShowMoreMenu(false);
+    // TODO: Implement report functionality
+    console.log('Report post:', post.id);
+  };
+
+  const handleEditSubmit = (postId: string, updatedData: Partial<Post>) => {
+    if (onEdit) {
+      onEdit(postId, updatedData);
+    }
+    setShowEditModal(false);
   };
 
   const handleDescriptionToggle = () => {
@@ -72,10 +134,22 @@ const PostCard = ({ post }: PostCardProps) => {
         </button>
 
         {showMoreMenu && (
-          <div className={styles.moreMenu}>
-            <button className={styles.menuItem}>Edit</button>
-            <button className={styles.menuItem}>Delete</button>
-            <button className={styles.menuItem}>Report</button>
+          <div className={styles.moreMenu} ref={menuRef}>
+            {isOwner && (
+              <>
+                <button className={styles.menuItem} onClick={handleEdit}>
+                  Chỉnh sửa
+                </button>
+                <button className={styles.menuItem} onClick={handleDelete}>
+                  Xóa
+                </button>
+              </>
+            )}
+            {!isOwner && (
+              <button className={styles.menuItem} onClick={handleReport}>
+                Báo cáo
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -152,10 +226,20 @@ const PostCard = ({ post }: PostCardProps) => {
       {/* Comment Modal */}
       <CommentModal
         isOpen={showCommentModal}
-        
         post={post}
         onClose={handleCloseComments}
       />
+
+      {/* Edit Modal */}
+      {currentUser && isOwner && (
+        <EditPostModal
+          user={currentUser}
+          post={post}
+          open={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSubmit={handleEditSubmit}
+        />
+      )}
 
     </article>
   );
