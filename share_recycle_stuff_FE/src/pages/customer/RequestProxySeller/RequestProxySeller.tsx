@@ -25,7 +25,7 @@ const RequestProxySeller = () => {
         className={styles.request_button}
       >Gửi yêu cầu</Button>
 
-      <div className={styles.request_list}>
+      <div className={styles.request_list}>  {/* đọc request của chính owner lên */}
         <RequestProxyItem            // Test thử, call API rồi map sau
         id={1}
         createDate="2025-10-01"

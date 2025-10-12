@@ -146,6 +146,9 @@ const UpgradeItem = ({ data, getAll }: UpgradeItemProps) => {
                     <div>
                     <strong>Địa chỉ chi tiết:</strong> {selectedRecord.addressDetail}
                     </div>
+                    <div>
+                    <strong>Số cccd:</strong> {selectedRecord.idCard}
+                    </div>
                     <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                     {selectedRecord.cardFront && (
                         <img

@@ -10,14 +10,14 @@ type PrivateLayoutProps = {
 const PrivateLayout = ({currentUser} : PrivateLayoutProps) => {
 
   return (
-    <>
+    <div style={{display: 'flex'}}>
     
         <Sidebar />
         <Header />
       <main>
         <Outlet />
       </main>
-    </>
+    </div>
   )
 }
 
