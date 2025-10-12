@@ -1,29 +1,107 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Icon from '@ant-design/icons';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { App } from 'antd';
 import HeartIcon from '../icons/HeartIcon';
 import CommentIcon from '../icons/CommentIcon';
 import ImageCarousel from '../ImageCarousel/ImageCarousel';
 import { formatLikes, formatViews, formatTimeAgo, formatPrice } from '../../utils/formatters';
-import type { Post } from '../../types/schema';
+import type { Post, User } from '../../types/schema';
 import styles from './PostCard.module.css';
 import CommentModal from '../CommentModal/CommentModal';
+import EditPostModal from '../Profile/EditPostModal';
+import { deleteData, putData } from '../../api/api';
 
 interface PostCardProps {
   post: Post;
+  currentUser?: User;
+  onActionSuccess?: () => void;
 }
 
-const PostCard = ({ post }: PostCardProps) => {
+const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
+  const { modal, message } = App.useApp();
   const [isLiked, setIsLiked] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const handleLike = () => {
     setIsLiked(!isLiked);
   };
 
   const handleMoreMenuToggle = () => {
     setShowMoreMenu(!showMoreMenu);
+  };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMoreMenu(false);
+      }
+    };
+
+    if (showMoreMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMoreMenu]);
+
+  // Check if current user is the post owner
+  const isOwner = currentUser && typeof post.accountId === 'object' && currentUser.id === post.accountId.id;
+  
+  // Get author info
+  const author = typeof post.accountId === 'object' ? post.accountId : null;
+
+  const handleEdit = () => {
+    setShowEditModal(true);
+  };
+
+  const handleDelete = () => {
+    modal.confirm({
+      title: 'Xóa bài viết',
+      content: 'Bạn có chắc chắn muốn xóa bài viết này?',
+      okText: 'Xóa',
+      cancelText: 'Hủy',
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteData(`/post/${post.id}`);
+          message.success('Xóa bài viết thành công!');
+          if (onActionSuccess) {
+            onActionSuccess();
+          }
+        } catch (error) {
+          console.error('Failed to delete post:', error);
+          message.error('Xóa bài viết thất bại. Vui lòng thử lại.');
+        }
+      }
+    });
+  };
+
+  const handleReport = () => {
+    setShowMoreMenu(false);
+    // TODO: Implement report functionality
+    console.log('Report post:', post.id);
+  };
+
+  const handleEditSubmit = async (postId: number, updatedData: Partial<Post>) => {
+    try {
+      await putData(`/post/${postId}`, updatedData);
+      message.success('Cập nhật bài viết thành công!');
+      if (onActionSuccess) {
+        onActionSuccess();
+      }
+    } catch (error) {
+      console.error('Failed to update post:', error);
+      message.error('Cập nhật bài viết thất bại. Vui lòng thử lại.');
+    } finally {
+      setShowEditModal(false);
+    }
   };
 
   const handleDescriptionToggle = () => {
@@ -48,19 +126,23 @@ const PostCard = ({ post }: PostCardProps) => {
       {/* Post Header */}
       <div className={styles.postHeader}>
         <div className={styles.authorInfo}>
-          <img
-            src={post.account_id.avatar_url}
-            alt={post.account_id.full_name}
-            className={styles.authorAvatar}
-          />
-          <div className={styles.authorDetails}>
-            <h3 className={styles.authorName}>{post.account_id.full_name}</h3>
-            <div className={styles.timeIndicator}>
-              <div className={styles.timeDot}></div>
-            </div>
-          </div>
+          {author && (
+            <>
+              <img
+                src={author.avatar_url}
+                alt={author.full_name}
+                className={styles.authorAvatar}
+              />
+              <div className={styles.authorDetails}>
+                <h3 className={styles.authorName}>{author.full_name}</h3>
+                <div className={styles.timeIndicator}>
+                  <div className={styles.timeDot}></div>
+                </div>
+              </div>
+            </>
+          )}
           <span className={styles.timestamp}>
-            {formatTimeAgo(post.create_at)}
+            {formatTimeAgo(new Date(post.createdAt))}
           </span>
         </div>
         
@@ -72,10 +154,22 @@ const PostCard = ({ post }: PostCardProps) => {
         </button>
 
         {showMoreMenu && (
-          <div className={styles.moreMenu}>
-            <button className={styles.menuItem}>Edit</button>
-            <button className={styles.menuItem}>Delete</button>
-            <button className={styles.menuItem}>Report</button>
+          <div className={styles.moreMenu} ref={menuRef}>
+            {isOwner && (
+              <>
+                <button className={styles.menuItem} onClick={handleEdit}>
+                  Chỉnh sửa
+                </button>
+                <button className={styles.menuItem} onClick={handleDelete}>
+                  Xóa
+                </button>
+              </>
+            )}
+            {!isOwner && (
+              <button className={styles.menuItem} onClick={handleReport}>
+                Báo cáo
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -84,8 +178,8 @@ const PostCard = ({ post }: PostCardProps) => {
       <div className={styles.imageSection}>
         <ImageCarousel
           images={post.images}
-          currentIndex={post.currentImageIndex}
-          hasMoreImages={post.hasMoreImages}
+          currentIndex={post.currentImageIndex || 0}
+          hasMoreImages={post.hasMoreImages || false}
         />
       </div>
 
@@ -111,11 +205,13 @@ const PostCard = ({ post }: PostCardProps) => {
 
       {/* Post Stats */}
       <div className={styles.postStats}>
+        {post.likeCount !== undefined && (
+          <span className={styles.statsText}>
+            {formatLikes(post.likeCount)}
+          </span>
+        )}
         <span className={styles.statsText}>
-          {formatLikes(post.like_count)}
-        </span>
-        <span className={styles.statsText}>
-          {formatViews(post.view_count)}
+          {formatViews(post.viewCount)}
         </span>
       </div>
 
@@ -152,10 +248,20 @@ const PostCard = ({ post }: PostCardProps) => {
       {/* Comment Modal */}
       <CommentModal
         isOpen={showCommentModal}
-        
         post={post}
         onClose={handleCloseComments}
       />
+
+      {/* Edit Modal */}
+      {currentUser && isOwner && (
+        <EditPostModal
+          user={currentUser}
+          post={post}
+          open={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSubmit={handleEditSubmit}
+        />
+      )}
 
     </article>
   );

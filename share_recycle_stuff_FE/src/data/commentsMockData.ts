@@ -1,5 +1,6 @@
 import type { Comment } from '../types/schema';
 import { mockRootProps } from './homeMockData';
+import { RoleValues, type Role } from '../types/enums';
 
 
 // Mock comments data for the comment modal
@@ -11,6 +12,7 @@ export const mockCommentsData = {
       account_id: {
         id: "user_1",
         account_id: 1,
+        email: "duong.vt@example.com",
         full_name: "Vũ Thành Dương",
         avatar_url: "/avatars/user-avatar-1.jpg",
         phone: "0123456789",
@@ -22,6 +24,7 @@ export const mockCommentsData = {
         bio: "Người yêu môi trường",
         rating_average: 4.8,
         total_ratings: 32,
+        roles: [RoleValues.CUSTOMER as Role],
         created_at: new Date(),
         updated_at: new Date()
         },
@@ -38,6 +41,7 @@ export const mockCommentsData = {
       account_id: {
         id: "user_1",
         account_id: 1,
+        email: "duong.vt@example.com",
         full_name: "Vũ Thành Dương",
         avatar_url: "/avatars/user-avatar-1.jpg",
         phone: "0123456789",
@@ -49,6 +53,7 @@ export const mockCommentsData = {
         bio: "Người yêu môi trường",
         rating_average: 4.8,
         total_ratings: 32,
+        roles: [RoleValues.CUSTOMER as Role],
         created_at: new Date(),
         updated_at: new Date()
         },
@@ -65,6 +70,7 @@ export const mockCommentsData = {
       account_id: {
         id: "user_1",
         account_id: 1,
+        email: "duong.vt@example.com",
         full_name: "Vũ Thành Dương",
         avatar_url: "/avatars/user-avatar-1.jpg",
         phone: "0123456789",
@@ -76,9 +82,10 @@ export const mockCommentsData = {
         bio: "Người yêu môi trường",
         rating_average: 4.8,
         total_ratings: 32,
+        roles: [RoleValues.CUSTOMER as Role],
         created_at: new Date(),
         updated_at: new Date()
-      },
+        },
       parent_comment_id: null,
       content: "Mình có thể đến xem trực tiếp được không?",
       is_edited: false,

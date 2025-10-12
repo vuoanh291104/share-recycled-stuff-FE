@@ -3,9 +3,10 @@ import Icon from '@ant-design/icons';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import styles from './ImageCarousel.module.css';
+import type { PostImageResponse } from '../../types/schema';
 
 interface ImageCarouselProps {
-  images: string[];
+  images: PostImageResponse[];
   currentIndex: number;
   hasMoreImages: boolean;
   onImageChange?: (index: number) => void;
@@ -40,7 +41,7 @@ const ImageCarousel = ({
     <div className={styles.carousel}>
       <div className={styles.imageContainer}>
         <img
-          src={images[activeIndex]}
+          src={images[activeIndex]?.imageUrl}
           alt={`Post image ${activeIndex + 1}`}
           className={styles.image}
         />

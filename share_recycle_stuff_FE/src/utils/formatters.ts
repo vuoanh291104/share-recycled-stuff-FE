@@ -70,3 +70,48 @@ export const formatReplyCount = (count: number): string => {
   if (count === 1) return '1 reply';
   return `${count} replies`;
 };
+
+// Convert UserProfileResponse from backend to frontend User format
+export const convertUserProfileToUser = (profile: any): any => {
+  return {
+    id: profile.userId?.toString() || profile.accountId?.toString() || '',
+    account_id: profile.accountId || profile.userId || 0,
+    full_name: profile.fullName || '',
+    phone: profile.phoneNumber || '',
+    address: profile.address || '',
+    ward: profile.ward || '',
+    district: profile.district || '',
+    city: profile.city || '',
+    id_card: profile.idCard || '',
+    avatar_url: profile.avatarUrl || '',
+    bio: profile.bio || '',
+    rating_average: profile.ratingAverage || 0,
+    total_ratings: profile.totalRatings || 0,
+    created_at: profile.createdAt ? new Date(profile.createdAt) : new Date(),
+    updated_at: profile.updatedAt ? new Date(profile.updatedAt) : new Date()
+  };
+};
+
+// Convert frontend User to backend UserProfileResponse format
+export const convertUserToUserProfile = (user: any): any => {
+  return {
+    accountId: user.account_id || 0,
+    userId: parseInt(user.id) || user.account_id || 0,
+    email: user.email || '',
+    fullName: user.full_name || '',
+    phoneNumber: user.phone || '',
+    address: user.address || '',
+    ward: user.ward || '',
+    district: user.district || '',
+    city: user.city || '',
+    idCard: user.id_card || '',
+    avatarUrl: user.avatar_url || '',
+    bio: user.bio || '',
+    ratingAverage: user.rating_average || 0,
+    totalRatings: user.total_ratings || 0,
+    roles: user.roles || [],
+    reviews: user.reviews || [],
+    createdAt: user.created_at ? user.created_at.toISOString() : new Date().toISOString(),
+    updatedAt: user.updated_at ? user.updated_at.toISOString() : new Date().toISOString()
+  };
+};

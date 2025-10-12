@@ -37,7 +37,7 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
     
     setIsLoading(true);
     try {
-      const commentsData = await commentAPI.fetchComments(post.id);
+      const commentsData = await commentAPI.fetchComments(post.id.toString());
       setComments(commentsData);
     } catch (error) {
       console.error('Failed to load comments:', error);
@@ -51,7 +51,7 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
     
     setIsAddingComment(true);
     try {
-      const newComment = await commentAPI.addComment(post.id, content);
+      const newComment = await commentAPI.addComment(post.id.toString(), content);
       setComments(prev => [newComment, ...prev]);
     } catch (error) {
       console.error('Failed to add comment:', error);
@@ -64,7 +64,7 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
     if (!post) return;
     
     try {
-      const newComment = await commentAPI.addComment(post.id, content, parentCommentId);
+      const newComment = await commentAPI.addComment(post.id.toString(), content, parentCommentId);
       setComments(prev => [...prev, newComment]);
     } catch (error) {
       console.error('Failed to add reply:', error);
@@ -117,25 +117,29 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
         <div className={styles.postSection}>
           <div className={styles.postHeader}>
             <div className={styles.authorInfo}>
-              <img
-                src={post.account_id.avatar_url}
-                alt={post.account_id.full_name}
-                className={styles.authorAvatar}
-              />
-              <div className={styles.authorDetails}>
-                <h3 className={styles.authorName}>{post.account_id.full_name}</h3>
-                <span className={styles.timestamp}>
-                  {formatTimeAgo(post.create_at)}
-                </span>
-              </div>
+              {typeof post.accountId === 'object' && (
+                <>
+                  <img
+                    src={post.accountId.avatar_url}
+                    alt={post.accountId.full_name}
+                    className={styles.authorAvatar}
+                  />
+                  <div className={styles.authorDetails}>
+                    <h3 className={styles.authorName}>{post.accountId.full_name}</h3>
+                    <span className={styles.timestamp}>
+                      {formatTimeAgo(new Date(post.createdAt))}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
           <div className={styles.imageSection}>
             <ImageCarousel
               images={post.images}
-              currentIndex={post.currentImageIndex}
-              hasMoreImages={post.hasMoreImages}
+              currentIndex={post.currentImageIndex || 0}
+              hasMoreImages={post.hasMoreImages || false}
             />
           </div>
 
@@ -159,12 +163,16 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
           </div>
 
           <div className={styles.postStats}>
+            {post.likeCount !== undefined && (
+              <>
+                <span className={styles.statsText}>
+                  {formatLikes(post.likeCount + (isLiked ? 1 : 0))}
+                </span>
+                <br />
+              </>
+            )}
             <span className={styles.statsText}>
-              {formatLikes(post.like_count + (isLiked ? 1 : 0))}
-            </span>
-            <br />
-            <span className={styles.statsText}>
-              {formatViews(post.view_count)}
+              {formatViews(post.viewCount)}
             </span>
           </div>
 
