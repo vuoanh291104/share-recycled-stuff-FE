@@ -1,0 +1,236 @@
+  .modalWrapper :global(.ant-modal-content) {
+    border-radius: 10px;
+    border: 1px solid #d4d7e5;
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .reviewCreation {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 451px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .userInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .userName {
+    font-family: 'Manrope', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+  }
+
+  .closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+    color: #000000;
+  }
+
+  .closeButton:hover {
+    opacity: 0.7;
+  }
+
+  .closeButton svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .label {
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #b4b7c9;
+    margin: 0 0 0 15px;
+  }
+
+  .textarea {
+    width: 95%;
+    min-height: 15px;
+    padding: 10px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s ease;
+    background: #f9f9f9;;
+  }
+
+  .textarea:focus {
+    border-color: #d4d7e5;
+    background: #ffffff;
+  }
+
+  .textarea::placeholder {
+    color: #b4b7c9;
+  }
+
+  .controlButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    padding: 0;
+  }
+
+  .controlButton:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+
+  .controlButton:active:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  .controlButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .controlButton svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ratingValue {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000000;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .postButton {
+    align-self: flex-end;
+    background: #3DC9D9;
+    border-radius: 6px;
+    padding: 8px 28px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    height: auto;
+    transition: background 0.2s ease;
+  }
+
+  .postButton:hover {
+    background: #0056b3 !important;
+  }
+
+  .postButton:active {
+    background: #004494 !important;
+  }
+
+  .selectRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+  }
+
+  .selectField {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .selectField :global(.ant-select-selector) {
+    background-color: #eff2fc !important;
+    border: none !important;
+    border-radius: 9px !important;
+    padding: 8px 12px !important;
+    height: 42px !important;
+    display: flex;
+    align-items: center;
+  }
+
+  .selectField :global(.ant-select-selection-placeholder),
+  .selectField :global(.ant-select-selection-item) {
+    font-family: 'Manrope', sans-serif;
+    font-size: 14.61px;
+    font-weight: 600;
+    color: #000000;
+    line-height: 1.5;
+  }
+
+  .selectField :global(.ant-select-arrow) {
+    color: #292d32;
+  }
+
+  .uploadSection {
+    width: 100%;
+  }
+
+  .uploadLabel {
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 12px;
+  }
+
+  .uploadSection :global(.ant-upload-list) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .uploadSection :global(.ant-upload-select-picture-card) {
+    width: 104px;
+    height: 104px;
+    margin: 0;
+    border-radius: 8px;
+  }
+
+  .uploadSection :global(.ant-upload-list-item) {
+    width: 104px;
+    height: 104px;
+    padding: 0;
+    margin: 0;
+    border-radius: 8px;
+  }
+
+  .uploadSection :global(.ant-upload-list-item-container) {
+    width: 104px !important;
+    height: 104px !important;
+  }
+  

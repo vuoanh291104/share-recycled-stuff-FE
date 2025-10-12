@@ -1,9 +1,61 @@
-import type { PostPurpose, RequestProxyStatus } from './enums';
+import type { PostPurpose, PostStatus, RequestProxyStatus, Role, UserStatus } from './enums';
 
-// Props types (data passed to components)
+// User review response from backend
+export interface UserReviewResponse {
+  reviewId: number;
+  reviewerAccountId: number;
+  reviewerName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// User profile response from backend (detailed profile with reviews)
+export interface UserProfileResponse {
+  accountId: number;
+  userId: number;
+  email: string;
+  fullName: string;
+  phoneNumber: string;
+  address: string;
+  ward: string;
+  district: string;
+  city: string;
+  idCard: string;
+  avatarUrl: string;
+  bio: string;
+  ratingAverage: number;
+  totalRatings: number;
+  roles: Role[];
+  reviews: UserReviewResponse[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// User detail response from backend (admin view)
+export interface UserDetailResponse {
+  userId: number;
+  email: string;
+  fullName: string;
+  phoneNumber: string;
+  address: string;
+  avatarUrl: string;
+  status: UserStatus;
+  roles: Role[];
+  isLocked: boolean;
+  lockReason?: string;
+  lockedAt?: string;
+  lockedBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Frontend User type (for compatibility with existing components)
 export interface User {
   id: string;
   account_id: number;
+  email?: string;
   full_name: string;
   phone: string;
   address: string;
@@ -15,28 +67,72 @@ export interface User {
   bio: string;
   rating_average: number;
   total_ratings: number;
+  roles?: Role[];
+  reviews?: UserReviewResponse[];
   created_at: Date;
   updated_at: Date;
 }
 
-export interface Post {
-  id: string;
-  account_id: User;
+// Post image response from backend
+export interface PostImageResponse {
+  id: number;
+  imageUrl: string;
+  displayOrder: number;
+}
+
+// User info in post detail response
+export interface UserInfo {
+  id: number;
+  fullName: string;
+  avatarUrl: string;
+  email: string;
+}
+
+// Basic post response from backend
+export interface PostResponse {
+  id: number;
+  accountId: number;
   title: string;
   content: string;
   category: string;
   price: number;
   purpose: PostPurpose;
-  status: string;
-  admin_review_comment: string;
-  view_count: number;
-  like_count: number;
-  create_at: Date;
-  update_at: Date;
-  delete_at: Date| null;
-  images: string[];
-  currentImageIndex: number;
-  hasMoreImages: boolean;
+  status: PostStatus;
+  images: PostImageResponse[];
+}
+
+// Detailed post response from backend
+export interface PostDetailResponse {
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  price: number;
+  purpose: PostPurpose;
+  status: PostStatus;
+  viewCount: number;
+  createdAt: string;
+  updatedAt: string;
+  author: UserInfo;
+  images: PostImageResponse[];
+}
+
+export interface Post {
+  id: number;
+  accountId: number | User; 
+  title: string;
+  content: string;
+  category: string;
+  price: number;
+  purpose: PostPurpose;
+  status: PostStatus;
+  viewCount: number;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  images: PostImageResponse[];
+  currentImageIndex?: number;
+  hasMoreImages?: boolean;
+  likeCount?: number;
 }
 
 export type HomePageProps = {

@@ -1,10 +1,24 @@
-export type PostPurpose = "Free GiveAway" | "For Sale" | "News/Information";
+export type PostPurpose = "FREE_GIVEAWAY" | "FOR_SALE" | "NEWS_INFORMATION";
 
 export const PostPurposeValues = {
-  FREE: "Free GiveAway" as const,
-  SALE: "For Sale" as const,
-  NEWS: "News/Information" as const
+  FREE_GIVEAWAY: "FREE_GIVEAWAY" as const,
+  FOR_SALE: "FOR_SALE" as const,
+  NEWS_INFORMATION: "NEWS_INFORMATION" as const
 } as const;
+
+export type PostStatus = "ACTIVE" | "EDIT" |"DELETED";
+
+export const PostStatusValues = {
+  ACTIVE: "ACTIVE" as const,
+  EDIT: "EDIT" as const,
+  DELETED: "DELETED" as const
+} as const;
+
+export const PostStatusText: Record<PostStatus, string> = {
+  ACTIVE: "Hỏat động",
+  EDIT: "Yêu cầu chỉnh sửa",
+  DELETED: "Đã xóa"
+};
 
 // Navigation menu items
 export type NavigationItem = 
@@ -55,4 +69,36 @@ export const RequestProxyStatusText: Record<RequestProxyStatus, string> = {
   APPROVED: "Đã duyệt",
   REJECTED: "Bị từ chối",
   PENDING: "Đang xét duyệt",
+};
+
+// User roles
+export type Role = "CUSTOMER" | "PROXY_SELLER" | "ADMIN";
+
+export const RoleValues = {
+  CUSTOMER: "CUSTOMER" as const,
+  PROXY_SELLER: "PROXY_SELLER" as const,
+  ADMIN: "ADMIN" as const
+} as const;
+
+export const RoleText: Record<Role, string> = {
+  CUSTOMER: "Khách hàng",
+  PROXY_SELLER: "Người bán ủy thác",
+  ADMIN: "Quản trị viên"
+};
+
+// User account status
+export type UserStatus = "ACTIVE" | "INACTIVE" | "LOCKED" | "DELETED";
+
+export const UserStatusValues = {
+  ACTIVE: "ACTIVE" as const,
+  INACTIVE: "INACTIVE" as const,
+  LOCKED: "LOCKED" as const,
+  DELETED: "DELETED" as const
+} as const;
+
+export const UserStatusText: Record<UserStatus, string> = {
+  ACTIVE: "Hoạt động",
+  INACTIVE: "Không hoạt động",
+  LOCKED: "Bị khóa",
+  DELETED: "Đã xóa"
 };
