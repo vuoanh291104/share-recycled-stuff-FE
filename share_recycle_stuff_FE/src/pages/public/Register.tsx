@@ -27,9 +27,12 @@ const Register = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
+    
+    const { confirm, ...dataToSend } = values;
+
     setLoading(true);
     try {
-      const res = await postData<RegisterResponse>("/api/auth/register", values);
+      const res = await postData<RegisterResponse>("/api/auth/register", dataToSend);
       showMessage({type: "success", message: res.message });
       setTimeout(() => navigate("/login"), 1500);
     } catch (err: any) {
@@ -107,6 +110,29 @@ const Register = () => {
           label="Mật khẩu"
           name="password"
           rules={[{ required: true, message: 'Nhập mật khẩu của bạn!' }]}
+          hasFeedback
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          name="confirm"
+          label="Xác nhận mật khẩu"
+          dependencies={['password']}
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: 'Xác nhận lại mật khẩu!',
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('Không khớp với mật khẩu !'));
+              },
+            }),
+          ]}
         >
           <Input.Password />
         </Form.Item>
