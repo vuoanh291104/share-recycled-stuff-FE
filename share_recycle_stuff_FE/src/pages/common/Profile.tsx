@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Header from '../../components/Header/Header';
 import Feed from '../../components/Feed/Feed';
 import styles from './Home.module.css';
@@ -9,60 +9,88 @@ import PostCreation from '../../components/Profile/PostCreation';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import ReviewSection from '../../components/Review/ReviewSection';
 import feedStyles from '../../components/Feed/Feed.module.css';
-import { Outlet, useLocation } from 'react-router-dom';
-import type { Post, PostImageResponse } from '../../types/schema';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
+import type { Post, PostImageResponse, PostResponse } from '../../types/schema';
 import type { PostPurpose, PostStatus } from '../../types/enums';
 import { PostStatusValues } from '../../types/enums';
+import type { ErrorResponse } from '../../api/api';
+import { getData, postData } from '../../api/api';
+import { useMessage } from '../../context/MessageProvider';
+import { normalizePosts } from '../../utils/normalizePost';
+
+interface PostProps {
+  message: string,
+  result : any,
+}
+
+interface ApiResponse<T> {
+  message: string;
+  result: T;
+}
+interface PostListResponse {
+  content: PostResponse[];
+}
 
 const Profile = () => {
-  const { currentUser, posts: initialPosts } = mockRootProps;
+  const {showMessage} = useMessage ();
   const location = useLocation();
+  const params = useParams();
+
   const isEditing = location.pathname.includes('/profile/edit');
+
   const [activeTab, setActiveTab] = useState<'posts' | 'reviews'>('posts');
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isOwner, setIsOwner] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const userInfo = localStorage.getItem("userInfo");
+  const owner = userInfo? JSON.parse(userInfo) : null;
+  const currentUser = owner; // sau check xem currentUser ở đây là owner hay là user khác
+
+  const fetchPosts = useCallback(async () => {
+    setLoading(true);
+    try {
+      let res: ApiResponse<PostListResponse>;
+      if (params.userId && Number(params.userId) !== currentUser.id) {
+        //  Profile ng khác
+        res = await getData<ApiResponse<PostListResponse>>(`/api/post/user/${params.userId}`);
+        setIsOwner(false);
+      } else {
+        // Profile của mk
+        res = await getData<ApiResponse<PostListResponse>>(`/api/post/my`);
+        setIsOwner(true);
+      }
+      const posts: Post[] = normalizePosts(res.result.content);
+      setPosts(posts);
+      // setPosts(res?.result?.content|| []);
+    } catch (error: any) {
+      const err: ErrorResponse = error;
+      showMessage({ type: 'error', message: err.message, code: err.status });
+    } finally {
+      setLoading(false);
+    }
+  }, [params.userId, currentUser.id, showMessage]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   const handleActionSuccess = useCallback(() => {
-    console.log('Action was successful, refetching posts for profile...');
-    // TODO: Implement logic to refetch posts from the API for the profile page
-  }, []);
+    fetchPosts();
+  }, [fetchPosts]);
 
-  const handleCreatePost = (postData: {
-    title: string;
-    content: string;
-    price: number;
-    category: string;
-    purpose: PostPurpose;
-    images: string[];
-  }) => {
-    const now = new Date();
-    
-    // Create new post object with all required fields from Post schema
-    const newPost: Post = {
-      id: Date.now(),
-      accountId: currentUser,
-      title: postData.title,
-      content: postData.content,
-      category: postData.category,
-      price: postData.price,
-      purpose: postData.purpose,
-      status: PostStatusValues.ACTIVE as PostStatus,
-      viewCount: 0,
-      likeCount: 0,
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
-      images: postData.images.map((url, idx) => ({
-        id: idx + 1,
-        imageUrl: url,
-        displayOrder: idx
-      } as PostImageResponse)),
-      currentImageIndex: 0,
-      hasMoreImages: postData.images.length > 1,
-    };
-
-    setPosts(prevPosts => [newPost, ...prevPosts]);
-    console.log('Post mới đã tạo:', newPost);
-    // TODO: Call API to create post
-  };
+  const handleCreatePost = async (payload: any) => {
+    try {
+      const res = await postData<PostProps>('/api/post', payload)
+      console.log(res);
+      showMessage({type: "success", message:"Đăng bài thành công"})
+      setPosts(prev => [res.result, ...prev]);
+    } catch (error: any) {
+      const errorData : ErrorResponse = error;
+      showMessage({type: "error", message: errorData.message, code: errorData.status});
+    }
+  }
+  
 
   return (
     <div className={styles.homeLayout}>

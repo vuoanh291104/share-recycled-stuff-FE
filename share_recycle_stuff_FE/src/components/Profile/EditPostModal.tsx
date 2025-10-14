@@ -2,28 +2,59 @@ import { useState, useEffect } from 'react';
 import { Modal, Button, Upload, Select } from 'antd';
 import type { UploadFile, UploadProps } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import type { User, Post } from '../../types/schema';
+import type { User, Post, UserInfo } from '../../types/schema';
 import { CloseSquareIcon } from '../icons/CountIcon';
 import Icon from '@ant-design/icons';
 import ChevronDownIcon from '../icons/ChevronDownIcon';
 import styles from './CreationPostModal.module.css';
 import { PostStatusValues, type PostPurpose, type PostStatus } from '../../types/enums';
+import { Categories } from '../../constant/Category';
+import { PostPurposeValues } from '../../constant/PostPurpose';
+import axios from 'axios';
+import { useMessage } from '../../context/MessageProvider';
 
 interface EditPostModalProps {
-  user: User;
+  user: UserInfo;
   post: Post;
   open: boolean;
   onClose: () => void;
-  onSubmit: (postId: number, updatedData: Partial<Post>) => void;
+  onSubmit: (postId: number, updatedData: any) => void;
 }
 
 const EditPostModal = ({ user, post, open, onClose, onSubmit }: EditPostModalProps) => {
+  const {showMessage} = useMessage();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState<string>('');
-  const [purpose, setPurpose] = useState<PostPurpose | ''>('');
+  const [categoryId, setCategoryId] = useState<number | undefined>(undefined);
+  const [purposeCode, setPurposeCode] = useState<number | undefined>(undefined);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const UPLOAD_PRESET_POST = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_POST;
+
+  //up từng ảnh 1 lên cloudinary
+  const uploadToCloudinary = async (file : File) : Promise<string> => {
+    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+    const formData = new FormData();
+
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET_POST);
+
+    try {
+      const res = await axios.post(url, formData, 
+        {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+      )
+
+      if(res.data.secure_url) return res.data.secure_url;
+      throw new Error('Upload thất bại');
+    } catch (error: any) {
+      showMessage({type:"error", message:"Up load thất bại"})
+      throw error;
+    }
+  }
 
   // Initialize form with post data when modal opens
   useEffect(() => {
@@ -31,9 +62,13 @@ const EditPostModal = ({ user, post, open, onClose, onSubmit }: EditPostModalPro
       setTitle(post.title || '');
       setContent(post.content || '');
       setPrice(post.price?.toString() || '');
-      setCategory(post.category || '');
-      setPurpose(post.purpose || '');
-      
+
+      const category = Categories.find((c) => c.description === post.category);
+      setCategoryId(category?.id);
+
+      const purpose = PostPurposeValues.find((p) => p.description === post.purpose);
+      setPurposeCode(purpose?.id);
+
       // Convert PostImageResponse to UploadFile format
       const initialFileList: UploadFile[] = (post.images || []).map((img) => ({
         uid: `${img.id}`,
@@ -51,27 +86,78 @@ const EditPostModal = ({ user, post, open, onClose, onSubmit }: EditPostModalPro
   };
 
   // Khi nhấn nút "Cập nhật"
-  const handleSubmit = () => {
-    const imageUrls = fileList
-      .map((file) => file.thumbUrl || file.url || (file.response && file.response.url))
-      .filter(Boolean) as string[];
+  // const handleSubmit = () => {
+  //   const imageUrls = fileList
+  //     .map((file) => file.thumbUrl || file.url || (file.response && file.response.url))
+  //     .filter(Boolean) as string[];
     
-    onSubmit(post.id, {
-      title,
-      content,
-      price: parseFloat(price) || 0,
-      category,
-      purpose: purpose as PostPurpose,
-      images: imageUrls.map((url, idx) => ({
-        id: idx + 1,
-        imageUrl: url,
-        displayOrder: idx
-      })),
-      updatedAt: new Date().toISOString(),
-      status: PostStatusValues.ACTIVE as PostStatus,
-    });
-    onClose();
+  //     const selectedCategory = Categories.find((c) => c.id === categoryId);
+  //     const selectedPurpose = PostPurposeValues.find((p) => p.id === purposeCode);
+  //   onSubmit(post.id, {
+  //     title,
+  //     content,
+  //     price: parseFloat(price) || 0,
+  //     category: selectedCategory!, // thêm "!" nếu chắc chắn có giá trị
+  //     purpose: selectedPurpose!,
+  //     images: imageUrls.map((url, idx) => ({
+  //       id: idx + 1,
+  //       imageUrl: url,
+  //       displayOrder: idx
+  //     })),
+  //     updatedAt: new Date().toISOString(),
+  //     status: PostStatusValues.ACTIVE as PostStatus,
+  //   });
+  //   onClose();
+  // };
+
+  const handleSubmit = async () => {
+    if (!categoryId || !purposeCode) {
+      showMessage({ type: 'error', message: 'Vui lòng chọn danh mục và mục đích!' });
+      return;
+    }
+
+    try {
+      // Xử lý ảnh: giữ id cũ, upload mới
+      const uploadedImages = await Promise.all(
+        fileList.map(async (file) => {
+          if (file.url) {
+            // Ảnh cũ
+            return {
+              id: file.uid ? parseInt(file.uid) : undefined,
+              imageUrl: file.url,
+            };
+          } else if (file.originFileObj) {
+            // Ảnh mới upload
+            const uploadedUrl = await uploadToCloudinary(file.originFileObj as File);
+            return { imageUrl: uploadedUrl };
+          }
+          return null;
+        })
+      );
+
+      const imagesForBE = uploadedImages
+        .filter(Boolean)
+        .map((img, idx) => ({
+          id: img?.id,
+          imageUrl: img!.imageUrl,
+          displayOrder: idx,
+        }));
+
+      onSubmit(post.id, {
+        title,
+        content,
+        price: parseFloat(price) || 0,
+        categoryId,
+        purposeCode,
+        images: imagesForBE,
+      });
+
+      onClose();
+    } catch (error) {
+      console.error('Upload hình ảnh thất bại', error);
+    }
   };
+
 
   const uploadButton = (
     <button style={{ border: 0, background: 'none' }} type="button">
@@ -94,11 +180,11 @@ const EditPostModal = ({ user, post, open, onClose, onSubmit }: EditPostModalPro
         <div className={styles.header}>
           <div className={styles.userInfo}>
             <img
-              src={user.avatar_url}
-              alt={user.full_name}
+              src={user.avatarUrl || "/images/default-avatar.png"}
+              alt={user.fullName}
               className={styles.avatar}
             />
-            <h3 className={styles.userName}>{user.full_name}</h3>
+            <h3 className={styles.userName}>{user.fullName}</h3>
           </div>
           <button className={styles.closeButton} onClick={onClose} type="button">
             <CloseSquareIcon />
@@ -131,43 +217,38 @@ const EditPostModal = ({ user, post, open, onClose, onSubmit }: EditPostModalPro
           <div className={styles.selectRow}>
             <Select
               placeholder="Chọn danh mục"
-              value={category || undefined}
-              onChange={(value) => setCategory(value)}
+              value={categoryId || undefined}
+              onChange={(value) => setCategoryId(value)}
               className={styles.selectField}
               suffixIcon={<Icon component={ChevronDownIcon} style={{ width: '16px', height: '8px', color: '#292d32' }} />}
-              options={[
-                { label: 'Đồ điện tử', value: 'Đồ điện tử' },
-                { label: 'Quần áo', value: 'Quần áo' },
-                { label: 'Đồ gia dụng', value: 'Đồ gia dụng' },
-                { label: 'Sách vở', value: 'Sách vở' },
-                { label: 'Đồ chơi', value: 'Đồ chơi' },
-                { label: 'Khác', value: 'Khác' }
-              ]}
+              options={Categories.map((cat) => ({
+                label: cat.description,
+                value: cat.id,
+              }))}
             />
             <Select
               placeholder="Chọn mục đích"
-              value={purpose || undefined}
-              onChange={(value) => setPurpose(value)}
+              value={purposeCode || undefined}
+              onChange={(value) => setPurposeCode(value)}
               className={styles.selectField}
               suffixIcon={<Icon component={ChevronDownIcon} style={{ width: '16px', height: '8px', color: '#292d32' }} />}
-              options={[
-                { label: 'Cho tặng miễn phí', value: 'Free GiveAway' },
-                { label: 'Bán', value: 'For Sale' },
-                { label: 'Tin tức/Thông tin', value: 'News/Information' }
-              ]}
+              options={PostPurposeValues.map((p) => ({
+                label: p.description,
+                value: p.id,
+              }))}
             />
           </div>
 
           <div className={styles.uploadSection}>
             <div className={styles.uploadLabel}>Ảnh bài đăng</div>
             <Upload
-              action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
               listType="picture-card"
               fileList={fileList}
               onChange={handleUploadChange}
               multiple
+              beforeUpload={() => false}
             >
-              {fileList.length >= 8 ? null : uploadButton}
+              {uploadButton}
             </Upload>
           </div>
         </div>

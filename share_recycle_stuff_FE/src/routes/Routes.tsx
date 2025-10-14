@@ -49,7 +49,11 @@ const router = createBrowserRouter([
                     {
                         path: '/profile',
                         element: <Profile />,
-                        children: [{ path: 'edit', element: <EditProfile /> }],
+                        children: [
+                            { path: '', element: <Profile /> }, // profile của mk
+                            { path: ':userId', element: <Profile /> }, // profile của ng khác
+                            { path: 'edit', element: <EditProfile /> },
+                        ],
                     },
                     
                     { path: '/upgrade', element: <RequestProxySeller /> },

@@ -1,9 +1,9 @@
 export type PostPurpose = "FREE_GIVEAWAY" | "FOR_SALE" | "NEWS_INFORMATION";
 
 export const PostPurposeValues = {
-  FREE_GIVEAWAY: "FREE_GIVEAWAY" as const,
-  FOR_SALE: "FOR_SALE" as const,
-  NEWS_INFORMATION: "NEWS_INFORMATION" as const
+  FREE_GIVEAWAY: "Cho tặng miễn phí" as const,
+  FOR_SALE: "Bán" as const,
+  NEWS_INFORMATION: "Tin tức, thông t in" as const
 } as const;
 
 export type PostStatus = "ACTIVE" | "EDIT" |"DELETED";

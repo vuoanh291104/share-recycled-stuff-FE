@@ -2,44 +2,77 @@ import { useState, useEffect } from 'react';
 import { Modal, Button, Upload, Select } from 'antd';
 import type { UploadFile, UploadProps } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import type { User } from '../../types/schema';
+import type { UserInfo } from '../../types/schema';
 import { CloseSquareIcon } from '../icons/CountIcon';
 import Icon from '@ant-design/icons';
 import ChevronDownIcon from '../icons/ChevronDownIcon';
 import styles from './CreationPostModal.module.css';
-import type { PostPurpose } from '../../types/enums';
-
+import { Categories } from '../../constant/Category';
+import { PostPurposeValues } from '../../constant/PostPurpose';
+import axios from 'axios';
+import { useMessage } from '../../context/MessageProvider';
 interface CreationPostModalProps {
-  user: User;
+  user: UserInfo;
   open: boolean;
   onClose: () => void;
-  onSubmit: (postData: {
+  onSubmit: (payload: {
+    accountId: number;
     title: string;
     content: string;
     price: number;
-    category: string;
-    purpose: PostPurpose;
-    images: string[];
-    createdAt?: Date;
+    categoryId: number;
+    purposeCode: number;
+    images: { imageUrl: string; displayOrder: number }[];
   }) => void;
 }
 
 const CreationPostModal = ({ user, open, onClose, onSubmit }: CreationPostModalProps) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [price, setPrice] = useState('');
-  const [category, setCategory] = useState<string>('');
-  const [purpose, setPurpose] = useState<PostPurpose | ''>('');
+  const {showMessage} = useMessage();
+
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState<number>(1);
+  const [purpose, setPurpose] = useState<number>(1);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const userInfo = localStorage.getItem("userInfo");
+  const accountID = userInfo? JSON.parse(userInfo).accountId : null;
+
+  const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const UPLOAD_PRESET_POST = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_POST;
+
+  //up từng ảnh 1 lên cloudinary
+  const uploadToCloudinary = async (file : File) : Promise<string> => {
+    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+    const formData = new FormData();
+
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET_POST);
+
+    try {
+      const res = await axios.post(url, formData, 
+        {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+      )
+
+      if(res.data.secure_url) return res.data.secure_url;
+      throw new Error('Upload thất bại');
+    } catch (error: any) {
+      showMessage({type:"error", message:"Up load thất bại"})
+      throw error;
+    }
+  }
 
   // Reset form when modal closes
   useEffect(() => {
     if (!open) {
-      setTitle('');
-      setContent('');
-      setPrice('');
-      setCategory('');
-      setPurpose('');
+      setTitle("");
+      setContent("");
+      setPrice("");
+      setCategory(1);
+      setPurpose(1);
       setFileList([]);
     }
   }, [open]);
@@ -50,20 +83,30 @@ const CreationPostModal = ({ user, open, onClose, onSubmit }: CreationPostModalP
   };
 
   // Khi nhấn nút "Post"
-  const handleSubmit = () => {
-    const imageUrls = fileList
-      .map((file) => file.thumbUrl || file.url || (file.response && file.response.url))
-      .filter(Boolean) as string[];
-    
-    onSubmit({
+  const handleSubmit = async () => {
+
+    const uploadedImages : {imageUrl: string, displayOrder: number} [] = []
+
+    for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        if (file.originFileObj) {
+          const url = await uploadToCloudinary(file.originFileObj as File);
+          uploadedImages.push({ imageUrl: url, displayOrder: i + 1 });
+        }
+      }
+
+    const payload = {
+      accountId: accountID, 
       title,
       content,
       price: parseFloat(price) || 0,
-      category,
-      purpose: purpose as PostPurpose,
-      images: imageUrls,
-      createdAt: new Date()
-    });
+      categoryId: category,
+      purposeCode: purpose,
+      images: uploadedImages,
+    };
+
+    console.log("🚀 Dữ liệu gửi lên BE:", payload);
+    onSubmit(payload);
     onClose();
   };
 
@@ -88,11 +131,11 @@ const CreationPostModal = ({ user, open, onClose, onSubmit }: CreationPostModalP
         <div className={styles.header}>
           <div className={styles.userInfo}>
             <img
-              src={user.avatar_url}
-              alt={user.full_name}
+              src={user.avatarUrl || "/images/default-avatar.png"}
+              alt={user.fullName}
               className={styles.avatar}
             />
-            <h3 className={styles.userName}>{user.full_name}</h3>
+            <h3 className={styles.userName}>{user.fullName}</h3>
           </div>
           <button className={styles.closeButton} onClick={onClose} type="button">
             <CloseSquareIcon />
@@ -129,14 +172,10 @@ const CreationPostModal = ({ user, open, onClose, onSubmit }: CreationPostModalP
               onChange={(value) => setCategory(value)}
               className={styles.selectField}
               suffixIcon={<Icon component={ChevronDownIcon} style={{ width: '16px', height: '8px', color: '#292d32' }} />}
-              options={[
-                { label: 'Đồ điện tử', value: 'Đồ điện tử' },
-                { label: 'Quần áo', value: 'Quần áo' },
-                { label: 'Đồ gia dụng', value: 'Đồ gia dụng' },
-                { label: 'Sách vở', value: 'Sách vở' },
-                { label: 'Đồ chơi', value: 'Đồ chơi' },
-                { label: 'Khác', value: 'Khác' }
-              ]}
+              options={Categories.map((cat) => ({
+                label: cat.description,
+                value: cat.id,
+              }))}
             />
             <Select
               placeholder="Chọn mục đích"
@@ -144,24 +183,23 @@ const CreationPostModal = ({ user, open, onClose, onSubmit }: CreationPostModalP
               onChange={(value) => setPurpose(value)}
               className={styles.selectField}
               suffixIcon={<Icon component={ChevronDownIcon} style={{ width: '16px', height: '8px', color: '#292d32' }} />}
-              options={[
-                { label: 'Cho tặng miễn phí', value: 'Free GiveAway' },
-                { label: 'Bán', value: 'For Sale' },
-                { label: 'Tin tức/Thông tin', value: 'News/Information' }
-              ]}
+              options={PostPurposeValues.map((p) => ({
+                label: p.description,
+                value: p.id,
+              }))}
             />
           </div>
 
           <div className={styles.uploadSection}>
             <div className={styles.uploadLabel}>Ảnh bài đăng</div>
             <Upload
-              action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
               listType="picture-card"
               fileList={fileList}
               onChange={handleUploadChange}
+              beforeUpload={() => false}
               multiple
             >
-              {fileList.length >= 8 ? null : uploadButton}
+              {uploadButton}
             </Upload>
           </div>
         </div>
