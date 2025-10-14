@@ -27,3 +27,7 @@ a {
 a:hover {
   cursor: pointer;
 }
+
+:where(.css-dev-only-do-not-override-q29r09).ant-form-item {
+  margin-bottom: 12px !important;
+}
