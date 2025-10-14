@@ -1,4 +1,6 @@
-import type { PostPurpose, PostStatus, RequestProxyStatus, Role, UserStatus } from './enums';
+import type { Category } from '../constant/Category';
+import type { PostPurpose } from '../constant/PostPurpose';
+import type { PostStatus, RequestProxyStatus, Role, UserStatus } from './enums';
 
 // User review response from backend
 export interface UserReviewResponse {
@@ -84,51 +86,44 @@ export interface PostImageResponse {
 export interface UserInfo {
   id: number;
   fullName: string;
-  avatarUrl: string;
+  avatarUrl: string | null;
   email: string;
 }
 
 // Basic post response from backend
 export interface PostResponse {
   id: number;
-  accountId: number;
   title: string;
   content: string;
   category: string;
   price: number;
-  purpose: PostPurpose;
+  purpose: string | PostPurpose;
   status: PostStatus;
-  images: PostImageResponse[];
-}
-
-// Detailed post response from backend
-export interface PostDetailResponse {
-  id: number;
-  title: string;
-  content: string;
-  category: string;
-  price: number;
-  purpose: PostPurpose;
-  status: PostStatus;
-  viewCount: number;
-  createdAt: string;
-  updatedAt: string;
+  viewCount: number | null;
+  createdAt: [number, number, number, number, number, number, number];
+  updatedAt: [number, number, number, number, number, number, number];
   author: UserInfo;
   images: PostImageResponse[];
 }
 
+// Detailed post response from backend
+export interface PostDetailResponse extends PostResponse {
+  likeCount?: number | 0;
+  commentCount?: number | 0;
+}
+
 export interface Post {
   id: number;
-  accountId: number | User; 
   title: string;
   content: string;
-  category: string;
+  category: Category["description"];
   price: number;
-  purpose: PostPurpose;
+  purpose: string;
   status: PostStatus;
-  viewCount: number;
+  viewCount: number | null;
   createdAt: Date | string;
   updatedAt: Date | string;
+  author: UserInfo;
   images: PostImageResponse[];
   currentImageIndex?: number;
   hasMoreImages?: boolean;

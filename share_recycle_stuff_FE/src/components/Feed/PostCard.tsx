@@ -6,19 +6,22 @@ import HeartIcon from '../icons/HeartIcon';
 import CommentIcon from '../icons/CommentIcon';
 import ImageCarousel from '../ImageCarousel/ImageCarousel';
 import { formatLikes, formatViews, formatTimeAgo, formatPrice } from '../../utils/formatters';
-import type { Post, User } from '../../types/schema';
+import type { Post, User, UserInfo } from '../../types/schema';
 import styles from './PostCard.module.css';
 import CommentModal from '../CommentModal/CommentModal';
 import EditPostModal from '../Profile/EditPostModal';
 import { deleteData, putData } from '../../api/api';
+import type { ErrorResponse } from '../../api/api';
+import { useMessage } from '../../context/MessageProvider';
 
 interface PostCardProps {
   post: Post;
-  currentUser?: User;
+  currentUser: any,
   onActionSuccess?: () => void;
 }
 
 const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
+  const {showMessage} = useMessage();
   const { modal, message } = App.useApp();
   const [isLiked, setIsLiked] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
@@ -26,6 +29,8 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+
   const handleLike = () => {
     setIsLiked(!isLiked);
   };
@@ -51,11 +56,18 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
     };
   }, [showMoreMenu]);
 
+  const userInfo = localStorage.getItem("userInfo");
+  console.log(userInfo)
+  currentUser = userInfo? JSON.parse(userInfo) : null;
+
+  const author = (post as any).author || null;
+
   // Check if current user is the post owner
-  const isOwner = currentUser && typeof post.accountId === 'object' && currentUser.id === post.accountId.id;
-  
-  // Get author info
-  const author = typeof post.accountId === 'object' ? post.accountId : null;
+  const isOwner = !!currentUser && !!author && Number(currentUser.accountId) === Number(author.id);
+
+  // console.log('currentUser', currentUser)
+  // console.log ('author', author);
+  // console.log ('Owner', isOwner);
 
   const handleEdit = () => {
     setShowEditModal(true);
@@ -70,14 +82,15 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
-          await deleteData(`/post/${post.id}`);
+          console.log('postId', post.id)
+          await deleteData(`/api/post/${post.id}`);
           message.success('Xóa bài viết thành công!');
           if (onActionSuccess) {
             onActionSuccess();
           }
-        } catch (error) {
-          console.error('Failed to delete post:', error);
-          message.error('Xóa bài viết thất bại. Vui lòng thử lại.');
+        } catch (error: any) {
+          const errData : ErrorResponse = error;
+          showMessage({type: "error", message: errData.message, code: errData.status})
         }
       }
     });
@@ -91,14 +104,14 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
 
   const handleEditSubmit = async (postId: number, updatedData: Partial<Post>) => {
     try {
-      await putData(`/post/${postId}`, updatedData);
+      await putData(`/api/post/${postId}`, updatedData);
       message.success('Cập nhật bài viết thành công!');
       if (onActionSuccess) {
         onActionSuccess();
       }
-    } catch (error) {
-      console.error('Failed to update post:', error);
-      message.error('Cập nhật bài viết thất bại. Vui lòng thử lại.');
+    } catch (error :any) {
+      const errData : ErrorResponse = error;
+      showMessage({type: "error", message: errData.message, code: errData.status})
     } finally {
       setShowEditModal(false);
     }
@@ -129,12 +142,12 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
           {author && (
             <>
               <img
-                src={author.avatar_url}
-                alt={author.full_name}
+                src={author.avatarUrl}
+                alt={author.fullName}
                 className={styles.authorAvatar}
               />
               <div className={styles.authorDetails}>
-                <h3 className={styles.authorName}>{author.full_name}</h3>
+                <h3 className={styles.authorName}>{author.fullName}</h3>
                 <div className={styles.timeIndicator}>
                   <div className={styles.timeDot}></div>
                 </div>
@@ -207,11 +220,11 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
       <div className={styles.postStats}>
         {post.likeCount !== undefined && (
           <span className={styles.statsText}>
-            {formatLikes(post.likeCount)}
+            {formatLikes(post.likeCount ?? 0)}
           </span>
         )}
         <span className={styles.statsText}>
-          {formatViews(post.viewCount)}
+          {formatViews(post.viewCount ?? 0)}
         </span>
       </div>
 

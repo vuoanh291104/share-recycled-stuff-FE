@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import PostCard from "./PostCard";
-import type { Post, User } from '../../types/schema';
+import type { Post, User, UserInfo } from '../../types/schema';
 import styles from "./Feed.module.css";
+import { useMessage } from '../../context/MessageProvider';
 
 interface FeedProps {
   posts: Post[];
-  currentUser?: User;
+  currentUser?: UserInfo;
   onActionSuccess?: () => void;
 }
 
