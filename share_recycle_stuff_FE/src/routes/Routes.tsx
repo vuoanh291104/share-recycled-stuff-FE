@@ -13,6 +13,8 @@ import VerifyEmail from '../pages/public/Verify/VerifyEmail'
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 import RequestUpgradeManagement from '../pages/admin/RequestUpgradeManagement/RequestUpgradeManagement'
+import ForgotPass from '../pages/public/ForgotPass/ForgotPass'
+import ResetPass from '../pages/public/ForgotPass/ResetPass'
 
 
 const router = createBrowserRouter([
@@ -24,7 +26,9 @@ const router = createBrowserRouter([
                 children: [
                     {path: '/login', element: <Login />},
                     {path: '/register', element: <Register />},
-                    {path: '/verify', element: <VerifyEmail />}
+                    {path: '/verify', element: <VerifyEmail />},
+                    {path: '/forgot', element: <ForgotPass />},
+                    {path: '/reset', element: <ResetPass />}
                 ]
             }
         ]
