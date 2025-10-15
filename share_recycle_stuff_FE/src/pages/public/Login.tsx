@@ -106,7 +106,7 @@ const Login = () => {
           <Input.Password />
         </Form.Item>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Link  to="">Quên mật khẩu</Link>
+          <Link  to="/forgot">Quên mật khẩu</Link>
         </div>
 
         <Form.Item style={{marginInlineStart:0}} >
