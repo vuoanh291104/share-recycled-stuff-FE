@@ -15,6 +15,7 @@ import PublicRoute from './PublicRoute'
 import RequestUpgradeManagement from '../pages/admin/RequestUpgradeManagement/RequestUpgradeManagement'
 import ForgotPass from '../pages/public/ForgotPass/ForgotPass'
 import ResetPass from '../pages/public/ForgotPass/ResetPass'
+import ResetPassValidate from '../pages/public/ForgotPass/ResetPassValidate'
 
 
 const router = createBrowserRouter([
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
                     {path: '/register', element: <Register />},
                     {path: '/verify', element: <VerifyEmail />},
                     {path: '/forgot', element: <ForgotPass />},
+                    {path: '/reset-password', element: <ResetPassValidate />},
                     {path: '/reset', element: <ResetPass />}
                 ]
             }

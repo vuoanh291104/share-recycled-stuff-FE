@@ -3,14 +3,42 @@ import { LockFilled } from '@ant-design/icons';
 import styles from './forgot.module.css'
 import '/src/styles/globalStyle.css';
 import ResetImage from '/src/assets/resetPass.png'
+import { postData } from '../../../api/api';
+import type { ErrorResponse } from '../../../api/api';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMessage } from '../../../context/MessageProvider';
+
+interface ResetPassProps {
+    message: string,
+    code: number
+}
 const ResetPass = () => {
+    const location = useLocation();
+    const token = location.state?.token || '';
+    const navigate = useNavigate();
+
+    const {showMessage} = useMessage();
+
     const [loading, setLoading] = useState(false);
   
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
+    const onFinish = async (values: any) => {
+        const payload = { ...values, token };
+        console.log('Success:', payload);
         setLoading(true);
+        try {
+            const res = await postData<ResetPassProps> ('/api/auth/reset-password', payload);
+            showMessage({ type: "success", message: res.message });
+            setTimeout(() => {
+                navigate('/login');
+            }, 1000);
+        } catch (error : any) {
+            const errData : ErrorResponse = error;
+            showMessage({ type: "error", message: errData.message, code: errData.status });
+        }finally {
+            setLoading(false);
+        }
     };
 
     const onFinishFailed = (errorInfo: any) => {
@@ -51,7 +79,7 @@ const ResetPass = () => {
             </Form.Item>
 
             <Form.Item
-                name="confirm"
+                name="confirmPassword"
                 label="Xác nhận mật khẩu"
                 dependencies={['newPassword']}
                 hasFeedback
