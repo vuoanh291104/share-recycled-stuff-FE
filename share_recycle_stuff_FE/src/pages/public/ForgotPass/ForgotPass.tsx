@@ -2,14 +2,32 @@ import { Form, Input, Button } from 'antd'
 import '/src/styles/globalStyle.css';
 import styles from './forgot.module.css'
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import forgot from '../../../assets/forgotPass.png'
+import { postData } from '../../../api/api';
+import type { ErrorResponse } from '../../../api/api';
+import { useMessage } from '../../../context/MessageProvider';
 const ForgotPass = () => {
+    const {showMessage} = useMessage();
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState (false);
 
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
+
+    const onFinish = async (values: any) => {
+        try {
+            setLoading(true);
+            const res = await postData<{message: string}>('/api/auth/forgot-password', values)
+            showMessage({ type: 'success', message: res.message });
+            setTimeout(() => {
+                navigate('/login');
+            }, 1000);
+        } catch (error: any) {
+            const errData : ErrorResponse = error;
+            showMessage({ type: 'error', message: errData.message || 'Đã có lỗi xảy ra, vui lòng thử lại sau!' });
+        }finally {
+            setLoading(false);
+        }
     }
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
