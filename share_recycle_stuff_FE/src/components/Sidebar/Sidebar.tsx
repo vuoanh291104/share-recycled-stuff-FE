@@ -46,7 +46,7 @@ const Sidebar = () => {
       { id: 'notifications', label: 'Thông báo', icon: () => <MdNotifications size={24} />, path: '/notifications' },
       { id: 'posts', label: 'Quản lí bài đăng', icon: () => <MdTextSnippet size={24} />, path: '/posts' },
       { id: 'transactions', label: 'Quản lí giao dịch', icon: () => <MdCurrencyExchange size={24} />, path: '/transactions' },
-      { id: 'delegation', label: 'Ủy thác', icon: () => <MdHandshake size={24} />, path: '/delegation' },
+      { id: 'delegation', label: 'Ủy thác', icon: () => <MdHandshake size={24} />, path: '/delegations' },
       { id: 'profile', label: 'Profile', icon: () => <MdAccountBox size={24} />, path: '/profile' },
       { id: 'reports', label: 'Khiếu nại & Báo cáo', icon: () => <MdReportGmailerrorred size={24} />, path: '/reports' },
       { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon, path: '/language' },

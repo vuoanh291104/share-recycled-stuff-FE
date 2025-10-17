@@ -1,0 +1,40 @@
+.container {
+    margin-top: 100px;
+    margin-left: 450px;
+    text-align: left;
+    width: 700px;
+}
+
+.mgb16 {
+    margin-bottom: 16px;
+}
+
+.btnContainer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btnSend, .btnSend:hover, .btnSend:active,
+.btnSend:focus, .btnSend:focus-within, .btnSend:focus-visible,
+.btnFindProxy, .btnFindProxy:hover, .btnFindProxy:active,
+.btnFindProxy:focus, .btnFindProxy:focus-within, .btnFindProxy{
+    background-color: var(--color-accent) !important;
+    color:  black !important;
+    outline: none;
+    border: #fff;
+}
+
+.btnSend:hover, .btnFindProxy:hover {
+    opacity: 0.7;
+}
+
+.btnCanel {
+    margin-right: 24px;
+}
+
+.proxyContainer {
+    width: 786px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+}
