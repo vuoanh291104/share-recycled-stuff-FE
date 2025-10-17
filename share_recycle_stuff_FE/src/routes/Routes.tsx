@@ -16,6 +16,7 @@ import RequestUpgradeManagement from '../pages/admin/RequestUpgradeManagement/Re
 import ForgotPass from '../pages/public/ForgotPass/ForgotPass'
 import ResetPass from '../pages/public/ForgotPass/ResetPass'
 import ResetPassValidate from '../pages/public/ForgotPass/ResetPassValidate'
+import SendDelegationRequest from '../pages/customer/DelegationRequest/SendDelegationRequest'
 
 
 const router = createBrowserRouter([
@@ -63,6 +64,13 @@ const router = createBrowserRouter([
                     },
                     
                     { path: '/upgrade', element: <RequestProxySeller /> },
+                    { 
+                        path: '/delegations', 
+                        element: <></>,  //Bổ sung component danh sách ủy thác sau
+                        children: [
+                            {path: 'new', element: <SendDelegationRequest />},
+                        ]
+                    }
                 ],
             },
         ],
@@ -82,16 +90,6 @@ const router = createBrowserRouter([
             },
         ],
     },
-
-    // {
-    //     element: <AdminLayout />,
-    //             children: [
-    //                 {
-    //                     path: '/admin',
-    //                     children: [{ index: true, element: <RequestUpgradeManagement /> }],
-    //                 },
-    //             ],
-    // }
 ])
 const Routes = () => <RouterProvider router={router} />
 
