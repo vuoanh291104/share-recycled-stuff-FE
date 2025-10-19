@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Modal } from 'antd';
+import { Modal, message} from 'antd';
 import Icon from '@ant-design/icons';
 import HeartIcon from '../icons/HeartIcon';
 import CommentIcon from '../icons/CommentIcon';
@@ -7,10 +7,11 @@ import ImageCarousel from '../ImageCarousel/ImageCarousel';
 import CommentThread from '../CommentThread/CommentThread';
 import CommentInput from '../CommentInput/CommentInput';
 import { formatLikes, formatViews, formatTimeAgo, formatPrice } from '../../utils/formatters';
-import { commentAPI } from '../../data/commentsMockData';
 import type { Post, Comment } from '../../types/schema';
 import styles from './CommentModal.module.css';
-import { mockRootProps } from "../../data/homeMockData";
+import {deleteData, getData, postData, putData } from '../../api/api';
+import type { ErrorResponse } from '../../api/api';
+import '../../styles/globalStyle.css'
 
 interface CommentModalProps {
   isOpen: boolean;
@@ -18,8 +19,25 @@ interface CommentModalProps {
   onClose: () => void;
 }
 
+interface CommentResponse {
+  code: number;
+  message: string;
+  result : any;
+}
+
+interface listCommentResponse {
+  code: number;
+  message: string;
+  result : Comment[];
+}
+
+
 const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
-  const currentUser = mockRootProps.currentUser;
+
+  const userInfo = localStorage.getItem('userInfo');
+
+  const currentUser = userInfo ? JSON.parse(userInfo) : null;
+
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAddingComment, setIsAddingComment] = useState(false);
@@ -32,13 +50,18 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
     }
   }, [isOpen, post]);
 
+  //Lấy list comment cha lên
   const loadComments = async () => {
     if (!post) return;
     
     setIsLoading(true);
     try {
-      const commentsData = await commentAPI.fetchComments(post.id.toString());
-      setComments(commentsData);
+
+      console.log ("check postID", post.id);
+      const commentsData = await getData<listCommentResponse>(`/api/post/${post.id}/comments`)
+
+      console.log('Loaded comments:', commentsData.result);
+      setComments(commentsData.result);
     } catch (error) {
       console.error('Failed to load comments:', error);
     } finally {
@@ -46,50 +69,82 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
     }
   };
 
+  // Thêm comment mới
+
   const handleAddComment = async (content: string) => {
     if (!post) return;
     
     setIsAddingComment(true);
     try {
-      const newComment = await commentAPI.addComment(post.id.toString(), content);
+      const payload = {postId: post.id, content: content};
+
+      const res = await postData<CommentResponse>('/api/comment', payload);
+      message.success('Bình luận của bạn đã được gửi!')
+
+      const newComment: Comment = res.result;
       setComments(prev => [newComment, ...prev]);
-    } catch (error) {
+    } catch (error : any) {
+      const errData : ErrorResponse = error;
+      message.error(errData.message || 'Đã xảy ra lỗi khi gửi bình luận.');
       console.error('Failed to add comment:', error);
     } finally {
       setIsAddingComment(false);
     }
   };
 
-  const handleReplyToComment = useCallback(async (parentCommentId: string, content: string) => {
+  // Thêm cái trả lời cmt
+  const handleReplyToComment = useCallback(
+  async (parentCommentId: string, content: string, onSuccess?: (newReply: Comment) => void) => {
     if (!post) return;
-    
+    const payload = {
+      parentCommentId,
+      content,
+    };
     try {
-      const newComment = await commentAPI.addComment(post.id.toString(), content, parentCommentId);
-      setComments(prev => [...prev, newComment]);
+      const res = await postData<CommentResponse>('/api/comment/reply', payload);
+      const newReply: Comment = res.result;
+
+      if (onSuccess) onSuccess(newReply);
+
+      setComments((prev) => [...prev, newReply]);
     } catch (error) {
       console.error('Failed to add reply:', error);
     }
-  }, [post]);
+  },
+  [post]
+);
 
+  //Xóa cái cmt
   const handleDeleteComment = useCallback((commentId: string) => {
     const comment = comments.find(c => c.id === commentId);
       if (!comment) return;
-      if (comment.account_id.id !== currentUser.id) {
+      if (comment.author.id !== currentUser.accountId) {
         return;
+      }
+      try {
+        const res = deleteData (`/api/comment/${commentId}`);
+      } catch (error) {
+        console.error('Failed to delete comment:', error);
       }
     setComments(prev => prev.filter(c => c.id !== commentId));
   }, [comments, currentUser]);
 
 
+  // Sửa cái cmt
   const handleEditComment = useCallback((commentId: string, newContent: string) => {
   const comment = comments.find(c => c.id === commentId);
   if (!comment) return;
 
   //Kiểm tra quyền
-  if (comment.account_id.id !== currentUser.id) {
+  if (comment.author.id !== currentUser.accountId) {
     return;
   }
 
+  try {
+    const res = putData<CommentResponse>(`/api/comment/${commentId}`, { content: newContent });
+  } catch (error) {
+    console.error('Failed to edit comment:', error);
+  }
   setComments(prev => prev.map(c => 
     c.id === commentId ? { ...c, content: newContent } : c
   ));
@@ -117,15 +172,15 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
         <div className={styles.postSection}>
           <div className={styles.postHeader}>
             <div className={styles.authorInfo}>
-              {typeof post.accountId === 'object' && (
+              {typeof post.author === 'object' && (
                 <>
                   <img
-                    src={post.accountId.avatar_url}
-                    alt={post.accountId.full_name}
+                    src={post.author.avatarUrl || '/example-avatar.png'} 
+                    alt={post.author.fullName}
                     className={styles.authorAvatar}
                   />
                   <div className={styles.authorDetails}>
-                    <h3 className={styles.authorName}>{post.accountId.full_name}</h3>
+                    <h3 className={styles.authorName}>{post.author.fullName}</h3>
                     <span className={styles.timestamp}>
                       {formatTimeAgo(new Date(post.createdAt))}
                     </span>
@@ -172,7 +227,7 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
               </>
             )}
             <span className={styles.statsText}>
-              {formatViews(post.viewCount)}
+              {formatViews(post.viewCount || 0)}
             </span>
           </div>
 
@@ -210,17 +265,15 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
             ) : comments.length > 0 ? (
               (() => {
                 // Separate main comments and replies
-                const mainComments = comments.filter(c => !c.parent_comment_id);
-                const replies = comments.filter(c => c.parent_comment_id);
+                const mainComments = comments.filter(c => !c.parentCommentId);
+                const replies = comments.filter(c => c.parentCommentId);
                 
                 return mainComments.map((comment) => {
-                  const commentReplies = replies.filter(r => r.parent_comment_id === comment.id);
                   
                   return (
                     <CommentThread
                       key={comment.id}
                       parentComment={comment}
-                      replies={commentReplies}
                       onReply={handleReplyToComment}
                       onDelete={handleDeleteComment}
                       onEdit={handleEditComment}

@@ -33,7 +33,6 @@ const Login = () => {
     setLoading(true);
     try {
       const res = await postData<LoginResponse>("/api/auth/login", values);
-      console.log(res);
       localStorage.setItem('accessToken', res.result.accessToken);
       localStorage.setItem('refreshToken', res.result.refreshToken);
       localStorage.setItem('userInfo', JSON.stringify(res.result.userInfo));

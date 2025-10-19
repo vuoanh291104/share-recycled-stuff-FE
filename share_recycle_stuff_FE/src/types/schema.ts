@@ -140,14 +140,13 @@ export type ProfilePageProps = {
 }
 export interface Comment {
   id: string;
-  post_id: string
-  account_id: User;
-  parent_comment_id: string | null;
+  postId: string;
+  parentCommentId: string | null;
   content: string;
-  is_edited: boolean;
-  created_at: Date;
-  updated_at: Date | null;
-  deleted_at: Date | null;
+  isEdited: boolean;
+  createdAt: Date;
+  updatedAt: Date | null;
+  author : UserInfo;
 }
 
 // Comment modal props

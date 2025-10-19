@@ -57,7 +57,6 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
   }, [showMoreMenu]);
 
   const userInfo = localStorage.getItem("userInfo");
-  console.log(userInfo)
   currentUser = userInfo? JSON.parse(userInfo) : null;
 
   const author = (post as any).author || null;
@@ -82,7 +81,6 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
-          console.log('postId', post.id)
           await deleteData(`/api/post/${post.id}`);
           message.success('Xóa bài viết thành công!');
           if (onActionSuccess) {
