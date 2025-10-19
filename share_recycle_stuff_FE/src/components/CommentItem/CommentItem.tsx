@@ -6,19 +6,21 @@ import CommentInput from '../CommentInput/CommentInput';
 import { formatCommentTime } from '../../utils/formatters';
 import type {CommentItemProps } from '../../types/schema';
 import styles from './CommentItem.module.css';
-import { mockRootProps } from '../../data/homeMockData';
 
 const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: CommentItemProps) => {
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
-  const currentUser = mockRootProps.currentUser;
-  const isOwner = comment.account_id.id === currentUser.id;
 
-  const handleReply = (content: string) => {
+  const userInfo = localStorage.getItem('userInfo');
+  const currentUser = userInfo ? JSON.parse(userInfo) : null;
+  const isOwner = comment.author.id === currentUser.accountId;
+
+  const handleReply = async (content: string) => {
     // For replies, use the original parent comment ID
     // For main comments, use the comment's own ID as parent
-    const parentId = comment.parent_comment_id || comment.id;
+    
+    const parentId = comment.parentCommentId || comment.id;
     onReply(parentId, content);
     setShowReplyInput(false);
   };
@@ -50,28 +52,30 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
             danger: true
           }
         ]
-      : []),
-    {
-      key: 'report',
-      label: 'Report'
-    }
+      : [
+          {
+            key: 'report',
+            label: 'Report'
+          }
+        ]),
+    
   ];
 
   return (
     <div className={`${styles.commentItem} ${isReply ? styles.replyItem : ''}`}>
       <div className={styles.commentHeader}>
         <img
-          src={comment.account_id.avatar_url}
-          alt={comment.account_id.full_name}
+          src={comment.author.avatarUrl || 'scr/example-avatar.png'}
+          alt={comment.author.fullName}
           className={`${styles.avatar} ${isReply ? styles.replyAvatar : ''}`}
         />
         <div className={styles.commentContent}>
           <div className={styles.authorInfo}>
             <span className={`${styles.authorName} ${isReply ? styles.replyAuthor : ''}`}>
-              {comment.account_id.full_name}
+              {comment.author.fullName}
             </span>
             <span className={`${styles.timestamp} ${isReply ? styles.replyTimestamp : ''}`}>
-              {formatCommentTime(comment.created_at)}
+              {formatCommentTime(comment.createdAt)}
             </span>
           </div>
           

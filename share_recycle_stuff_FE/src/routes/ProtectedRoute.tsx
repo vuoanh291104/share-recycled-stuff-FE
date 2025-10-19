@@ -10,7 +10,6 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
     const userInfo = localStorage.getItem("userInfo");
     const expiresAt = localStorage.getItem("expiresAt");
 
-    console.log(userInfo)
     const navigate = useNavigate();
 
   // chưa login

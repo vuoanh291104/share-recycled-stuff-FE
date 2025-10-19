@@ -39,31 +39,35 @@ export const formatPrice = (price: number): string => {
   return `${price.toLocaleString()}VNĐ`;
 };
 
-export const formatCommentTime = (timestamp: Date): string => {
+export function formatCommentTime(timestamp: string | Date | number[]): string {
+  if (!timestamp) return '';
+
+  let date: Date;
+
+  if (Array.isArray(timestamp)) {
+    // Java LocalDateTime -> [year, month, day, hour, minute, second, nano]
+    const [y, m, d, h = 0, min = 0, s = 0] = timestamp;
+    date = new Date(y, m - 1, d, h, min, s);
+  } else if (timestamp instanceof Date) {
+    date = timestamp;
+  } else {
+    date = new Date(timestamp);
+  }
+
+  if (isNaN(date.getTime())) return '';
+
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - timestamp.getTime()) / 1000);
-  
-  if (diffInSeconds < 60) {
-    return `${diffInSeconds}s`;
-  }
-  
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) {
-    return `${diffInMinutes}m`;
-  }
-  
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) {
-    return `${diffInHours}h`;
-  }
-  
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 7) {
-    return `${diffInDays}d`;
-  }
-  
-  return timestamp.toLocaleDateString('vi-VN');
-};
+  const diff = now.getTime() - date.getTime();
+
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return 'Vừa xong';
+  if (minutes < 60) return `${minutes} phút trước`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} giờ trước`;
+  const days = Math.floor(hours / 24);
+  return `${days} ngày trước`;
+}
+
 
 export const formatReplyCount = (count: number): string => {
   if (count === 0) return '';
