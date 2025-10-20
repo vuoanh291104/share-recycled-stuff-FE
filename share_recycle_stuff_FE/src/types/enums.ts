@@ -3,7 +3,7 @@ export type PostPurpose = "FREE_GIVEAWAY" | "FOR_SALE" | "NEWS_INFORMATION";
 export const PostPurposeValues = {
   FREE_GIVEAWAY: "Cho tặng miễn phí" as const,
   FOR_SALE: "Bán" as const,
-  NEWS_INFORMATION: "Tin tức, thông t in" as const
+  NEWS_INFORMATION: "Tin tức, thông tin" as const
 } as const;
 
 export type PostStatus = "ACTIVE" | "EDIT" |"DELETED";
@@ -71,6 +71,29 @@ export const RequestProxyStatusText: Record<RequestProxyStatus, string> = {
   PENDING: "Đang xét duyệt",
 };
 
+export type RequestDelegationStatus = "APPROVED" | "REJECTED" | "PENDING" | "IN_TRANSIT" | "PRODUCT_RECEIVED" | "SELLING" | "SOLD" | "PAYMENT_COMPLETED";
+
+export const RequestDelegationStatusText: Record<RequestDelegationStatus, string> = {
+  APPROVED: "Chấp nhận",
+  REJECTED: "Từ chối",
+  PENDING: "Đang chờ",
+  IN_TRANSIT: "Đang vận chuyển",
+  PRODUCT_RECEIVED: "Đã nhận hàng",
+  SELLING: "Đang bán",
+  SOLD: "Đã bán",
+  PAYMENT_COMPLETED: "Đã thanh toán",
+};
+
+export const RequestDelegationStatusColor: Record<RequestDelegationStatus, string> = {
+  APPROVED: "#52c41a",
+  REJECTED: "#ff4d4f",
+  PENDING: "#faad14",
+  IN_TRANSIT: "#fa2222ff",
+  PRODUCT_RECEIVED: "#1890ff",
+  SELLING: "#722ed1",
+  SOLD: "#13c2c2",
+  PAYMENT_COMPLETED: "#52c41a",
+};
 // User roles
 export type Role = "CUSTOMER" | "PROXY_SELLER" | "ADMIN";
 

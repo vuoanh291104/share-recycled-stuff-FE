@@ -17,7 +17,8 @@ import ForgotPass from '../pages/public/ForgotPass/ForgotPass'
 import ResetPass from '../pages/public/ForgotPass/ResetPass'
 import ResetPassValidate from '../pages/public/ForgotPass/ResetPassValidate'
 import SendDelegationRequest from '../pages/customer/DelegationRequest/SendDelegationRequest'
-
+import ViewDelegationRequest from '../pages/customer/DelegationRequest/ViewDelegationRequest'
+import DelegationRequestManagement from '../pages/proxy_seller/DelegationRequestManagement/DelegationRequestManagement'
 
 const router = createBrowserRouter([
     {
@@ -66,9 +67,16 @@ const router = createBrowserRouter([
                     { path: '/upgrade', element: <RequestProxySeller /> },
                     { 
                         path: '/delegations', 
-                        element: <></>,  //Bổ sung component danh sách ủy thác sau
+                        element: <ViewDelegationRequest />,
                         children: [
                             {path: 'new', element: <SendDelegationRequest />},
+                        ]
+                    },
+                    { 
+                        path: '/managedelegations', 
+                        element: <DelegationRequestManagement />,
+                        children: [
+                            
                         ]
                     }
                 ],

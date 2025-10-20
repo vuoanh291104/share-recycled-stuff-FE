@@ -1,6 +1,6 @@
 import type { Category } from '../constant/Category';
 import type { PostPurpose } from '../constant/PostPurpose';
-import type { PostStatus, RequestProxyStatus, Role, UserStatus } from './enums';
+import type { PostStatus, RequestDelegationStatus, RequestProxyStatus, Role, UserStatus } from './enums';
 
 // User review response from backend
 export interface UserReviewResponse {
@@ -192,5 +192,23 @@ export interface RequestUpgradeDataProps {
   addressDetail: string;
   status: string;
   createdAt: number[];
+}
+
+// Delegation Request
+export interface RequestDelegationItemProps {
+  id: number;
+  customerId: number;
+  customerName: string;
+  proxySellerName: string;
+  proxySellerId: number;
+  productDescription: string;
+  expectPrice: number;
+  bankAccountNumber: string;
+  bankName: string;
+  accountHolderName: string;
+  status: RequestDelegationStatus;
+  createdAt: string;
+  updatedAt: string;
+  imageUrls: string[];
 }
 
