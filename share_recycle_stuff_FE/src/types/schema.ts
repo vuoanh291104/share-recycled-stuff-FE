@@ -207,8 +207,10 @@ export interface RequestDelegationItemProps {
   bankName: string;
   accountHolderName: string;
   status: RequestDelegationStatus;
+  rejectionReason?: string;
   createdAt: string;
   updatedAt: string;
   imageUrls: string[];
+  onRefresh?: () => void;
 }
 

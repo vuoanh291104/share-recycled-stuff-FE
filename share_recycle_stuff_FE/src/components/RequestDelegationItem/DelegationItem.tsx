@@ -20,6 +20,7 @@ const DelegationItem = ({
   bankName,
   accountHolderName,
   imageUrls,
+  rejectionReason,
   onRefresh
 }: DelegationItemProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -194,7 +195,9 @@ const DelegationItem = ({
           {status === 'REJECTED' && (
             <div className={styles.modalSection}>
               <h3>Lý do từ chối</h3>
-              <p>Yêu cầu của bạn đã bị từ chối</p>
+              <p style={{ color: '#ff4d4f', fontSize: '15px' }}>
+                {rejectionReason || 'Yêu cầu của bạn đã bị từ chối'}
+              </p>
             </div>
           )}
         </div>
