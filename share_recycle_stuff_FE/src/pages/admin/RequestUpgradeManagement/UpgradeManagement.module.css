@@ -1,8 +1,11 @@
 .page {
-    margin-left: 100px;
+    margin-left: 400px;
     margin-top: 64px;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     width: 900px;
+    height: 100vh;
 }
 .title {
     display: flex;

@@ -119,3 +119,23 @@ export const convertUserToUserProfile = (user: any): any => {
     updatedAt: user.updated_at ? user.updated_at.toISOString() : new Date().toISOString()
   };
 };
+
+export const formatDate = (arr?: number[] | string): string => {
+  if (!arr) return '';
+  
+  let year, month, day;
+
+  if (Array.isArray(arr)) {
+    [year, month, day] = arr;
+  } else if (typeof arr === 'string') {
+    // Tách bằng dấu '-' hoặc '/'
+    const parts = arr.split(/[-/]/).map(Number);
+    [year, month, day] = parts;
+  } else {
+    return '';
+  }
+
+  if (!year || !month || !day) return '';
+
+  return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+};

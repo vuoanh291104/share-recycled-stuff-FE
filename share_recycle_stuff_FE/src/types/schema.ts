@@ -121,8 +121,8 @@ export interface Post {
   purpose: string;
   status: PostStatus;
   viewCount: number | null;
-  createdAt: Date | string;
-  updatedAt: Date | string;
+  createdAt:  string;
+  updatedAt: string;
   author: UserInfo;
   images: PostImageResponse[];
   currentImageIndex?: number;
@@ -187,11 +187,13 @@ export interface RequestUpgradeDataProps {
   fullName: string;
   email: string;
   idCard: string;
-  cardFront?: string;
-  cardBack?: string;
+  idCardFrontImage?: string;
+  idCardBackImage?: string;
   addressDetail: string;
   status: string;
   createdAt: number[];
+  processedAt : number[];
+  rejectionReason: string;
 }
 
 // Delegation Request
@@ -208,8 +210,8 @@ export interface RequestDelegationItemProps {
   accountHolderName: string;
   status: RequestDelegationStatus;
   rejectionReason?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number [];
+  updatedAt: number [];
   imageUrls: string[];
   onRefresh?: () => void;
 }

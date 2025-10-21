@@ -1,10 +1,10 @@
 .title {
     font-size: 32px;
     font-weight: 600;
-    margin-bottom: 70px;
+    margin-bottom: 46px;
 }
 .container {
-    margin-left: 64px;
+    margin-left: 450px;
     margin-top: 100px;
     height: 100vh;
     width: 80%;
@@ -15,6 +15,7 @@
 .request_list {
     margin-top: 52px;
     display: flex;
+    flex-direction: column;
     justify-content: space-around;
     align-items: center;
     border-radius: 20px;
@@ -34,6 +35,7 @@
     border-radius: 30px;
     border: none !important;
     outline: none !important;
+    margin-bottom: 46px;
 }
 .request_button:hover {
     opacity: 0.7;

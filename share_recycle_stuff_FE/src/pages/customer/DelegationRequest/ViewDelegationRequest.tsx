@@ -42,6 +42,8 @@ const ViewDelegationRequest = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
 
+  console.log (requestList)
+
   // Fetch delegation requests from API
   const fetchDelegationRequests = async (page: number = 0, status?: string) => {
     setLoading(true);
