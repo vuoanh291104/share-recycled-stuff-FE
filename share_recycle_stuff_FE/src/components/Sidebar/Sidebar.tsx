@@ -3,11 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Icon from '@ant-design/icons';
 import { MdNotifications, MdTextSnippet, MdCurrencyExchange, MdHandshake, MdAccountBox, MdReportGmailerrorred } from 'react-icons/md';
 import { TbArrowBigUpLines } from "react-icons/tb";
-
+import { Modal } from 'antd';
 import HomeIcon from '../icons/HomeIcon';
 import LanguageIcon from '../icons/LanguageIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import styles from "./Sidebar.module.css";
+import { postData } from '../../api/api';
+import type { ErrorResponse } from '../../api/api';
+import { useMessage } from '../../context/MessageProvider';
 
 interface MenuItem {
   id: string;
@@ -17,6 +20,7 @@ interface MenuItem {
 }
 
 const Sidebar = () => {
+  const {showMessage} = useMessage();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeItem, setActiveItem] = useState('home');
@@ -24,6 +28,40 @@ const Sidebar = () => {
   const userInfo = localStorage.getItem("userInfo");
   const user = userInfo? JSON.parse(userInfo) : null;
   const role = user?.role ?? null; 
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const onOK = async () => {
+    setLoading(true);
+
+    try {
+      // const res = await postData <{message : string }>('/api/auth/logout', {});
+      // showMessage({type: "success" , message: res.message})
+      setTimeout(() => {      
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        navigate('/login');
+      }, 1500);
+
+    } catch (error : any) {
+      const errData : ErrorResponse = error;
+      showMessage({type: "error" , message: errData.message || "Đăng xuất thất bại" , code: errData.status}) 
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+    setOpen(false);
+  }
+
+  const hideModal = () => {
+    setOpen(false);
+  };
 
   const commonItems: MenuItem [] = [
     { id: 'logout', label: 'Đăng xuất', icon: LogoutIcon },
@@ -73,11 +111,8 @@ const Sidebar = () => {
 
   const handleMenuClick = (itemId: string) => {
     if (itemId === 'logout') {
-      if (window.confirm('Bạn có chắc muốn đăng xuất?')) {
-        localStorage.removeItem('userInfo');
-        navigate('/login');
-      }
-      return;
+
+        showModal();
     }
 
     setActiveItem(itemId);
@@ -111,6 +146,18 @@ const Sidebar = () => {
           ))}
         </ul>
       </nav>
+      <>
+          <Modal
+            title=""
+            open={open}
+            onOk={onOK}
+            onCancel={hideModal}
+            okText="OK"
+            cancelText="Hủy"
+          >
+            <p>Bạn chắc chắn muốn đăng xuất không ?</p>
+          </Modal>
+      </>
     </div>
   );
 };

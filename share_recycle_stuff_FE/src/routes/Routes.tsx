@@ -48,8 +48,6 @@ const router = createBrowserRouter([
                         path: '/',
                         element: (
                         <Home
-                            currentUser={mockRootProps.currentUser}
-                            posts={mockRootProps.posts}
                         />
                         ),
                     },

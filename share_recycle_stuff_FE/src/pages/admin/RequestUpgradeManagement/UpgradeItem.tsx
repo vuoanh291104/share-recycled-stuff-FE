@@ -1,10 +1,11 @@
-import { Table, Modal, Button, Input, Tag } from 'antd';
+import { Table, Modal, Button, Input, Tag, Image  } from 'antd';
 import type { TableProps } from 'antd';
 import { useState } from 'react';
 import type { RequestUpgradeDataProps } from '../../../types/schema';
 import { postData } from '../../../api/api';
 import type { ErrorResponse } from '../../../api/api';
 import { useMessage } from '../../../context/MessageProvider';
+import { formatDate } from '../../../utils/formatters';
 
 interface UpgradeItemProps {
   data: RequestUpgradeDataProps[];
@@ -42,6 +43,7 @@ const UpgradeItem = ({ data, getAll }: UpgradeItemProps) => {
         title: 'Ngày đăng ký',
         dataIndex: 'createdAt',
         key: 'createdAt',
+        render: (text: number []) => formatDate(text),
     },
     {
         title: 'Trạng thái',
@@ -149,21 +151,25 @@ const UpgradeItem = ({ data, getAll }: UpgradeItemProps) => {
                     <div>
                     <strong>Số cccd:</strong> {selectedRecord.idCard}
                     </div>
-                    <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                    {selectedRecord.cardFront && (
-                        <img
-                        src={selectedRecord.cardFront}
-                        alt="CCCD mặt trước"
-                        style={{ width: 150, borderRadius: 8 }}
-                        />
-                    )}
-                    {selectedRecord.cardBack && (
-                        <img
-                        src={selectedRecord.cardBack}
-                        alt="CCCD mặt sau"
-                        style={{ width: 150, borderRadius: 8 }}
-                        />
-                    )}
+                    <div style={{ display: 'flex', gap: 12 }}>
+                        <Image.PreviewGroup>
+                            {selectedRecord.idCardFrontImage && (
+                            <Image
+                                width={150}
+                                src={selectedRecord.idCardFrontImage}
+                                alt="CCCD mặt trước"
+                                style={{ borderRadius: 8 }}
+                            />
+                            )}
+                            {selectedRecord.idCardBackImage && (
+                            <Image
+                                width={150}
+                                src={selectedRecord.idCardBackImage}
+                                alt="CCCD mặt sau"
+                                style={{ borderRadius: 8 }}
+                            />
+                            )}
+                        </Image.PreviewGroup>
                     </div>
 
                     {selectedRecord.status === 'PENDING' &&

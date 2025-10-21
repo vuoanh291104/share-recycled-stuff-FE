@@ -5,6 +5,7 @@ import type { RequestDelegationItemProps } from '../../types/schema';
 import { RequestDelegationStatusText, RequestDelegationStatusColor, type RequestDelegationStatus } from '../../types/enums';
 import { putData } from '../../api/api';
 import type { ErrorResponse } from '../../api/api';
+import { formatDate } from '../../utils/formatters';
 
 const { TextArea } = Input;
 
@@ -95,10 +96,11 @@ const ProxySellerDelegationItem = ({
     } finally {
       setRejectLoading(false);
     }
-  };  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN');
-  };
+  };  
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   return date.toLocaleDateString('vi-VN');
+  // };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN', {

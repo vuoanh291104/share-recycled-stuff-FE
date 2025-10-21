@@ -4,6 +4,7 @@ import styles from '../../pages/customer/DelegationRequest/ViewDelegationRequest
 import type { RequestDelegationItemProps } from '../../types/schema';
 import { RequestDelegationStatusText, RequestDelegationStatusColor, type RequestDelegationStatus } from '../../types/enums';
 import type { ErrorResponse } from '../../api/api';
+import { formatDate } from '../../utils/formatters';
 
 type DelegationItemProps = RequestDelegationItemProps & {
   onRefresh?: () => void;
@@ -37,10 +38,10 @@ const DelegationItem = ({
     setIsModalOpen(false);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN');
-  };
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   return date.toLocaleDateString('vi-VN');
+  // };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN', {

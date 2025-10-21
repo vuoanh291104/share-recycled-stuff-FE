@@ -153,7 +153,7 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
             </>
           )}
           <span className={styles.timestamp}>
-            {formatTimeAgo(new Date(post.createdAt))}
+            {post.createdAt }
           </span>
         </div>
         

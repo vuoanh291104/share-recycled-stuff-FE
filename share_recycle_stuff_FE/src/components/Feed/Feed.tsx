@@ -16,10 +16,18 @@ const Feed = ({ posts = [], currentUser, onActionSuccess }: FeedProps) => {
   const [hasMore, setHasMore] = useState(true);
 
   // Initialize with first batch of posts
+  // useEffect(() => {
+  //   setDisplayedPosts(posts?.slice(0, 2));
+  //   setHasMore((posts?.length || 0) > 2);
+  // }, [posts]);
+
   useEffect(() => {
-    setDisplayedPosts(posts?.slice(0, 2));
-    setHasMore((posts?.length || 0) > 2);
-  }, [posts]);
+  // Loại bỏ bài trùng trước khi set
+  const unique = Array.from(new Map(posts.map(p => [p.id, p])).values());
+  setDisplayedPosts(unique.slice(0, 2));
+  setHasMore(unique.length > 2);
+}, [posts]);
+
 
   // Infinite scroll handler
   const handleScroll = useCallback(() => {
