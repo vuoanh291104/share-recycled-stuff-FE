@@ -1,49 +1,31 @@
+import { Table, Modal, Button, Input, Tag, Select, App } from 'antd';
+import type { TableProps } from 'antd';
 import { useState } from 'react';
-import { Modal, Button, App, Select, Input } from 'antd';
 import styles from '../../pages/proxy_seller/DelegationRequestManagement/DelegationRequestManagement.module.css';
 import type { RequestDelegationItemProps } from '../../types/schema';
-import { RequestDelegationStatusText, RequestDelegationStatusColor, type RequestDelegationStatus } from '../../types/enums';
 import { putData } from '../../api/api';
 import type { ErrorResponse } from '../../api/api';
-import { formatDate } from '../../utils/formatters';
+import { formatDate, formatPrice } from '../../utils/formatters';
 
 const { TextArea } = Input;
 
-interface ApiResponse<T> {
-  code: number;
-  message: string;
-  path?: string;
-  timestamp: string;
-  result?: T;
+interface ProxySellerDelegationItemProps {
+  data: RequestDelegationItemProps[];
+  getAll: () => Promise<void>;
+  loading?: boolean;
 }
 
-type DelegationItemProps = RequestDelegationItemProps & {
-  onRefresh?: () => void;
-};
-
-const ProxySellerDelegationItem = ({
-  id,
-  customerName,
-  customerId,
-  createdAt,
-  status: initialStatus,
-  productDescription,
-  expectPrice,
-  bankAccountNumber,
-  bankName,
-  accountHolderName,
-  imageUrls,
-  rejectionReason,
-  onRefresh
-}: DelegationItemProps) => {
+const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySellerDelegationItemProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [status, setStatus] = useState<RequestDelegationStatus>(initialStatus);
+  const [selectedRecord, setSelectedRecord] = useState<RequestDelegationItemProps | null>(null);
   const [rejectReason, setRejectReason] = useState('');
-  const [approveLoading, setApproveLoading] = useState(false);
-  const [rejectLoading, setRejectLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
   const { message } = App.useApp();
 
-  const showModal = () => {
+  const showModal = (record: RequestDelegationItemProps) => {
+    setSelectedRecord(record);
     setIsModalOpen(true);
   };
 
@@ -52,95 +34,110 @@ const ProxySellerDelegationItem = ({
     setRejectReason('');
   };
 
-  const handleApprove = async () => {
-    setApproveLoading(true);
+  // Mapping trạng thái
+  const statusMap: Record<string, { label: string; color: string }> = {
+    PENDING: { label: "Đang chờ", color: "gold" },
+    APPROVED: { label: "Đã chấp nhận", color: "green" },
+    REJECTED: { label: "Đã từ chối", color: "red" },
+    PRODUCT_RECEIVED: { label: "Đã nhận hàng", color: "blue" },
+    SELLING: { label: "Đang bán", color: "cyan" },
+    SOLD: { label: "Đã bán", color: "purple" },
+    PAYMENT_COMPLETED: { label: "Đã thanh toán", color: "lime" },
+  };
+
+  // Xử lý approve
+  const handleApprove = async (id?: number) => {
+    if (!id) return;
+    setActionLoading(true);
     try {
-      const endpoint = `/api/delegation-requests/${id}/approve`;
-      const response = await putData<ApiResponse<void>>(endpoint, {});
-      
-      if (response && response.code === 200) {
-        setStatus('APPROVED');
-        message.success(response.message || 'Phê duyệt yêu cầu ủy thác thành công');
-        setIsModalOpen(false);
-        if (onRefresh) onRefresh();
-      }
+      await putData<void>(`/api/delegation-requests/${id}/approve`, {});
+      message.success('Chấp nhận yêu cầu thành công!');
+      getAll();
+      setIsModalOpen(false);
     } catch (error) {
       const errorData = error as ErrorResponse;
-      message.error(errorData.message || 'Có lỗi xảy ra khi phê duyệt yêu cầu');
+      message.error(errorData.message || 'Có lỗi xảy ra khi chấp nhận yêu cầu');
     } finally {
-      setApproveLoading(false);
+      setActionLoading(false);
     }
   };
 
-  const handleReject = async () => {
-    if (!rejectReason.trim()) {
+  // Xử lý reject
+  const handleReject = async (id?: number, reason?: string) => {
+    if (!id) return;
+    if (!reason?.trim()) {
       message.warning('Vui lòng nhập lý do từ chối');
       return;
     }
 
-    setRejectLoading(true);
+    setActionLoading(true);
     try {
-      const endpoint = `/api/delegation-requests/${id}/reject`;
-      const response = await putData<ApiResponse<void>>(endpoint, { reason: rejectReason });
-      
-      if (response && response.code === 200) {
-        setStatus('REJECTED');
-        message.success(response.message || 'Từ chối yêu cầu ủy thác thành công');
-        setIsModalOpen(false);
-        setRejectReason('');
-        if (onRefresh) onRefresh();
-      }
+      await putData<void>(`/api/delegation-requests/${id}/reject`, { reason });
+      message.success('Từ chối yêu cầu thành công!');
+      getAll();
+      setIsModalOpen(false);
+      setRejectReason('');
     } catch (error) {
       const errorData = error as ErrorResponse;
       message.error(errorData.message || 'Có lỗi xảy ra khi từ chối yêu cầu');
     } finally {
-      setRejectLoading(false);
+      setActionLoading(false);
     }
-  };  
-  // const formatDate = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   return date.toLocaleDateString('vi-VN');
-  // };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(price);
   };
 
-  const handleStatusSelect = (value: string) => {
-    // Chỉ cập nhật UI, không gọi API
-    setStatus(value as RequestDelegationStatus);
-    message.success('Đã chọn trạng thái: ' + value);
+  // Xử lý thay đổi trạng thái từ dropdown
+  const handleStatusSelect = (value: string, record: RequestDelegationItemProps) => {
+    // TODO: Implement API call to update status
+    message.success(`Đã chọn trạng thái: ${statusMap[value]?.label || value} cho yêu cầu #${record.id}`);
+    // Sau khi API thành công thì gọi getAll()
   };
 
-  return (
-    <>
-      <div className={styles.delegation_proxySellerName}>
-        <span>Người bán đại lý</span>
-        <p>{customerName}</p>
-      </div>
-      <div className={styles.delegation_proxySellerId}>
-        <span>ID người bán</span>
-        <p>{customerId}</p>
-      </div>
-      <div className={styles.delegation_createDate}>
-        <span>Ngày tạo</span>
-        <p>{formatDate(createdAt)}</p>
-      </div>
-      <div className={styles.delegation_status}>
-        <span>Trạng thái</span>
-        <p style={{ color: RequestDelegationStatusColor[status], fontWeight: 'bold' }}>
-          {RequestDelegationStatusText[status]}
-        </p>
-      </div>
-      <div className={styles.delegation_details}>
-        <a onClick={showModal} style={{ cursor: 'pointer', color: '#1890ff', textDecoration: 'underline' }}>
+  // Table columns
+  const columns: TableProps<RequestDelegationItemProps>['columns'] = [
+    {
+      title: 'STT',
+      key: 'index',
+      width: 60,
+      render: (_text, _record, index) => (currentPage - 1) * pageSize + index + 1,
+    },
+    {
+      title: 'Người ủy thác',
+      dataIndex: 'customerName',
+      key: 'customerName',
+      width: 150,
+    },
+    {
+      title: 'Ngày tạo',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 120,
+      render: (text: number[]) => formatDate(text),
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      key: 'status',
+      width: 130,
+      render: (status: string) => {
+        const { label, color } = statusMap[status] || { label: status, color: "default" };
+        return <Tag color={color}>{label}</Tag>;
+      },
+    },
+    {
+      title: 'Chi tiết',
+      key: 'detail',
+      width: 100,
+      render: (_text, record) => (
+        <Button type="link" onClick={() => showModal(record)}>
           Xem chi tiết
-        </a>
-      </div>
-      <div className={styles.delegation_actions}>
+        </Button>
+      ),
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      width: 130,
+      render: (_text, record) => (
         <Select
           options={[
             { value: 'PRODUCT_RECEIVED', label: 'Đã nhận hàng' },
@@ -148,106 +145,122 @@ const ProxySellerDelegationItem = ({
             { value: 'SOLD', label: 'Đã bán' },
             { value: 'PAYMENT_COMPLETED', label: 'Đã thanh toán' },
           ]}
-          onChange={handleStatusSelect}
-          style={{ width: '140px' }}
+          onChange={(value) => handleStatusSelect(value, record)}
+          style={{ width: '125px' }}
           placeholder="Chọn hành động"
         />
-      </div>
-      
+      ),
+    },
+  ];
 
+  return (
+    <>
+      <Table<RequestDelegationItemProps>
+        columns={columns}
+        dataSource={data}
+        rowKey="id"
+        loading={loading}
+        pagination={{ 
+          position: ['bottomCenter'],
+          pageSize: pageSize,
+          current: currentPage,
+          onChange: (page) => setCurrentPage(page),
+          showTotal: (total: number) => `Tổng ${total} yêu cầu`
+        }}
+      />
+
+      {/* Detail Modal */}
       <Modal
         title={<div className={styles.modalTitle}>Chi tiết yêu cầu ủy thác</div>}
         open={isModalOpen}
         onCancel={handleCancel}
         width={700}
-        footer={[
-          <Button key="cancel" onClick={handleCancel}>
-            Đóng
-          </Button>,
-          <Button 
-            key="approve" 
-            type="primary"
-            onClick={handleApprove}
-            loading={approveLoading}
-            disabled={status !== 'PENDING'}
-          >
-            Đồng ý
-          </Button>,
-          <Button 
-            key="reject" 
-            danger
-            onClick={handleReject}
-            loading={rejectLoading}
-            disabled={status !== 'PENDING'}
-          >
-            Từ chối
-          </Button>,
-        ]}
+        footer={null}
       >
-        <div className={styles.modalContent}>
-          <div className={styles.modalSection}>
-            <h3>Thông tin người bán đại lý</h3>
-            <div style={{ display: 'flex', gap: '40px' }}>
-              <p><strong>Tên:</strong> {customerName}</p>
-              <p><strong>ID:</strong> {customerId}</p>
+        {selectedRecord && (
+          <div className={styles.modalContent}>
+            <div className={styles.modalSection}>
+              <h3>Thông tin người ủy thác</h3>
+              <div style={{ display: 'flex', gap: '40px' }}>
+                <p><strong>Tên:</strong> {selectedRecord.customerName}</p>
+                <p><strong>ID:</strong> {selectedRecord.customerId}</p>
+              </div>
             </div>
-          </div>
 
-          <div className={styles.modalSection}>
-            <h3>Thông tin sản phẩm</h3>
-            <p><strong>Mô tả:</strong> {productDescription}</p>
-            <p><strong>Giá mong muốn:</strong> {formatPrice(expectPrice)}</p>
-          </div>
-
-          <div className={styles.modalSection}>
-            <h3>Thông tin ngân hàng</h3>
-            <div style={{ display: 'flex', gap: '40px', marginBottom: '8px' }}>
-              <p><strong>Ngân hàng:</strong> {bankName}</p>
-              <p><strong>Chủ tài khoản:</strong> {accountHolderName}</p>
+            <div className={styles.modalSection}>
+              <h3>Thông tin sản phẩm</h3>
+              <p><strong>Mô tả:</strong> {selectedRecord.productDescription}</p>
+              <p><strong>Giá mong muốn:</strong> {formatPrice(selectedRecord.expectPrice)}</p>
             </div>
-            <p><strong>Số tài khoản:</strong> {bankAccountNumber}</p>
-          </div>
 
-          <div className={styles.modalSection}>
-            <h3>Hình ảnh sản phẩm</h3>
-            <div className={styles.imageGrid}>
-              {imageUrls && imageUrls.length > 0 ? (
-                imageUrls.map((image: string, index: number) => (
-                  <img 
-                    key={index} 
-                    className={styles.img} 
-                    src={image} 
-                    alt={`Product Image ${index + 1}`} 
+            <div className={styles.modalSection}>
+              <h3>Thông tin ngân hàng</h3>
+              <div style={{ display: 'flex', gap: '40px', marginBottom: '8px' }}>
+                <p><strong>Ngân hàng:</strong> {selectedRecord.bankName}</p>
+                <p><strong>Chủ tài khoản:</strong> {selectedRecord.accountHolderName}</p>
+              </div>
+              <p><strong>Số tài khoản:</strong> {selectedRecord.bankAccountNumber}</p>
+            </div>
+
+            <div className={styles.modalSection}>
+              <h3>Hình ảnh sản phẩm</h3>
+              <div className={styles.imageGrid}>
+                {selectedRecord.imageUrls && selectedRecord.imageUrls.length > 0 ? (
+                  selectedRecord.imageUrls.map((image: string, index: number) => (
+                    <img 
+                      key={index} 
+                      className={styles.img} 
+                      src={image} 
+                      alt={`Product Image ${index + 1}`} 
+                    />
+                  ))
+                ) : (
+                  <p>Không có hình ảnh</p>
+                )}
+              </div>
+            </div>
+
+            {selectedRecord.status === 'PENDING' && (
+              <div>
+                <div className={styles.modalSection}>
+                  <h3>Lý do từ chối</h3>
+                  <TextArea
+                    rows={4}
+                    placeholder="Nhập lý do từ chối (nếu có)"
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
                   />
-                ))
-              ) : (
-                <p>Không có hình ảnh</p>
-              )}
-            </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16, gap: 10 }}>
+                  <Button 
+                    danger
+                    onClick={() => handleReject(selectedRecord.id, rejectReason)}
+                    loading={actionLoading}
+                  >
+                    Từ chối
+                  </Button>
+                  <Button 
+                    type="primary"
+                    onClick={() => handleApprove(selectedRecord.id)}
+                    loading={actionLoading}
+                  >
+                    Chấp nhận
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {selectedRecord.status === 'REJECTED' && selectedRecord.rejectionReason && (
+              <div className={styles.modalSection}>
+                <h3>Lý do đã từ chối</h3>
+                <p style={{ color: '#ff4d4f', fontSize: '15px' }}>
+                  {selectedRecord.rejectionReason}
+                </p>
+              </div>
+            )}
           </div>
-
-          {status === 'PENDING' && (
-            <div className={styles.modalSection}>
-              <h3>Lý do từ chối</h3>
-              <TextArea
-                rows={4}
-                placeholder="Nhập lý do từ chối (bắt buộc nếu từ chối)"
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
-                style={{ marginTop: '10px' }}
-              />
-            </div>
-          )}
-
-          {status === 'REJECTED' && rejectionReason && (
-            <div className={styles.modalSection}>
-              <h3>Lý do đã từ chối</h3>
-              <p style={{ color: '#ff4d4f', fontSize: '15px', fontStyle: 'italic' }}>
-                {rejectionReason}
-              </p>
-            </div>
-          )}
-        </div>
+        )}
       </Modal>
     </>
   );

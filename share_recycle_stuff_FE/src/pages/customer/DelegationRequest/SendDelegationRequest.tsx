@@ -25,7 +25,7 @@ const SendDelegationRequest = () => {
     const {showMessage} = useMessage();
 
     const [loading, setLoading] = useState(false);
-    const [listProxy, setListProxy] = useState([ {value : 4, label : "Nguyễn Văn A"}]);
+    const [listProxy, setListProxy] = useState([ {value : 2, label : "Nguyễn Văn A"}]);
     const [selectedProxy, setSelectedProxy] = useState(null);
 
     const navigate = useNavigate();
@@ -53,6 +53,7 @@ const SendDelegationRequest = () => {
         try {
             const res = await postData<SendDelegationRequestProps>('/api/delegation-requests', payload);
             showMessage({type:"success", message: res.message})
+            navigate('/delegations');
         } catch (error: any) {
             const errData : ErrorResponse = error;
             showMessage({type:"error", message: errData.message || "Gửi yêu cầu thất bại", code: errData.status });
@@ -68,6 +69,7 @@ const SendDelegationRequest = () => {
 
     const onCancel = () => {
         form.resetFields();
+        navigate('/delegations');
     }
 
     //Phần proxy

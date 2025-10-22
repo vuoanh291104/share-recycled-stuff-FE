@@ -1,19 +1,21 @@
 .page {
-  margin-left: 400px;
-  margin-top: 86px;
+  margin-left: 425px;
+  margin-top: 100px;
+  margin-right: 50px;
   display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: 900px;
-    height: 100vh;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 75%;
+  height: 100vh;
 }
 
 .title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 42px;
-  font-size: 24px;
+  margin-bottom: 46px;
+  font-size: 32px;
+  font-weight: 600;
 }
 
 .delegation_list {
@@ -22,8 +24,8 @@
 }
 
 .delegation_list_header {
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: 60px 2fr 140px 80px 80px;
   align-items: center;
   background-color: #f5f5f5;
   padding: 15px 20px;
@@ -31,16 +33,18 @@
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 10px 10px 0 0;
+  gap: 10px;
 }
 
 .delegation_list_item {
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: 60px 2fr 140px 80px 80px;
   align-items: center;
   padding: 20px;
   border: 1px solid #ddd;
   border-top: none;
   transition: background-color 0.2s;
+  gap: 10px;
 }
 
 .delegation_list_item:last-child {
@@ -56,20 +60,11 @@
 .delegation_createDate,
 .delegation_status,
 .delegation_details {
-  flex: 1;
   text-align: center;
 }
 
 .delegation_proxySellerName {
-  flex: 1.5;
-}
-
-.delegation_createDate {
-  flex: 1.2;
-}
-
-.delegation_status {
-  flex: 1.2;
+  text-align: left;
 }
 
 .delegation_list_item span {
@@ -113,7 +108,8 @@
 }
 
 .modalSection {
-  margin-bottom: 25px;
+  margin-bottom: 15px;
+  margin: 10px;
 }
 
 .modalSection h3 {
