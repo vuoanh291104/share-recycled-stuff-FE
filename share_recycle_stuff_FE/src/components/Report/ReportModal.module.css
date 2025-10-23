@@ -1,0 +1,22 @@
+.reason {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+.reason:hover {
+    opacity: 0.7;
+}
+
+.mgb16 {
+    margin-bottom: 16px;
+}
+
+.mgr16 {
+    margin-right: 16px;
+}
+
+.btns {
+    display: flex;
+    justify-content: flex-end;
+}

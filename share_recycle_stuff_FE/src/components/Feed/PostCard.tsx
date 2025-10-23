@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Icon from '@ant-design/icons';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { App } from 'antd';
+import { App, Modal } from 'antd';
 import HeartIcon from '../icons/HeartIcon';
 import CommentIcon from '../icons/CommentIcon';
 import ImageCarousel from '../ImageCarousel/ImageCarousel';
@@ -13,6 +13,7 @@ import EditPostModal from '../Profile/EditPostModal';
 import { deleteData, putData } from '../../api/api';
 import type { ErrorResponse } from '../../api/api';
 import { useMessage } from '../../context/MessageProvider';
+import ReportModal from '../Report/ReportModal';
 
 interface PostCardProps {
   post: Post;
@@ -30,6 +31,7 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const [resetKey, setResetKey] = useState(0);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -72,6 +74,7 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
     setShowEditModal(true);
   };
 
+  // Này xóa bài
   const handleDelete = () => {
     modal.confirm({
       title: 'Xóa bài viết',
@@ -94,12 +97,30 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
     });
   };
 
+  // này report bài
+
+  const [modalReport, setModalReport] = useState (false);
+
+  const openModalReport = () => {
+    setModalReport (true);
+  }
+
+  const reportOK = () => {
+    setModalReport (false);
+  }
+
+  const cancelReport = () => {
+    setModalReport (false);
+  }
+
   const handleReport = () => {
     setShowMoreMenu(false);
+    openModalReport();
     // TODO: Implement report functionality
     console.log('Report post:', post.id);
   };
 
+  // này update bài
   const handleEditSubmit = async (postId: number, updatedData: Partial<Post>) => {
     try {
       await putData(`/api/post/${postId}`, updatedData);
@@ -273,6 +294,27 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
           onSubmit={handleEditSubmit}
         />
       )}
+
+      {/*Report Modal*/}
+      {
+        currentUser &&
+        <Modal
+          title="Báo cáo "
+          closable={{ 'aria-label': 'Custom Close Button' }}
+          open={modalReport}
+          onCancel={cancelReport}
+          footer = {false}
+          afterClose={() => setResetKey(k => k + 1)}
+        >
+          <ReportModal 
+            key={resetKey}
+            reportOK={reportOK}
+            cancelReport={cancelReport}
+            reportTypeCode = {2}
+            postID={post.id}
+          />
+        </Modal>
+      }
 
     </article>
   );

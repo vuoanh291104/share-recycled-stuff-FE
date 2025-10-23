@@ -15,11 +15,6 @@ const Feed = ({ posts = [], currentUser, onActionSuccess }: FeedProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  // Initialize with first batch of posts
-  // useEffect(() => {
-  //   setDisplayedPosts(posts?.slice(0, 2));
-  //   setHasMore((posts?.length || 0) > 2);
-  // }, [posts]);
 
   useEffect(() => {
   // Loại bỏ bài trùng trước khi set
