@@ -105,7 +105,6 @@ const CreationPostModal = ({ user, open, onClose, onSubmit }: CreationPostModalP
       images: uploadedImages,
     };
 
-    console.log("🚀 Dữ liệu gửi lên BE:", payload);
     onSubmit(payload);
     onClose();
   };

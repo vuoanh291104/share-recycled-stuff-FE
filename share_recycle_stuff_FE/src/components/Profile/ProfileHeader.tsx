@@ -1,9 +1,11 @@
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import Icon from '@ant-design/icons';
 import StarIcon from '../icons/StarIcon';
 import type { User } from '../../types/schema';
 import styles from './ProfileHeader.module.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import ReportModal from '../Report/ReportModal';
 
 interface ProfileHeaderProps {
   user: User;
@@ -12,7 +14,33 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader = ({ user, activeTab, onTabChange }: ProfileHeaderProps) => {
+
   const navigate = useNavigate();
+
+  const params = useParams ();
+
+  const userInfo = localStorage.getItem("userInfo");
+  const me = userInfo ? JSON.parse (userInfo) : null;
+
+  const notMyProfile = params.userId && Number(params.userId) !== me.accountId; 
+
+  const reportedAccountId = Number(params.userId); //id của cái đứa mk muốn rp nó đây
+
+  const [modalReport, setModalReport] = useState (false);
+  const [resetKey, setResetKey] = useState(0);
+  
+  const openModalReport = () => {
+    setModalReport (true);
+  }
+  
+  const reportOK = () => {
+    setModalReport (false);
+  }
+  
+  const cancelReport = () => {
+    setModalReport (false);
+  }
+
   return (
     <div className={styles.profileHeader}>
       <div className={styles.profileInfo}>
@@ -41,14 +69,47 @@ const ProfileHeader = ({ user, activeTab, onTabChange }: ProfileHeaderProps) => 
             <span className={styles.reviewCount}>{user.total_ratings} reviews</span>
           </div>
         </div>
+
+        <div>
+
+          {!notMyProfile &&
+            <Button 
+              className={styles.editButton}
+              type="default"
+              onClick={() => navigate ('/profile/edit')}
+            >
+              Edit Profile
+            </Button>         
+          }
+
+          {notMyProfile && 
+            <Button
+              className={styles.editButton}
+              type="default"
+              onClick={openModalReport}
+            >
+              Báo cáo
+            </Button>
+          }
+        </div>
+
+        <Modal
+          title="Báo cáo "
+          closable={{ 'aria-label': 'Custom Close Button' }}
+          open={modalReport}
+          onCancel={cancelReport}
+          footer = {false}
+          afterClose={() => setResetKey(k => k + 1)}
+        >
+          <ReportModal 
+            key={resetKey}
+            reportOK={reportOK}
+            cancelReport={cancelReport}
+            reportTypeCode = {3}
+            reportedAccountId={reportedAccountId}
+          />
+        </Modal>
         
-          <Button 
-            className={styles.editButton}
-            type="default"
-            onClick={() => navigate ('/profile/edit')}
-          >
-            Edit Profile
-          </Button>
         
       </div>
       
@@ -59,6 +120,7 @@ const ProfileHeader = ({ user, activeTab, onTabChange }: ProfileHeaderProps) => 
         >
           Bài đăng
         </button>
+        
         <button 
           className={`${styles.tab} ${activeTab === 'reviews' ? styles.activeTab : ''}`}
           onClick={() => onTabChange('reviews')}

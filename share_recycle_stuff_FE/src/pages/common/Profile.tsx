@@ -41,8 +41,11 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
 
   const userInfo = localStorage.getItem("userInfo");
-  const owner = userInfo? JSON.parse(userInfo) : null;
-  const currentUser = owner; // sau check xem currentUser ở đây là owner hay là user khác
+  const me = userInfo? JSON.parse(userInfo) : null;
+
+  const notMyProfile = params.userId && Number(params.userId) !== me.accountId; 
+  
+  const currentUser = me; // sau check xem currentUser ở đây là owner hay là user khác
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -106,10 +109,12 @@ const Profile = () => {
             <div className={feedStyles.postsContainer}>
               {activeTab === 'posts' ? (
                 <>
-                  <PostCreation 
-                    user={currentUser}
-                    onCreatePost={handleCreatePost}
-                  />
+                  {!notMyProfile &&
+                    <PostCreation 
+                      user={currentUser}
+                      onCreatePost={handleCreatePost}
+                    />                  
+                  }
                   <Feed 
                     posts={posts}
                     currentUser={currentUser}
