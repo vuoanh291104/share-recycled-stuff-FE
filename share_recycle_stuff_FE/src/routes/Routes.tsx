@@ -19,6 +19,7 @@ import ResetPassValidate from '../pages/public/ForgotPass/ResetPassValidate'
 import SendDelegationRequest from '../pages/customer/DelegationRequest/SendDelegationRequest'
 import ViewDelegationRequest from '../pages/customer/DelegationRequest/ViewDelegationRequest'
 import DelegationRequestManagement from '../pages/proxy_seller/DelegationRequestManagement/DelegationRequestManagement'
+import ReportManagement from '../pages/admin/ReportManagement/ReportManagement'
 
 const router = createBrowserRouter([
     {
@@ -92,6 +93,10 @@ const router = createBrowserRouter([
                         path: '/admin/upgradeRequests',
                         children: [{ index: true, element: <RequestUpgradeManagement /> }],
                     },
+                    {
+                        path: '/admin/reports',
+                        element: <ReportManagement />
+                    }
                 ],
             },
         ],
