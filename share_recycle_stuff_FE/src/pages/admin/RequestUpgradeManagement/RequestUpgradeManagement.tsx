@@ -10,7 +10,7 @@ import styles from './UpgradeManagement.module.css'
 const RequestUpgradeManagement = () => {
   const {showMessage} = useMessage();
   const [requestList, setRequestList] = useState<RequestUpgradeDataProps[]>([])
-
+console.log(requestList)
   const onStatusChange = (value?: string) => {
     if (!value || value === "ALL") {
       getAll();

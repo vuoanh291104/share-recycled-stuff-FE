@@ -1,0 +1,50 @@
+.page {
+    margin-left: 400px;
+    margin-top: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 900px;
+    height: 100vh;
+}
+.title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 42px;
+}
+
+.sub_title {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--color-primary);
+}
+
+.ctn_1 {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mgb_16 {
+    margin-bottom: 16px;
+}
+
+.btn_processing, .btn_processing:active, .btn_processing:focus,
+.btn_processing:focus-within, .btn_processing:hover {
+    background-color: var(--color-primary) !important;
+    color: white !important;
+}
+
+.btn_processing:hover {
+    opacity: 0.7;
+}
+
+.btn_handle, .btn_handle:active, .btn_handle:focus, .btn_handle:focus-within,
+.btn_handle:hover {
+    background-color: #F76C6F !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn_handle:hover {
+    opacity: 0.7;
+}

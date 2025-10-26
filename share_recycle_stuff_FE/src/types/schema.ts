@@ -216,3 +216,50 @@ export interface RequestDelegationItemProps {
   onRefresh?: () => void;
 }
 
+//Report Management
+export interface reporter {
+  id: number,
+  fullName: string,
+  email: string,
+  phoneNumber: string,
+}
+
+export interface reportedPost {
+  id: number,
+  title: string,
+  content: string,
+  authorName: string,
+  status: string,
+  createdAt: number []
+}
+
+export interface reportedAccount {
+  id: number,
+  fullName: string,
+  email: string,
+  phoneNumber: string,
+  isLocked: boolean,
+  createdAt: number[]
+}
+
+export interface processedBy {
+  id: number,
+  fullName: string,
+  email: string
+}
+
+export interface ReportItemProps {
+  id: number,
+  reportType: string,
+  violationType: string,
+  content: string,
+  evidenceUrl: string,
+  status: string,
+  adminResponse: string,
+  createdAt: number[],
+  processedAt: number[],
+  reporter: reporter,
+  reportedPost: reportedPost,
+  reportedAccount:reportedAccount,
+  processedBy: processedBy
+}
