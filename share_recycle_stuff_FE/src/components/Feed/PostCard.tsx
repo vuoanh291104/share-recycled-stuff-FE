@@ -14,6 +14,7 @@ import { deleteData, putData } from '../../api/api';
 import type { ErrorResponse } from '../../api/api';
 import { useMessage } from '../../context/MessageProvider';
 import ReportModal from '../Report/ReportModal';
+import { useNavigate } from 'react-router-dom';
 
 interface PostCardProps {
   post: Post;
@@ -22,6 +23,8 @@ interface PostCardProps {
 }
 
 const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
+  const navigate = useNavigate();
+
   const {showMessage} = useMessage();
   const { modal, message } = App.useApp();
   const [isLiked, setIsLiked] = useState(false);
@@ -65,10 +68,6 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
 
   // Check if current user is the post owner
   const isOwner = !!currentUser && !!author && Number(currentUser.accountId) === Number(author.id);
-
-  // console.log('currentUser', currentUser)
-  // console.log ('author', author);
-  // console.log ('Owner', isOwner);
 
   const handleEdit = () => {
     setShowEditModal(true);
@@ -160,11 +159,23 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
         <div className={styles.authorInfo}>
           {author && (
             <>
-              <img
-                src={author.avatarUrl}
-                alt={author.fullName}
-                className={styles.authorAvatar}
-              />
+              <div 
+                className={styles.authorAvatarWrapper}
+                onClick={() => navigate(isOwner ? '/profile' : `/profile/${author.id}`)}
+              >
+                <img
+                  src={author.avatarUrl || '/default-avatar.png'}
+                  alt={author.fullName}
+                  className={styles.authorAvatar}
+                />
+
+                {/* Tooltip hiển thị khi hover */}
+                <div className={styles.authorTooltip}>
+                  <img src={author.avatarUrl || '/default-avatar.png'} alt={author.fullName} />
+                  <p>{author.fullName}</p>
+                </div>
+              </div>
+
               <div className={styles.authorDetails}>
                 <h3 className={styles.authorName}>{author.fullName}</h3>
                 <div className={styles.timeIndicator}>

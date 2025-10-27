@@ -47,6 +47,7 @@ const Profile = () => {
   
   const currentUser = me; // sau check xem currentUser ở đây là owner hay là user khác
 
+  
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
@@ -102,7 +103,6 @@ const Profile = () => {
           isEditing ? <Outlet/> :
           <>
             <ProfileHeader 
-              user={currentUser} 
               activeTab={activeTab}
               onTabChange={setActiveTab}
             />

@@ -241,3 +241,54 @@
   color: #333;
   text-decoration: underline;
 }
+
+.authorAvatarWrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.authorAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Tooltip */
+.authorTooltip {
+  position: absolute;
+  top: 50px; /* cách avatar một chút */
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 10px;
+  text-align: center;
+  width: 160px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 999;
+}
+
+.authorTooltip img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 6px;
+}
+
+.authorTooltip p {
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.authorAvatarWrapper:hover .authorTooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(-5px);
+}

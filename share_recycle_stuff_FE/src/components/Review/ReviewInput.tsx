@@ -1,13 +1,20 @@
 import { useState } from 'react';
-import type { User } from '../../types/schema';
+import type { User, UserInfo } from '../../types/schema';
 import styles from '../Profile/PostCreation.module.css';
 import ReviewCreationModal from './ReviewCreationModal';
+import { postData } from '../../api/api';
+import type { ErrorResponse } from '../../api/api';
+import { useMessage } from '../../context/MessageProvider';
 
 interface ReviewInputProps {
-  user: User;
+  user: UserInfo;
+  reviewedUserId : number;
+  onReviewSuccess: () => void;
 }
 
-const ReviewInput = ({ user }: ReviewInputProps) => {
+const ReviewInput = ({ user, reviewedUserId, onReviewSuccess  }: ReviewInputProps) => {
+
+  const {showMessage} = useMessage();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleInputClick = () => {
@@ -18,9 +25,24 @@ const ReviewInput = ({ user }: ReviewInputProps) => {
     setIsModalOpen(false);
   };
 
-  const handleSubmit = (rating: number, comment: string) => {
+  const handleSubmit = async (rating: number, comment: string) => {
     console.log('New review:', { rating, comment });
-    // TODO: Handle review submission
+
+    const payload = {
+      reviewedUserId: reviewedUserId,
+      rating: rating,
+      comment:comment
+    }
+
+    try {
+      const res = await postData<{message : string}>('/api/reviews', payload);
+      showMessage ({type:"success", message: res.message})
+      onReviewSuccess();
+      handleModalClose();
+    } catch (error : any) {
+      const errData : ErrorResponse = error
+      showMessage({type: "error", message : errData.message, code: errData.status})
+    }
   };
 
   return (
@@ -28,13 +50,13 @@ const ReviewInput = ({ user }: ReviewInputProps) => {
       <div className={styles.postCreation} onClick={handleInputClick} style={{ cursor: 'pointer' }}>
         <div className={styles.inputSection}>
           <img
-            src={user.avatar_url}
-            alt={user.full_name}
+            src={user.avatarUrl || 'example'}
+            alt={user.fullName}
             className={styles.userAvatar}
           />
           <input
             type="text"
-            placeholder="Hãy viết gì đó cho Oanh..."
+            placeholder="Viết đánh giá ..."
             className={styles.postInput}
             readOnly
           />

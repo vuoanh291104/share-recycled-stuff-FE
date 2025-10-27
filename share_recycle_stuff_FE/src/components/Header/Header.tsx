@@ -31,18 +31,19 @@ const Header = () => {
     }
   }
 
+  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Searching for:', searchValue);
   };
 
   const handleGoToProfile = () => {
-    navigate('/profile'); // chuyển sang trang /profile
+    navigate('/profile'); 
   };
 
   return (
     <header className={styles.header}>
-      {/* 🔍 Khu vực tìm kiếm */}
       <div className={styles.searchSection}>
         <form className={styles.searchForm} onSubmit={handleSearch}>
           <div className={styles.searchInputWrapper}>
@@ -65,7 +66,6 @@ const Header = () => {
         </form>
       </div>
 
-      {/* 👤 Khu vực người dùng */}
       <div className={styles.userSection}>
         <div 
           className={styles.userInfo} 
