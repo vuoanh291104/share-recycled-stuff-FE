@@ -215,7 +215,6 @@ export interface RequestDelegationItemProps {
   imageUrls: string[];
   onRefresh?: () => void;
 }
-
 //Report Management
 export interface reporter {
   id: number,
