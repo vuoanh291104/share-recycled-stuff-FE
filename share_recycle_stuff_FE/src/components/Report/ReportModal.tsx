@@ -46,26 +46,26 @@ const ReportModal = ({reportOK, cancelReport, postID, reportTypeCode, reportedAc
     };
 
     const uploadToCloudinary = async (file : File) : Promise<string> => {
-    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-    const formData = new FormData();
+        const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+        const formData = new FormData();
 
-    formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET_POST);
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET_POST);
 
-    try {
-      const res = await axios.post(url, formData, 
-        {
-          headers: {'Content-Type': 'multipart/form-data'}
+        try {
+        const res = await axios.post(url, formData, 
+            {
+            headers: {'Content-Type': 'multipart/form-data'}
+            }
+        )
+
+        if(res.data.secure_url) return res.data.secure_url;
+        throw new Error('Upload thất bại');
+        } catch (error: any) {
+        showMessage({type:"error", message:"Up load thất bại"})
+        throw error;
         }
-      )
-
-      if(res.data.secure_url) return res.data.secure_url;
-      throw new Error('Upload thất bại');
-    } catch (error: any) {
-      showMessage({type:"error", message:"Up load thất bại"})
-      throw error;
     }
-  }
 
 
   //Hủy modal 

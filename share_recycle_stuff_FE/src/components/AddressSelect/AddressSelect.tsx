@@ -14,6 +14,8 @@ interface Ward {
     province_code: number;
 }
 const AddressSelect = () => {
+    const form = Form.useFormInstance();
+
     const [cities, setCities] = useState<Province[]>([]);
     const [wards, setWards] = useState<Ward[]>([]);
     const [selectedCity, setSelectedCity] = useState<number | null>(null);
@@ -34,6 +36,19 @@ const AddressSelect = () => {
         
         return () => controller.abort();
     }, []);
+
+    //Set giá trị sẵn có
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const cityName = form?.getFieldValue?.('city');
+            if (cityName && cities.length > 0) {
+            const found = cities.find((c) => c.name === cityName);
+            if (found) setSelectedCity(found.code);
+            }
+        }, 100); 
+        return () => clearTimeout(timer);
+    }, [cities]);
+
 
     useEffect(() => {
         const controller = new AbortController();
@@ -63,18 +78,21 @@ const AddressSelect = () => {
                 noStyle
                 rules={[{ required: true, message: 'Vui lòng chọn Tỉnh/Thành phố!' }]}
                 >
+
                 <Select
                     placeholder="Tỉnh/Thành phố"
                     style={{ width: 180 }}
-                    onChange={(value) => {
-                        const selected = cities.find(c => c.name === value);
-                        setSelectedCity(selected?.code || null); 
+                    onSelect={(value) => {
+                        const selected = cities.find((c) => c.name === value);
+                        setSelectedCity(selected?.code || null);
+                        form?.setFieldsValue?.({ ward: undefined });
                     }}
                     options={cities.map((c) => ({
                         label: c.name,
-                        value: c.name,  
+                        value: c.name,
                     }))}
                 />
+
                 </Form.Item>
 
                 <Form.Item

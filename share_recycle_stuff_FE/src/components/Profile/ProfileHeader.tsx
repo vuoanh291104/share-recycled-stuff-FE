@@ -1,19 +1,27 @@
 import { Button, Modal } from 'antd';
 import Icon from '@ant-design/icons';
 import StarIcon from '../icons/StarIcon';
-import type { User } from '../../types/schema';
+import type { ProfileInfo, User } from '../../types/schema';
 import styles from './ProfileHeader.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReportModal from '../Report/ReportModal';
+import { getData } from '../../api/api';
+import type { ErrorResponse } from '../../api/api';
+
+
+interface DataResponse {
+  code: number,
+  message: string,
+  result: ProfileInfo
+}
 
 interface ProfileHeaderProps {
-  user: User;
   activeTab: 'posts' | 'reviews';
   onTabChange: (tab: 'posts' | 'reviews') => void;
 }
 
-const ProfileHeader = ({ user, activeTab, onTabChange }: ProfileHeaderProps) => {
+const ProfileHeader = ({  activeTab, onTabChange }: ProfileHeaderProps) => {
 
   const navigate = useNavigate();
 
@@ -28,6 +36,8 @@ const ProfileHeader = ({ user, activeTab, onTabChange }: ProfileHeaderProps) => 
 
   const [modalReport, setModalReport] = useState (false);
   const [resetKey, setResetKey] = useState(0);
+
+  const [profileInfo, setProfileInfo] = useState<ProfileInfo| null> (null);
   
   const openModalReport = () => {
     setModalReport (true);
@@ -41,32 +51,47 @@ const ProfileHeader = ({ user, activeTab, onTabChange }: ProfileHeaderProps) => 
     setModalReport (false);
   }
 
+  const getProfileInfo = async () => {
+    const url = notMyProfile? `/api/profile/${Number(params.userId)}` : '/api/profile/me';
+    try {
+      const res = await getData<DataResponse> (url);
+      setProfileInfo(res.result);
+    } catch (error: any) {
+      console.error('data error');
+    }
+  }
+
+  useEffect(()=> {
+    getProfileInfo();
+  },[])
+
   return (
     <div className={styles.profileHeader}>
       <div className={styles.profileInfo}>
         <div className={styles.avatarSection}>
           <img
-            src={user.avatar_url}
-            alt={user.full_name}
+            src={profileInfo?.avatarUrl}
+            alt={profileInfo?.fullName}
             className={styles.profileAvatar}
           />
         </div>
         
         <div className={styles.userDetails}>
-          <h1 className={styles.userName}>{user.full_name}</h1>
-          <p className={styles.userBio}>{user.bio}</p>
+          <h1 className={styles.userName}>{profileInfo?.fullName}</h1>
+          <p className={styles.userBio}>{profileInfo?.bio}</p>
           <p className={styles.userBio}>
-            {user.address}, {user.ward}, {user.district}, {user.city}
+            {profileInfo?.address ? `${profileInfo.address}, ` : ''}
+            {profileInfo?.ward}, {profileInfo?.city}
           </p>
-          <p className={styles.userBio}> {user.phone}</p>
+          <p className={styles.userBio}> {profileInfo?.phoneNumber}</p>
 
           <div className={styles.ratingSection}>
-            <span className={styles.ratingText}>{user.rating_average}/5</span>
+            <span className={styles.ratingText}>{profileInfo?.ratingAverage}/5</span>
             <Icon 
               component={StarIcon} 
               className={styles.starIcon}
             />
-            <span className={styles.reviewCount}>{user.total_ratings} reviews</span>
+            <span className={styles.reviewCount}>{profileInfo?.totalRatings} reviews</span>
           </div>
         </div>
 

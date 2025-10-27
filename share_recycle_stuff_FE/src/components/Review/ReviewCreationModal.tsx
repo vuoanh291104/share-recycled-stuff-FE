@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Modal, Button } from 'antd';
-import type { User } from '../../types/schema';
+import type { User, UserInfo } from '../../types/schema';
 import { MinusIcon, PlusIcon, CloseSquareIcon } from '../icons/CountIcon';
 import styles from './ReviewCreationModal.module.css';
 
 interface ReviewCreationModalProps {
-  user: User;
+  user: UserInfo;
   open: boolean;
   onClose: () => void;
   onSubmit: (rating: number, comment: string) => void;
@@ -44,11 +44,11 @@ const ReviewCreationModal = ({ user, open, onClose, onSubmit }: ReviewCreationMo
         <div className={styles.header}>
           <div className={styles.userInfo}>
             <img
-              src={user.avatar_url}
-              alt={user.full_name}
+              src={user.avatarUrl || 'example'}
+              alt={user.fullName}
               className={styles.avatar}
             />
-            <h3 className={styles.userName}>{user.full_name}</h3>
+            <h3 className={styles.userName}>{user.fullName}</h3>
           </div>
           <button className={styles.closeButton} onClick={onClose} type="button">
             <CloseSquareIcon />

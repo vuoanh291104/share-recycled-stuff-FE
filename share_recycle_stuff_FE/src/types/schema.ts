@@ -262,3 +262,19 @@ export interface ReportItemProps {
   reportedAccount:reportedAccount,
   processedBy: processedBy
 }
+
+export interface ProfileInfo {
+  accountId: number,
+  userId: number,
+  email: string,
+  fullName: string,
+  phoneNumber: string,
+  address: string,
+  ward: string,
+  city: string,
+  idCard: string,
+  avatarUrl: string,
+  bio: string,
+  ratingAverage: number,
+  totalRatings: number,
+}

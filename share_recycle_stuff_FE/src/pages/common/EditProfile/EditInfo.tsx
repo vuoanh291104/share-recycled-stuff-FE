@@ -2,28 +2,82 @@ import { Button, Form, Input, message, Upload } from 'antd';
 
 import AddressSelect from '../../../components/AddressSelect/AddressSelect';
 import styles from './EditProfile.module.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ProfileInfo } from '../../../types/schema';
+import { getData, putData } from '../../../api/api';
+import axios from 'axios';
+import { useMessage } from '../../../context/MessageProvider';
+
+interface DataResponse {
+  code: number,
+  message: string,
+  result: ProfileInfo
+}
 
 const EditInfo = () => {
+    const {showMessage} = useMessage();
+
+    const [profileInfo, setProfileInfo] = useState<ProfileInfo | null> (null);
+
+    const getProfileInfo = async () => {
+        const url = '/api/profile/me';
+        try {
+          const res = await getData<DataResponse> (url);
+          setProfileInfo(res.result);
+        } catch (error: any) {
+          console.error('data error');
+        }
+      }
+    
+    useEffect(()=> {
+        getProfileInfo();
+    },[])
+
     const [form] = Form.useForm();
 
+    const [imageUrl, setImageUrl] = useState(profileInfo?.avatarUrl);
 
-    const [imageUrl, setImageUrl] = useState("https://i.pinimg.com/564x/dd/2d/0a/dd2d0a59ad7e79453110b2968af72d89.jpg");
+    const [uploading, setUploading] = useState(false);
+    const [updating, setUpdating] = useState(false);
 
-    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (profileInfo) {
+            setImageUrl (profileInfo.avatarUrl);
+
+            form.setFieldsValue({
+                fullName: profileInfo.fullName,
+                phoneNumber: profileInfo.phoneNumber,
+                city: profileInfo.city,
+                ward: profileInfo.ward,
+                address: profileInfo.address,
+                bio: profileInfo.bio,
+                avatarUrl: profileInfo.avatarUrl,
+            });
+        }
+    }, [profileInfo, form]);
+
+    const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const UPLOAD_PRESET_POST = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_AVATAR;
 
     const onFinish = async (values: any) => {
         console.log('Success:', values);
-        setLoading(true);
+        setUpdating(true);
         try {
-        // giả lập gọi api
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            const res = await putData('/api/profile/me', values);
+            const storedUser = JSON.parse(localStorage.getItem('userInfo') || '{}');
+            const updatedUser = {
+                ...storedUser,
+                fullName: values.fullName,
+                avatarUrl: form.getFieldValue('avatarUrl') || imageUrl, 
+            };
+            localStorage.setItem('userInfo', JSON.stringify(updatedUser));
 
-            message.success('Cập nhật thông tin thành công!');
-        } catch (error) {
-            message.error('Đã có lỗi xảy ra!');
+            showMessage({type:"success", message: "Cập nhật thành công!"})
+        } catch (error: any) {
+            showMessage({type:"error", message: "Cập nhật thất bại! Vui lòng thử lại"})
         } finally {
-            setLoading(false); //load xong thì tắt
+            setUpdating(false);
         }
     };
 
@@ -31,13 +85,45 @@ const EditInfo = () => {
         console.log('Failed:', errorInfo);
     };
 
-    const handleChange = (info: any) => {
-    if (info.file.status === 'done' || info.file.status === 'uploading') {
-      const file = info.file.originFileObj;
-      const preview = URL.createObjectURL(file);
-      setImageUrl(preview);
+    const uploadToCloudinary = async (file : File) : Promise<string> => {
+        const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+        const formData = new FormData();
+
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET_POST);
+
+        try {
+        const res = await axios.post(url, formData, 
+            {
+            headers: {'Content-Type': 'multipart/form-data'}
+            }
+        )
+
+        if(res.data.secure_url) return res.data.secure_url;
+            throw new Error('Upload thất bại');
+        } catch (error: any) {
+            showMessage({type:"error", message:"Up load thất bại"})
+            throw error;
+        }
     }
-  };
+
+    const handleChange = async (info: any) => {
+        const file = info.file.originFileObj as File;
+        if (!file) return;
+
+        try {
+            setUploading(true);
+            const url = await uploadToCloudinary(file); 
+            setImageUrl(url); 
+            form.setFieldValue('avatarUrl', url); 
+            showMessage({ type: 'success', message: 'Tải ảnh thành công! Hãy cập nhật để thông tin được lưu lại' });
+        } catch (error) {
+            showMessage({ type: 'error', message: 'Tải ảnh thất bại! Hãy thử lại' });
+        } finally {
+            setUploading(false);
+        }
+    };
+
     return (
         <div>
             <Form
@@ -58,22 +144,29 @@ const EditInfo = () => {
                         alt="avatar"
                         className={styles.img}
                     />
-                    <div>name</div>
+                    <div>{profileInfo?.fullName}</div>
                     </div>
 
                     <Upload
-                    showUploadList={false}
-                    beforeUpload={() => false} // không upload lên server
-                    onChange={handleChange}
-                    accept="image/*"
-                    >
-                    <Button >Change Photo</Button>
+                        showUploadList={false}
+                        customRequest={() => {}} 
+                        beforeUpload={async (file) => {
+                            await handleChange({ file: { originFileObj: file } });
+                            return false; 
+                        }}
+                        accept="image/*"
+                        >
+                        <Button loading={uploading}>Change Photo</Button>
                     </Upload>
                 </div>
             </Form.Item>
+            <Form.Item name="avatarUrl" hidden>
+                <Input type="hidden" />
+            </Form.Item>
+
             <Form.Item
             label="Họ và tên"
-            name="name"
+            name="fullName"
             rules={[
                 { required: true, message: 'Nhập tên của bạn!' }
             ]}
@@ -132,7 +225,7 @@ const EditInfo = () => {
                 <Button 
                     className= {styles.update}
                     htmlType="submit"
-                    loading = {loading}
+                    loading = {updating}
                 >Cập nhật </Button>
             </Form.Item>
         </Form>
