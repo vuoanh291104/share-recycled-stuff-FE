@@ -1,0 +1,17 @@
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.label {
+  font-weight: 600;
+  min-width: 150px;
+  color: #262626;
+}

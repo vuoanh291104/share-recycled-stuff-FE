@@ -1,0 +1,22 @@
+.page {
+  padding: 20px;
+  margin-left: 350px;
+}
+
+.titleText {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 50px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+}

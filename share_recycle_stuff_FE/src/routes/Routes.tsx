@@ -20,6 +20,7 @@ import SendDelegationRequest from '../pages/customer/DelegationRequest/SendDeleg
 import ViewDelegationRequest from '../pages/customer/DelegationRequest/ViewDelegationRequest'
 import DelegationRequestManagement from '../pages/proxy_seller/DelegationRequestManagement/DelegationRequestManagement'
 import ReportManagement from '../pages/admin/ReportManagement/ReportManagement'
+import AccountManagement from '../pages/admin/AccountMangement/AccountManagement'
 
 const router = createBrowserRouter([
     {
@@ -96,6 +97,12 @@ const router = createBrowserRouter([
                     {
                         path: '/admin/reports',
                         element: <ReportManagement />
+                    },
+                    {
+                        path: '/admin/accountmanagement',
+                        children: [
+                            { index: true, element: <AccountManagement /> },
+                        ],
                     }
                 ],
             },
