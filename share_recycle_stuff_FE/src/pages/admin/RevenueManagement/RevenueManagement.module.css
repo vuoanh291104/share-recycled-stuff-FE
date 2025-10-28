@@ -1,5 +1,5 @@
 .page {
-  margin-left: 400px;
+    margin-left: 400px;
     margin-top: 64px;
     display: flex;
     flex-direction: column;
@@ -11,19 +11,16 @@
 .titleText {
     font-size: 24px;
     font-weight: 600;
+    margin-bottom: 16px;
+    color: #000;
     display: flex;
     justify-content: space-between;
     margin-bottom: 42px;
 }
 
 .controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.actionButtons {
-  display: flex;
-  gap: 12px;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    gap: 12px;
 }

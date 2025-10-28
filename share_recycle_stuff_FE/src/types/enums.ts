@@ -125,3 +125,27 @@ export const UserStatusText: Record<UserStatus, string> = {
   LOCKED: "Bị khóa",
   DELETED: "Đã xóa"
 };
+
+// Payment status
+export type PaymentStatus = "NOT_DUE" | "PENDING" | "PAID" | "OVERDUE";
+
+export const PaymentStatusValues = {
+  NOT_DUE: "NOT_DUE" as const,
+  PENDING: "PENDING" as const,
+  PAID: "PAID" as const,
+  OVERDUE: "OVERDUE" as const
+} as const;
+
+export const PaymentStatusText: Record<PaymentStatus, string> = {
+  NOT_DUE: "Chưa đến hạn",
+  PENDING: "Đang chờ",
+  PAID: "Đã thanh toán",
+  OVERDUE: "Quá hạn"
+};
+
+export const PaymentStatusColor: Record<PaymentStatus, string> = {
+  NOT_DUE: "default",
+  PENDING: "warning",
+  PAID: "success",
+  OVERDUE: "error"
+};

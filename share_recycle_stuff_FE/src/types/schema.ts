@@ -278,3 +278,14 @@ export interface ProfileInfo {
   ratingAverage: number,
   totalRatings: number,
 }
+
+// Proxy Seller Revenue Management
+export interface ProxySellerRevenueResponse {
+  proxySellerId: number;
+  year: number;
+  month: number;
+  name: string;
+  totalRevenue: number;
+  discountProfitPayable: number;
+  paymentStatus: string;
+}
