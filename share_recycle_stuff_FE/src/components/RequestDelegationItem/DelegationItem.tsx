@@ -4,6 +4,7 @@ import { useState } from 'react';
 import styles from '../../pages/customer/DelegationRequest/ViewDelegationRequest.module.css';
 import type { RequestDelegationItemProps } from '../../types/schema';
 import type { ErrorResponse } from '../../api/api';
+import { patchData } from '../../api/api';
 import { formatDate, formatPrice } from '../../utils/formatters';
 
 interface DelegationItemProps {
@@ -16,7 +17,6 @@ const DelegationItem = ({ data, getAll, loading = false }: DelegationItemProps) 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<RequestDelegationItemProps | null>(null);
   const [deliveryLoading, setDeliveryLoading] = useState(false);
-  const [paymentLoading, setPaymentLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const { message } = App.useApp();
@@ -42,14 +42,15 @@ const DelegationItem = ({ data, getAll, loading = false }: DelegationItemProps) 
   };
 
   const handleDelivery = async () => {
+    if (!selectedRecord) return;
+    
     setDeliveryLoading(true);
     try {
-      // TODO: Implement API call when backend is ready
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await patchData(`/api/delegation-requests/${selectedRecord.id}/in-transit`);
 
-      message.success('Xác nhận đã giao hàng thành công!');
+      message.success('Cập nhật trạng thái "Đang giao" thành công');
       setIsModalOpen(false);
-      getAll();
+      await getAll();
     } catch (error) {
       const ErrorData = error as ErrorResponse;
       message.error(ErrorData.message || 'Có lỗi xảy ra khi xác nhận giao hàng');
@@ -58,25 +59,8 @@ const DelegationItem = ({ data, getAll, loading = false }: DelegationItemProps) 
     }
   };
 
-  const handleConfirmPayment = async () => {
-    setPaymentLoading(true);
-    try {
-      // TODO: Implement API call when backend is ready
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      message.success('Xác nhận thanh toán thành công!');
-      setIsModalOpen(false);
-      getAll();
-    } catch (error) {
-      const ErrorData = error as ErrorResponse;
-      message.error(ErrorData.message || 'Có lỗi xảy ra khi xác nhận thanh toán');
-    } finally {
-      setPaymentLoading(false);
-    }
-  };
-
+  // Check if delivery button should be enabled (status === APPROVED)
   const canDeliver = selectedRecord?.status === 'APPROVED';
-  const canConfirmPayment = selectedRecord?.status === 'SOLD';
 
   // Table columns
   const columns: TableProps<RequestDelegationItemProps>['columns'] = [
@@ -202,25 +186,12 @@ const DelegationItem = ({ data, getAll, loading = false }: DelegationItemProps) 
                 Đóng
               </Button>
               <Button 
-                type="default"
+                type="primary"
                 onClick={handleDelivery} 
                 loading={deliveryLoading}
                 disabled={!canDeliver}
-                style={{
-                  backgroundColor: canDeliver ? '#52c41a' : undefined,
-                  borderColor: canDeliver ? '#52c41a' : undefined,
-                  color: canDeliver ? '#fff' : undefined
-                }}
               >
                 Đã giao hàng
-              </Button>
-              <Button 
-                type="primary" 
-                onClick={handleConfirmPayment} 
-                loading={paymentLoading}
-                disabled={!canConfirmPayment}
-              >
-                Xác nhận thanh toán
               </Button>
             </div>
           </div>

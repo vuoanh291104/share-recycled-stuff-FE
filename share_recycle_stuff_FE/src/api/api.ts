@@ -99,6 +99,21 @@ export const putData = async <T>(
   }
 };
 
+export const patchData = async <T>(
+  url: string,
+  body?: any,
+  config?: AxiosRequestConfig
+): Promise<T> => {
+  try {
+    const response: AxiosResponse<T> = await api.patch(url, body, config);
+    return response.data;
+  } catch (error) {
+    const errData = handleAxiosError(error);
+    console.error("PATCH error:", errData.message);
+    throw errData;
+  }
+};
+
 export const deleteData = async <T>(
   url: string,
   config?: AxiosRequestConfig

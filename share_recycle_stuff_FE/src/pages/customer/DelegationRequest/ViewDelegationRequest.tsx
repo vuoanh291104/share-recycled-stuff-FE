@@ -48,7 +48,7 @@ const ViewDelegationRequest = () => {
         '/api/delegation-requests',
         { 
           page: 0, 
-          size: 50, // Giảm xuống 50 items để load nhanh hơn
+          size: 30, // Giảm xuống 30 để load nhanh hơn
           sort: 'createdAt,desc' 
         }
       );

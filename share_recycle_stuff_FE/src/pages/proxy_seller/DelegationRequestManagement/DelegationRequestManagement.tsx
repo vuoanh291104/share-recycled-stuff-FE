@@ -47,7 +47,7 @@ const DelegationRequestManagement = () => {
         '/api/delegation-requests',
         { 
           page: 0, 
-          size: 40,
+          size: 30,
           sort: 'createdAt,desc' 
         }
       );
