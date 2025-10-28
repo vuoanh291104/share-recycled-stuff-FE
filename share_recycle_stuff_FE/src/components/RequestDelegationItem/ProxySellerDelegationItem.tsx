@@ -3,7 +3,7 @@ import type { TableProps } from 'antd';
 import { useState } from 'react';
 import styles from '../../pages/proxy_seller/DelegationRequestManagement/DelegationRequestManagement.module.css';
 import type { RequestDelegationItemProps } from '../../types/schema';
-import { putData } from '../../api/api';
+import { putData, patchData } from '../../api/api';
 import type { ErrorResponse } from '../../api/api';
 import { formatDate, formatPrice } from '../../utils/formatters';
 
@@ -20,6 +20,7 @@ const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySelle
   const [selectedRecord, setSelectedRecord] = useState<RequestDelegationItemProps | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const { message } = App.useApp();
@@ -86,10 +87,40 @@ const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySelle
   };
 
   // Xử lý thay đổi trạng thái từ dropdown
-  const handleStatusSelect = (value: string, record: RequestDelegationItemProps) => {
-    // TODO: Implement API call to update status
-    message.success(`Đã chọn trạng thái: ${statusMap[value]?.label || value} cho yêu cầu #${record.id}`);
-    // Sau khi API thành công thì gọi getAll()
+  const handleStatusSelect = async (value: string, record: RequestDelegationItemProps) => {
+    setUpdatingId(record.id);
+    try {
+      let endpoint = '';
+      
+      switch (value) {
+        case 'PRODUCT_RECEIVED':
+          endpoint = `/api/delegation-requests/${record.id}/product-received`;
+          break;
+        case 'SELLING':
+          endpoint = `/api/delegation-requests/${record.id}/selling`;
+          break;
+        case 'SOLD':
+          endpoint = `/api/delegation-requests/${record.id}/sold`;
+          break;
+        case 'PAYMENT_COMPLETED':
+          endpoint = `/api/delegation-requests/${record.id}/payment-completed`;
+          break;
+        default:
+          message.warning('Trạng thái không hợp lệ');
+          setUpdatingId(null);
+          return;
+      }
+
+      await patchData(endpoint);
+      
+      message.success(`Cập nhật trạng thái "${statusMap[value]?.label}" thành công`);
+      await getAll();
+    } catch (error) {
+      const errorData = error as ErrorResponse;
+      message.error(errorData.message || 'Có lỗi xảy ra khi cập nhật trạng thái');
+    } finally {
+      setUpdatingId(null);
+    }
   };
 
   // Table columns
@@ -137,19 +168,28 @@ const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySelle
       title: 'Hành động',
       key: 'action',
       width: 130,
-      render: (_text, record) => (
-        <Select
-          options={[
-            { value: 'PRODUCT_RECEIVED', label: 'Đã nhận hàng' },
-            { value: 'SELLING', label: 'Đang bán' },
-            { value: 'SOLD', label: 'Đã bán' },
-            { value: 'PAYMENT_COMPLETED', label: 'Đã thanh toán' },
-          ]}
-          onChange={(value) => handleStatusSelect(value, record)}
-          style={{ width: '125px' }}
-          placeholder="Chọn hành động"
-        />
-      ),
+      render: (_text, record) => {
+        // Chỉ hiển thị dropdown cho các status có thể update
+        const validStatuses = ['PRODUCT_RECEIVED', 'SELLING', 'SOLD', 'PAYMENT_COMPLETED'];
+        const currentValue = validStatuses.includes(record.status) ? record.status : undefined;
+        
+        return (
+          <Select
+            value={currentValue}
+            options={[
+              { value: 'PRODUCT_RECEIVED', label: 'Đã nhận hàng' },
+              { value: 'SELLING', label: 'Đang bán' },
+              { value: 'SOLD', label: 'Đã bán' },
+              { value: 'PAYMENT_COMPLETED', label: 'Đã thanh toán' },
+            ]}
+            onChange={(value) => handleStatusSelect(value, record)}
+            style={{ width: '125px' }}
+            placeholder="Chọn hành động"
+            loading={updatingId === record.id}
+            disabled={updatingId === record.id}
+          />
+        );
+      },
     },
   ];
 
