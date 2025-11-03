@@ -1,20 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Select, DatePicker, Spin, Statistic, Button, Space } from 'antd';
+import { Card, Row, Col, Select, DatePicker, Spin, Button, Space } from 'antd';
+import type { Dayjs } from 'dayjs';
 import {
   ShoppingOutlined,
   FileTextOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SyncOutlined,
   DollarOutlined,
-  InboxOutlined,
   ShopOutlined,
   FilterOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import { 
-  AreaChart, 
-  Area,
   BarChart, 
   Bar, 
   XAxis, 
@@ -30,25 +25,49 @@ import {
 import { getData } from '../../../api/api';
 import { useMessage } from '../../../context/MessageProvider';
 import styles from './StatisticReport.module.css';
-import dayjs from 'dayjs';
+
+interface DelegationStats {
+  totalReceived: number;
+  pending: number;
+  approved: number;
+  rejected: number;
+  inTransit: number;
+  productReceived: number;
+  selling: number;
+  sold: number;
+  paymentCompleted: number;
+}
+
+interface PostStats {
+  totalPosts: number;
+  activePosts: number;
+  editRequestPosts: number;
+  deletedPosts: number;
+}
+
+interface StatisticsReportResponse {
+  delegationStats: DelegationStats;
+  postStats: PostStats;
+}
 
 const StatisticReport = () => {
   const { showMessage } = useMessage();
-  const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState(null);
-  const [filterType, setFilterType] = useState('all');
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [stats, setStats] = useState<StatisticsReportResponse | null>(null);
+  const [filterType, setFilterType] = useState<string>('all');
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-  const fetchStatistics = async (params = {}) => {
+  const fetchStatistics = async (params: Record<string, number> = {}) => {
     setLoading(true);
     try {
-      const res = await getData('/api/proxy-seller/statistics/my-report', params);
+      const res = await getData<{ result: StatisticsReportResponse }>('/api/proxy-seller/statistics/my-report', params);
       setStats(res.result);
     } catch (error) {
+      const err = error as { message?: string; status?: number };
       showMessage({ 
         type: 'error', 
-        message: error.message || 'Không thể tải thống kê', 
-        code: error.status 
+        message: err.message || 'Không thể tải thống kê', 
+        code: err.status 
       });
     } finally {
       setLoading(false);
@@ -57,14 +76,15 @@ const StatisticReport = () => {
 
   useEffect(() => {
     fetchStatistics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleFilterChange = (value) => {
+  const handleFilterChange = (value: string) => {
     setFilterType(value);
     setSelectedDate(null);
   };
 
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: Dayjs | null) => {
     setSelectedDate(date);
   };
 
@@ -74,7 +94,7 @@ const StatisticReport = () => {
       return;
     }
 
-    const params = {};
+    const params: Record<string, number> = {};
     
     if (filterType === 'day') {
       params.day = selectedDate.date();
@@ -99,17 +119,6 @@ const StatisticReport = () => {
   if (!stats && !loading) {
     return null;
   }
-
-  // Mock data for monthly trends (will be replaced when backend is ready)
-  const monthlyTrendData = [
-    { month: 'T7', delegation: 320, post: 210, sales: 180, revenue: 5200000 },
-    { month: 'T8', delegation: 450, post: 280, sales: 250, revenue: 6800000 },
-    { month: 'T9', delegation: 520, post: 310, sales: 320, revenue: 7500000 },
-    { month: 'T10', delegation: 680, post: 420, sales: 410, revenue: 9200000 },
-    { month: 'T11', delegation: 550, post: 380, sales: 350, revenue: 7800000 },
-    { month: 'T12', delegation: 620, post: 440, sales: 390, revenue: 8900000 },
-    { month: 'T1', delegation: 580, post: 400, sales: 370, revenue: 8200000 },
-  ];
 
   // Mock data for category sales (will be replaced when backend is ready)
   const categorySalesData = [
@@ -309,7 +318,7 @@ const StatisticReport = () => {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value, name) => [`${((value / totalDelegations) * 100).toFixed(1)}%`, name]} />
+                        <Tooltip formatter={(value: number, name: string) => [`${((value / totalDelegations) * 100).toFixed(1)}%`, name]} />
                         <Legend 
                           verticalAlign="middle" 
                           align="right"
@@ -358,13 +367,14 @@ const StatisticReport = () => {
                           outerRadius={100}
                           fill="#8884d8"
                           dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(0)}%`}
                         >
                           {postChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => value.toLocaleString()} />
+                        <Tooltip formatter={(value: number) => value.toLocaleString()} />
                         <Legend verticalAlign="bottom" align="center" />
                       </PieChart>
                     </ResponsiveContainer>
@@ -413,7 +423,7 @@ const StatisticReport = () => {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value, name) => [`${((value / totalSales) * 100).toFixed(1)}%`, name]} />
+                        <Tooltip formatter={(value: number, name: string) => [`${((value / totalSales) * 100).toFixed(1)}%`, name]} />
                         <Legend 
                           verticalAlign="middle" 
                           align="right"
@@ -462,13 +472,14 @@ const StatisticReport = () => {
                           outerRadius={100}
                           fill="#8884d8"
                           dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(0)}%`}
                         >
                           {revenueChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => value.toLocaleString() + ' VNĐ'} />
+                        <Tooltip formatter={(value: number) => value.toLocaleString() + ' VNĐ'} />
                         <Legend verticalAlign="bottom" align="center" />
                       </PieChart>
                     </ResponsiveContainer>
