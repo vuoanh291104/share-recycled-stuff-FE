@@ -279,6 +279,7 @@ export interface ProfileInfo {
   totalRatings: number,
 }
 
+
 // Proxy Seller Revenue Management
 export interface ProxySellerRevenueResponse {
   proxySellerId: number;
@@ -288,4 +289,17 @@ export interface ProxySellerRevenueResponse {
   totalRevenue: number;
   discountProfitPayable: number;
   paymentStatus: string;
+}
+
+export interface NotificationType {
+  id: number,
+  title: string,
+  content: string,
+  notificationType: number,
+  notificationTypeName: string,
+  deliveryMethod: number,
+  read: boolean,
+  relatedEntityType: string,
+  relatedEntityId: number,
+  createdAt: number []
 }

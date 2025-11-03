@@ -1,0 +1,90 @@
+.page {
+    margin-left: 450px;
+    margin-top: 100px;
+    width: 900px;
+    text-align: left;
+    margin-bottom: 46px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    font-size: 24px;
+}
+
+.hasRead {
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.tabs {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 12px;
+}
+
+.tab {
+  padding: 8px 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.tab:hover {
+  color: #1677ff;
+}
+
+.tab.active {
+  color: #1677ff;
+  border-bottom-color: #1677ff;
+}
+
+.container {
+   display: flex;
+   flex-direction: column;
+}
+
+.loadMore {
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    justify-content: flex-end;
+    
+}
+
+.item {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 12px 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+.item .titleContainer {
+    display: flex;
+}
+
+.item  .subtitle {
+    color: var(--color-primary);
+}
+
+.item .time {
+    opacity: 0.7;
+    font-size: 12px;
+}
+
+.read {
+    opacity: 0.5;
+}

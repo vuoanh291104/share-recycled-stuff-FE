@@ -3,20 +3,27 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Icon from '@ant-design/icons';
 import { MdNotifications, MdTextSnippet, MdCurrencyExchange, MdHandshake, MdAccountBox, MdReportGmailerrorred } from 'react-icons/md';
 import { TbArrowBigUpLines } from "react-icons/tb";
-import { Modal } from 'antd';
+import { Modal,Badge } from 'antd';
 import HomeIcon from '../icons/HomeIcon';
 import LanguageIcon from '../icons/LanguageIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import styles from "./Sidebar.module.css";
-import { postData } from '../../api/api';
-import type { ErrorResponse } from '../../api/api';
+import { getData, type ErrorResponse } from '../../api/api';
 import { useMessage } from '../../context/MessageProvider';
+import { useNotification } from '../../context/NotificationContext';
 
 interface MenuItem {
   id: string;
   label: string;
   icon: React.ComponentType<any>;
   path?: string;
+}
+
+interface NotiCount {
+  message: string,
+  result: {
+    count: number
+  }
 }
 
 const Sidebar = () => {
@@ -66,6 +73,15 @@ const Sidebar = () => {
   const commonItems: MenuItem [] = [
     { id: 'logout', label: 'Đăng xuất', icon: LogoutIcon },
   ]
+
+  const {unreadCount, refreshUnread} = useNotification();
+
+
+  useEffect(() => {
+      refreshUnread();
+
+  }, [location.pathname]);
+
 
   const roleItems : Record <string, MenuItem []> = {
     ADMIN: [
@@ -140,7 +156,13 @@ const Sidebar = () => {
                 className={`${styles.menuButton} ${activeItem === item.id ? styles.active : ''}`}
                 onClick={() => handleMenuClick(item.id)}
               >
-                <Icon component={item.icon} className={styles.menuIcon} />
+                {item.id === 'notifications' ? (
+                  <Badge count={unreadCount} size="small" offset={[4, -2]}>
+                    <Icon component={item.icon} className={styles.menuIcon} />
+                  </Badge>
+                ) : (
+                  <Icon component={item.icon} className={styles.menuIcon} />
+                )}
                 <span className={styles.menuLabel}>{item.label}</span>
               </button>
             </li>
@@ -159,6 +181,7 @@ const Sidebar = () => {
             <p>Bạn chắc chắn muốn đăng xuất không ?</p>
           </Modal>
       </>
+      
     </div>
   );
 };
