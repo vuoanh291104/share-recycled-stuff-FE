@@ -1,0 +1,135 @@
+.container {
+  padding: 24px;
+  padding-top: 80px;
+  background-color: #f0f2f5;
+  min-height: calc(100vh - 64px);
+  margin-left: 275px;
+  width: calc(100vw - 275px);
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionTitle svg {
+  font-size: 24px;
+  color: #1890ff;
+}
+
+.summaryCard {
+  height: 100%;
+  min-height: 120px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.summaryCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.summaryCardContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 88px;
+}
+
+.summaryCardLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.summaryCardTitle {
+  font-size: 14px;
+  color: #8c8c8c;
+  height: 21px;
+  line-height: 21px;
+}
+
+.summaryCardValue {
+  font-size: 28px;
+  font-weight: 600;
+  color: #262626;
+  height: 34px;
+  line-height: 34px;
+}
+
+.summaryCardIcon {
+  font-size: 48px;
+  opacity: 0.15;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .summaryCardValue {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin-left: 0;
+    width: 100vw;
+    padding: 16px;
+    padding-top: 80px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .filters {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .summaryCardValue {
+    font-size: 20px;
+  }
+}
