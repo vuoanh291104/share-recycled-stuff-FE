@@ -22,6 +22,7 @@ import DelegationRequestManagement from '../pages/proxy_seller/DelegationRequest
 import ReportManagement from '../pages/admin/ReportManagement/ReportManagement'
 import AccountManagement from '../pages/admin/AccountMangement/AccountManagement'
 import RevenueManagement from '../pages/admin/RevenueManagement/RevenueManagement'
+import StatisticReport from '../pages/proxy_seller/StatisticReport/StatisticReport'
 
 const router = createBrowserRouter([
     {
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
                         children: [
                             
                         ]
+                    },
+                    {
+                        path: '/statistic',
+                        element: <StatisticReport />
                     }
                 ],
             },

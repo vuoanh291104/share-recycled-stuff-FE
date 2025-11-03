@@ -1,0 +1,209 @@
+.container {
+  padding: 24px;
+  padding-top: 80px;
+  background-color: #f0f2f5;
+  min-height: calc(100vh - 64px);
+  margin-left: 275px;
+  width: calc(100vw - 275px);
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionTitle svg {
+  font-size: 24px;
+  color: #1890ff;
+}
+
+.summaryCard {
+  height: 100%;
+  transition: all 0.3s ease;
+  min-height: 120px;
+}
+
+.summaryCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.summaryCardContent {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 88px;
+}
+
+.summaryCardLeft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+.summaryCardTitle {
+  font-size: 14px;
+  color: #8c8c8c;
+  font-weight: 500;
+  line-height: 1.5;
+  height: 21px;
+}
+
+.summaryCardValue {
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #262626;
+  word-break: break-word;
+  max-width: 180px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 1200px) {
+  .summaryCardValue {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .summaryCardValue {
+    font-size: 28px;
+    max-width: 100%;
+  }
+}
+
+.summaryCardGrowth {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  height: 18px;
+}
+
+.summaryCardIcon {
+  font-size: 48px;
+  opacity: 0.15;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-left: 16px;
+  height: 48px;
+  width: 48px;
+  flex-shrink: 0;
+}
+
+/* Chart Styles */
+.chartContainer {
+  padding: 20px 0;
+}
+
+.chartBar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.barGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.barLabel {
+  min-width: 120px;
+  font-size: 14px;
+  color: #595959;
+  font-weight: 500;
+}
+
+.barWrapper {
+  flex: 1;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  height: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  transition: width 0.3s ease;
+  min-width: 40px;
+  position: relative;
+}
+
+.barValue {
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .filters {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters > * {
+    width: 100% !important;
+  }
+}
