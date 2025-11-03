@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Select, DatePicker, Spin, Space, Button } from 'antd';
+import type { Dayjs } from 'dayjs';
 import {
-  ShoppingOutlined,
   FileTextOutlined,
   DollarOutlined,
   ShopOutlined,
@@ -24,25 +24,37 @@ import {
 import { getData } from '../../../api/api';
 import { useMessage } from '../../../context/MessageProvider';
 import styles from './AdminStatisticReport.module.css';
-import dayjs from 'dayjs';
+
+// TypeScript interfaces
+interface PostStats {
+  totalPosts: number;
+  activePosts: number;
+  editRequestPosts: number;
+  deletedPosts: number;
+}
+
+interface StatisticsReportResponse {
+  postStats: PostStats;
+}
 
 const AdminStatisticReport = () => {
   const { showMessage } = useMessage();
-  const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState(null);
-  const [filterType, setFilterType] = useState('all');
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [stats, setStats] = useState<StatisticsReportResponse | null>(null);
+  const [filterType, setFilterType] = useState<string>('all');
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-  const fetchStatistics = async (params = {}) => {
+  const fetchStatistics = async (params: Record<string, number> = {}) => {
     setLoading(true);
     try {
-      const res = await getData('/api/admin/statistics/report', params);
+      const res = await getData<{ result: StatisticsReportResponse }>('/api/admin/statistics/report', params);
       setStats(res.result);
     } catch (error) {
+      const err = error as { message?: string; status?: number };
       showMessage({ 
         type: 'error', 
-        message: error.message || 'Không thể tải thống kê', 
-        code: error.status 
+        message: err.message || 'Không thể tải thống kê', 
+        code: err.status 
       });
     } finally {
       setLoading(false);
@@ -51,14 +63,15 @@ const AdminStatisticReport = () => {
 
   useEffect(() => {
     fetchStatistics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleFilterChange = (value) => {
+  const handleFilterChange = (value: string) => {
     setFilterType(value);
     setSelectedDate(null);
   };
 
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: Dayjs | null) => {
     setSelectedDate(date);
   };
 
@@ -68,7 +81,7 @@ const AdminStatisticReport = () => {
       return;
     }
 
-    const params = {};
+    const params: Record<string, number> = {};
     
     if (filterType === 'day') {
       params.day = selectedDate.date();
@@ -94,6 +107,10 @@ const AdminStatisticReport = () => {
     return null;
   }
 
+  if (!stats && !loading) {
+    return null;
+  }
+
   // Mock data for category sales (will be replaced when backend is ready)
   const categorySalesData = [
     { name: 'Điện tử', value: 450, color: '#1890ff' },
@@ -111,7 +128,6 @@ const AdminStatisticReport = () => {
   ] : [];
 
   // Calculate stats
-  const totalDelegations = stats ? stats.delegationStats.totalReceived : 0;
   const totalPosts = stats ? stats.postStats.totalPosts : 0;
   const totalSales = categorySalesData.reduce((sum, item) => sum + item.value, 0);
   const totalRevenue = 8900000; // Mock data
@@ -195,11 +211,11 @@ const AdminStatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Số lượng ủy thác</div>
-                      <div className={styles.summaryCardValue}>{totalDelegations.toLocaleString()}</div>
+                      <div className={styles.summaryCardTitle}>Tổng số bài đăng</div>
+                      <div className={styles.summaryCardValue}>{totalPosts.toLocaleString()}</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#1890ff' }}>
-                      <ShoppingOutlined />
+                      <FileTextOutlined />
                     </div>
                   </div>
                 </Card>
@@ -267,7 +283,8 @@ const AdminStatisticReport = () => {
                           outerRadius={100}
                           fill="#8884d8"
                           dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(0)}%`}
                         >
                           {postChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -322,7 +339,7 @@ const AdminStatisticReport = () => {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value, name) => [`${((value / totalSales) * 100).toFixed(1)}%`, name]} />
+                        <Tooltip formatter={(value: number, name: string) => [`${((value / totalSales) * 100).toFixed(1)}%`, name]} />
                         <Legend 
                           verticalAlign="middle" 
                           align="right"
