@@ -24,6 +24,8 @@ import AccountManagement from '../pages/admin/AccountMangement/AccountManagement
 import RevenueManagement from '../pages/admin/RevenueManagement/RevenueManagement'
 import StatisticReport from '../pages/proxy_seller/StatisticReport/StatisticReport'
 import AdminStatisticReport from '../pages/admin/StatisticReport/AdminStatisticReport'
+import Notification from '../pages/common/Notification/Notification'
+
 
 const router = createBrowserRouter([
     {
@@ -85,6 +87,11 @@ const router = createBrowserRouter([
                     {
                         path: '/statistic',
                         element: <StatisticReport />
+
+                    },
+                    {
+                        path:'notifications',
+                        element: <Notification />
                     }
                 ],
             },

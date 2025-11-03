@@ -2,6 +2,7 @@ import Routes from './routes/Routes'
 import './App.css'
 import { ConfigProvider, App as AntApp } from 'antd'
 import { MessageProvider } from './context/MessageProvider'
+import { NotificationProvider } from './context/NotificationContext'
 
 function App() {
   return (
@@ -13,9 +14,11 @@ function App() {
       }}
     >
       <AntApp>
-        <MessageProvider>
-          <Routes />
-        </MessageProvider>
+        <NotificationProvider>
+          <MessageProvider>
+            <Routes />
+          </MessageProvider>
+        </NotificationProvider>
       </AntApp>
     </ConfigProvider>
   )
