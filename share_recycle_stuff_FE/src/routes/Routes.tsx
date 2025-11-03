@@ -23,6 +23,7 @@ import ReportManagement from '../pages/admin/ReportManagement/ReportManagement'
 import AccountManagement from '../pages/admin/AccountMangement/AccountManagement'
 import RevenueManagement from '../pages/admin/RevenueManagement/RevenueManagement'
 import StatisticReport from '../pages/proxy_seller/StatisticReport/StatisticReport'
+import AdminStatisticReport from '../pages/admin/StatisticReport/AdminStatisticReport'
 
 const router = createBrowserRouter([
     {
@@ -111,6 +112,10 @@ const router = createBrowserRouter([
                     {
                         path: '/admin/revenues',
                         element: <RevenueManagement />
+                    },
+                    {
+                        path: '/admin/statistics',
+                        element: <AdminStatisticReport />
                     }
                 ],
             },

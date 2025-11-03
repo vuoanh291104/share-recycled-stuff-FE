@@ -73,7 +73,7 @@ const Sidebar = () => {
       { id: 'accountMana', label: 'Quản lí tài khoản', icon: () => <MdTextSnippet size={24} />, path: '/admin/accounts' },
       { id: 'postsMana', label: 'Kiểm duyệt bài đăng', icon: () => <MdTextSnippet size={24} />, path: '/admin/posts' },
       { id: 'reportsMana', label: 'Quản lí khiếu nại', icon: () => <MdReportGmailerrorred size={24} />, path: '/admin/reports' },
-      { id: 'statisticalMana', label: 'Báo cáo & thống kê', icon: () => <MdCurrencyExchange size={24} />, path: '/admin/statisticals' },
+      { id: 'statisticsMana', label: 'Báo cáo & thống kê', icon: () => <MdCurrencyExchange size={24} />, path: '/admin/statistics' },
       { id: 'revenueMana', label: 'Quản lý doanh thu', icon: () => <MdHandshake size={24} />, path: '/admin/revenues' },
       { id: 'upgradeMana', label: 'Yêu cầu nâng cấp',  icon: () => <TbArrowBigUpLines size={24} />, path: '/admin/upgradeRequests' },
       { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon, path: '/language' },
