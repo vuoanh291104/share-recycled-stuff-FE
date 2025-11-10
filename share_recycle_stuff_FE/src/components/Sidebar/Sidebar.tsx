@@ -92,7 +92,6 @@ const Sidebar = () => {
       { id: 'statisticsMana', label: 'Báo cáo & thống kê', icon: () => <MdCurrencyExchange size={24} />, path: '/admin/statistics' },
       { id: 'revenueMana', label: 'Quản lý doanh thu', icon: () => <MdHandshake size={24} />, path: '/admin/revenues' },
       { id: 'upgradeMana', label: 'Yêu cầu nâng cấp',  icon: () => <TbArrowBigUpLines size={24} />, path: '/admin/upgradeRequests' },
-      { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon, path: '/language' },
 
     ],
     CUSTOMER: [
@@ -102,8 +101,6 @@ const Sidebar = () => {
       //{ id: 'transactions', label: 'Quản lí giao dịch', icon: () => <MdCurrencyExchange size={24} />, path: '/transactions' },
       { id: 'delegation', label: 'Ủy thác', icon: () => <MdHandshake size={24} />, path: '/delegations' },
       { id: 'profile', label: 'Profile', icon: () => <MdAccountBox size={24} />, path: '/profile' },
-      { id: 'reports', label: 'Khiếu nại & Báo cáo', icon: () => <MdReportGmailerrorred size={24} />, path: '/reports' },
-      { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon, path: '/language' },
       { id: 'upgrade', label: 'Nâng cấp tài khoản',  icon: () => <TbArrowBigUpLines size={24} />, path: '/upgrade' },
     ],
 
@@ -113,9 +110,7 @@ const Sidebar = () => {
       { id: 'delegation', label: 'Quản lí ủy thác', icon: () => <MdHandshake size={24} />, path: '/managedelegations' },
       { id: 'statistic', label: 'Báo cáo & thống kê', icon: () => <MdCurrencyExchange size={24} />, path: '/statistic' },
       { id: 'profile', label: 'Profile', icon: () => <MdAccountBox size={24} />, path: '/profile' },
-      { id: 'reports', label: 'Khiếu nại & Báo cáo', icon: () => <MdReportGmailerrorred size={24} />, path: 'proxy/reports' },
       { id: 'paid', label: 'Thanh toán', icon: () => <MdCurrencyExchange size={24} />, path: 'proxy/paid' },
-      { id: 'language', label: 'Ngôn ngữ', icon: LanguageIcon, path: '/language' },
     ]
   }
 

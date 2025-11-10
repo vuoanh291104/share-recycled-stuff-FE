@@ -25,6 +25,7 @@ import RevenueManagement from '../pages/admin/RevenueManagement/RevenueManagemen
 import StatisticReport from '../pages/proxy_seller/StatisticReport/StatisticReport'
 import AdminStatisticReport from '../pages/admin/StatisticReport/AdminStatisticReport'
 import Notification from '../pages/common/Notification/Notification'
+import SearchPage from '../pages/common/SearchPage'
 
 
 const router = createBrowserRouter([
@@ -57,6 +58,11 @@ const router = createBrowserRouter([
                         <Home
                         />
                         ),
+                    },
+
+                    {
+                        path: '/search',
+                        element: <SearchPage />,
                     },
 
                     {
