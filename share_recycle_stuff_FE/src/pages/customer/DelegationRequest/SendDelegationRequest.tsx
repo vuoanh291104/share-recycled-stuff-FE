@@ -7,7 +7,7 @@ import { useMessage } from "../../../context/MessageProvider";
 import axios from "axios";
 import styles from './DelegationRequest.module.css'
 import AddressSelect from "../../../components/AddressSelect/AddressSelect";
-import { postData } from "../../../api/api";
+import { getData, postData } from "../../../api/api";
 import type { ErrorResponse } from "../../../api/api";
 import { code } from "framer-motion/client";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ const SendDelegationRequest = () => {
     const {showMessage} = useMessage();
 
     const [loading, setLoading] = useState(false);
-    const [listProxy, setListProxy] = useState([ {value : 2, label : "Nguyễn Văn A"}]);
+    const [listProxy, setListProxy] = useState<{ value: number; label: React.ReactNode }[]>([]);
     const [selectedProxy, setSelectedProxy] = useState(null);
 
     const navigate = useNavigate();
@@ -85,9 +85,52 @@ const SendDelegationRequest = () => {
         }
     }, [selectedProxy]);
 
-    useEffect(() => {   //call api lấy danh sách proxy seller
-    
-    })       
+    // api lấy danh sách proxy seller
+    useEffect(() => {
+        let fetched = false; 
+        
+        const fetchProxyList = async () => {
+            if (fetched) return; // Nếu đã fetch thì không fetch lại
+            fetched = true;
+
+            try {
+                const res = await getData<{
+                    code: number;
+                    message: string;
+                    result: {
+                        content: { accountId: number; fullName: string; avatarUrl: string }[];
+                    };
+                }>('/api/delegation-requests/proxy-sellers');
+
+
+                const options = res.result.content
+                    .filter((proxy, index, self) =>
+                        index === self.findIndex(p => p.accountId === proxy.accountId)
+                    )
+                    .map(proxy => ({
+                        value: proxy.accountId,
+                        label: (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <img
+                                    src={proxy.avatarUrl || '/default-avatar.png'}
+                                    alt={proxy.fullName}
+                                    style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }}
+                                />
+                                <span>{proxy.fullName}</span>
+                            </div>
+                        )
+                    }));
+
+
+                setListProxy(options);
+            } catch (error: any) {
+                showMessage({ type: "error", message: "Lấy danh sách proxy thất bại" });
+            }
+        };
+
+        fetchProxyList();
+    }, []);
+
 
     const onSearch = (value: any) => {
         console.log('search:', value);

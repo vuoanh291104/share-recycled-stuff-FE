@@ -10,7 +10,7 @@ import type { Post, User, UserInfo } from '../../types/schema';
 import styles from './PostCard.module.css';
 import CommentModal from '../CommentModal/CommentModal';
 import EditPostModal from '../Profile/EditPostModal';
-import { deleteData, putData } from '../../api/api';
+import { deleteData, postData, putData } from '../../api/api';
 import type { ErrorResponse } from '../../api/api';
 import { useMessage } from '../../context/MessageProvider';
 import ReportModal from '../Report/ReportModal';
@@ -36,9 +36,54 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
 
   const [resetKey, setResetKey] = useState(0);
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
+  const [likeCount, setLikeCount] = useState(post.likeCount || 0);
+
+  const likeRef = useRef<boolean>(false);
+  useEffect(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    const currentUser = userInfo ? JSON.parse(userInfo) : null;
+
+    const likedIds = post.likedUserIDs || [];
+    const liked = currentUser ? likedIds.includes(currentUser.accountId) : false;
+
+    setIsLiked(liked);
+    setLikeCount(post.likeCount || 0);
+    likeRef.current = liked; // lưu trạng thái hiện tại
+  }, [post.id, post.likedUserIDs]);
+
+
+const handleLike = (postID: number) => {
+  const newLiked = !likeRef.current;
+  likeRef.current = newLiked;
+
+  // cập nhật UI ngay
+  setIsLiked(newLiked);
+  setLikeCount((prev) => prev + (newLiked ? 1 : -1));
+
+  // gọi API và rollback nếu lỗi
+  void updateLike(postID, newLiked);
+};
+
+const updateLike = async (postID: number, newLiked: boolean) => {
+  try {
+    const res = await postData<{ code: number; message: string }>(
+      `/api/reactions/post/${postID}`,
+      {}
+    );
+
+    if (res.code !== 200) {
+      throw new Error(res.message);
+    }
+  } catch (error) {
+    console.error("Update like failed:", error);
+    // rollback UI
+    setIsLiked((prev) => !prev);
+    setLikeCount((prev) => prev + (newLiked ? -1 : 1));
+    likeRef.current = !newLiked;
+  }
+};
+
+
 
   const handleMoreMenuToggle = () => {
     setShowMoreMenu(!showMoreMenu);
@@ -230,7 +275,7 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
       <div className={styles.postActions}>
         <button 
           className={`${styles.actionButton} ${isLiked ? styles.liked : ''}`}
-          onClick={handleLike}
+          onClick={() => { void handleLike(post.id); }}
         >
           <Icon 
             component={HeartIcon} 
@@ -250,7 +295,7 @@ const PostCard = ({ post, currentUser, onActionSuccess }: PostCardProps) => {
       <div className={styles.postStats}>
         {post.likeCount !== undefined && (
           <span className={styles.statsText}>
-            {formatLikes(post.likeCount ?? 0)}
+            {formatLikes(likeCount ?? 0)}
           </span>
         )}
         <span className={styles.statsText}>

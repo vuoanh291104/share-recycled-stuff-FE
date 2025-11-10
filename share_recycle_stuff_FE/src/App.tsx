@@ -3,6 +3,7 @@ import './App.css'
 import { ConfigProvider, App as AntApp } from 'antd'
 import { MessageProvider } from './context/MessageProvider'
 import { NotificationProvider } from './context/NotificationContext'
+import { MessageChatProvider } from './context/MessageChatContext'
 
 function App() {
   return (
@@ -16,7 +17,9 @@ function App() {
       <AntApp>
         <NotificationProvider>
           <MessageProvider>
-            <Routes />
+            <MessageChatProvider>
+              <Routes />
+            </MessageChatProvider>       
           </MessageProvider>
         </NotificationProvider>
       </AntApp>

@@ -6,8 +6,12 @@ import CommentInput from '../CommentInput/CommentInput';
 import { formatCommentTime } from '../../utils/formatters';
 import type {CommentItemProps } from '../../types/schema';
 import styles from './CommentItem.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: CommentItemProps) => {
+  
+  const navigate = useNavigate();
+
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
@@ -68,6 +72,8 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
           src={comment.author.avatarUrl || 'scr/example-avatar.png'}
           alt={comment.author.fullName}
           className={`${styles.avatar} ${isReply ? styles.replyAvatar : ''}`}
+          onClick={() => navigate(isOwner ? '/profile' : `/profile/${comment.author.id}`)}
+          style={{cursor:"pointer"}}
         />
         <div className={styles.commentContent}>
           <div className={styles.authorInfo}>
