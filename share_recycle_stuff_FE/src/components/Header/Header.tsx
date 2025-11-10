@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Icon from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom'; // ⚡ dùng để chuyển trang
+import { useNavigate } from 'react-router-dom';
 import MenuIcon from '../icons/MenuIcon';
 import SearchIcon from '../icons/SearchIcon';
 import type { User } from '../../types/schema';
@@ -10,7 +10,7 @@ import styles from "./Header.module.css";
 const Header = () => {
 
   const [searchValue, setSearchValue] = useState('');
-  const navigate = useNavigate(); // dùng để điều hướng trang
+  const navigate = useNavigate();
 
   const userInfo = localStorage.getItem("userInfo");
 
@@ -35,7 +35,12 @@ const Header = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Searching for:', searchValue);
+    if (searchValue.trim()) {
+      const keyword = searchValue.trim();
+      console.log('🔍 Searching for:', keyword);
+      navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+      console.log('✅ Navigated to:', `/search?keyword=${encodeURIComponent(keyword)}`);
+    }
   };
 
   const handleGoToProfile = () => {
@@ -53,7 +58,7 @@ const Header = () => {
             />
             <input
               type="text"
-              placeholder="Hinted search text"
+              placeholder="Nhập từ khóa tìm kiếm"
               className={styles.searchInput}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -61,6 +66,7 @@ const Header = () => {
             <Icon 
               component={SearchIcon} 
               className={styles.searchIcon}
+              onClick={handleSearch}
             />
           </div>
         </form>

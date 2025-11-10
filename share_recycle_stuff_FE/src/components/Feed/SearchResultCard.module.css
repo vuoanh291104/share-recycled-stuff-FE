@@ -1,0 +1,169 @@
+.card {
+  display: flex;
+  gap: 16px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.imageContainer {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.authorInfo {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.authorInfo:hover .authorName {
+  color: #1890ff;
+}
+
+.authorAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.authorName {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  transition: color 0.2s;
+}
+
+.timestamp {
+  display: block;
+  font-size: 13px;
+  color: #8e8e8e;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.categoryBadge,
+.purposeBadge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.categoryBadge {
+  background: #e6f4ff;
+  color: #1890ff;
+}
+
+.purposeBadge {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.details {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ff4d4f;
+}
+
+.location {
+  font-size: 14px;
+  color: #666;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.stat {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .imageContainer {
+    width: 100%;
+    height: 180px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .badges {
+    align-self: flex-start;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .price {
+    font-size: 18px;
+  }
+}
