@@ -100,17 +100,14 @@ export interface PostResponse {
   purpose: string | PostPurpose;
   status: PostStatus;
   viewCount: number | null;
+  likeCount: number;
   createdAt: [number, number, number, number, number, number, number];
   updatedAt: [number, number, number, number, number, number, number];
   author: UserInfo;
   images: PostImageResponse[];
+  likedUserIDs: number [];
 }
 
-// Detailed post response from backend
-export interface PostDetailResponse extends PostResponse {
-  likeCount?: number | 0;
-  commentCount?: number | 0;
-}
 
 export interface Post {
   id: number;
@@ -128,6 +125,7 @@ export interface Post {
   currentImageIndex?: number;
   hasMoreImages?: boolean;
   likeCount?: number;
+  likedUserIDs: number [];
 }
 
 export type HomePageProps = {
@@ -302,4 +300,19 @@ export interface NotificationType {
   relatedEntityType: string,
   relatedEntityId: number,
   createdAt: number []
+}
+
+export interface ContactPerson {
+  id: number,
+  fullName: string,
+  avatarUrl: string,
+}
+
+export interface MessageChat {
+  id: number;
+  type: string;
+  sender_id: number;
+  receiver_id: number;
+  content: string;
+  created_at: string;
 }

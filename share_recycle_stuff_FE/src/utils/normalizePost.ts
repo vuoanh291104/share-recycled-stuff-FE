@@ -25,7 +25,8 @@ export const normalizePost = (p: PostResponse): Post => {
     images: p.images || [],
     currentImageIndex: 0,
     hasMoreImages: (p.images?.length || 0) > 1,
-    likeCount: 0,
+    likeCount: p.likeCount ?? 0,
+    likedUserIDs: p.likedUserIDs
   };
 };
 

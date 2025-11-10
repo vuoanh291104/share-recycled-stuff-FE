@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import ReportModal from '../Report/ReportModal';
 import { getData } from '../../api/api';
 import type { ErrorResponse } from '../../api/api';
+import ChatContainer from '../Message/ChatContainer';
 
 
 interface DataResponse {
@@ -38,6 +39,8 @@ const ProfileHeader = ({  activeTab, onTabChange }: ProfileHeaderProps) => {
   const [resetKey, setResetKey] = useState(0);
 
   const [profileInfo, setProfileInfo] = useState<ProfileInfo| null> (null);
+
+  const [isChatOpen, setIsChatOpen] = useState (false);
   
   const openModalReport = () => {
     setModalReport (true);
@@ -64,6 +67,14 @@ const ProfileHeader = ({  activeTab, onTabChange }: ProfileHeaderProps) => {
   useEffect(()=> {
     getProfileInfo();
   },[])
+
+  const openChatMessage = () => {
+    setIsChatOpen(true);
+  }
+
+  const closeChatMessage = () => {
+    setIsChatOpen (false);
+  }
 
   return (
     <div className={styles.profileHeader}>
@@ -108,15 +119,33 @@ const ProfileHeader = ({  activeTab, onTabChange }: ProfileHeaderProps) => {
           }
 
           {notMyProfile && 
-            <Button
-              className={styles.editButton}
-              type="default"
-              onClick={openModalReport}
-            >
-              Báo cáo
-            </Button>
+            <div className= {styles.btnGr}>
+              <Button
+                className={styles.editButton}
+                type="default"
+                onClick={openModalReport}
+              >
+                Báo cáo
+              </Button> 
+
+              <Button 
+                className= {styles.editButton}
+                onClick={openChatMessage}
+              >
+                Nhắn tin
+              </Button>
+            </div>
           }
         </div>
+
+        {isChatOpen && (
+          <ChatContainer 
+            onClose={closeChatMessage} 
+            defaultReceiverId={Number(params.userId)} 
+            defaultReceiverName={profileInfo?.fullName || ''} 
+          />
+        )}
+
 
         <Modal
           title="Báo cáo "

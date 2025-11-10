@@ -34,6 +34,8 @@ const Login = () => {
     try {
       const res = await postData<LoginResponse>("/api/auth/login", values);
       localStorage.setItem('accessToken', res.result.accessToken);
+      window.dispatchEvent(new Event('token-updated'));
+
       localStorage.setItem('refreshToken', res.result.refreshToken);
       localStorage.setItem('userInfo', JSON.stringify(res.result.userInfo));
 
