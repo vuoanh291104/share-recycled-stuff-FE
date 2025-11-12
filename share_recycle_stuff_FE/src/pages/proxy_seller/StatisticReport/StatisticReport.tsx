@@ -45,9 +45,16 @@ interface PostStats {
   deletedPosts: number;
 }
 
+interface SalesAndRevenueStats {
+  totalCompletedOrders: number;
+  totalRevenue: number;
+  totalProfit: number;
+}
+
 interface StatisticsReportResponse {
   delegationStats: DelegationStats;
   postStats: PostStats;
+  salesAndRevenueStats: SalesAndRevenueStats;
 }
 
 const StatisticReport = () => {
@@ -61,6 +68,8 @@ const StatisticReport = () => {
     setLoading(true);
     try {
       const res = await getData<{ result: StatisticsReportResponse }>('/api/proxy-seller/statistics/my-report', params);
+      console.log('Statistics response:', res.result);
+      console.log('Sales and Revenue Stats:', res.result?.salesAndRevenueStats);
       setStats(res.result);
     } catch (error) {
       const err = error as { message?: string; status?: number };
@@ -120,15 +129,6 @@ const StatisticReport = () => {
     return null;
   }
 
-  // Mock data for category sales (will be replaced when backend is ready)
-  const categorySalesData = [
-    { name: 'Điện tử', value: 450, color: '#1890ff' },
-    { name: 'Thời trang', value: 320, color: '#52c41a' },
-    { name: 'Đồ gia dụng', value: 280, color: '#faad14' },
-    { name: 'Sách & văn phòng', value: 150, color: '#722ed1' },
-    { name: 'Khác', value: 120, color: '#13c2c2' },
-  ];
-
   // Delegation stats chart data
   const delegationChartData = stats ? [
     { name: 'Đang chờ', value: stats.delegationStats.pending, color: '#faad14' },        // Vàng cam
@@ -151,15 +151,16 @@ const StatisticReport = () => {
   // Calculate stats
   const totalDelegations = stats ? stats.delegationStats.totalReceived : 0;
   const totalPosts = stats ? stats.postStats.totalPosts : 0;
-  const totalSales = categorySalesData.reduce((sum, item) => sum + item.value, 0);
-  const totalRevenue = 8900000; // Mock data
+  const totalSales = stats ? stats.salesAndRevenueStats.totalCompletedOrders : 0;
+  const totalRevenue = stats ? stats.salesAndRevenueStats.totalRevenue : 0;
+  const totalProfit = stats ? stats.salesAndRevenueStats.totalProfit : 0;
 
-  // Revenue chart data (Mock - sẽ thay bằng data thật khi có API)
-  const revenueChartData = [
-    { name: 'Doanh thu', value: totalRevenue, color: '#52c41a' },
-    { name: 'Chi phí', value: totalRevenue * 0.3, color: '#ff4d4f' },
-    { name: 'Lợi nhuận', value: totalRevenue * 0.7, color: '#1890ff' },
-  ];
+  // Revenue chart data (Dùng data thực từ API)
+  const revenueChartData = stats ? [
+    { name: 'Doanh thu', value: stats.salesAndRevenueStats.totalRevenue, color: '#52c41a' },
+    { name: 'Chi phí', value: stats.salesAndRevenueStats.totalRevenue - stats.salesAndRevenueStats.totalProfit, color: '#ff4d4f' },
+    { name: 'Lợi nhuận', value: stats.salesAndRevenueStats.totalProfit, color: '#1890ff' },
+  ] : [];
 
   return (
     <div className={styles.container}>
@@ -268,7 +269,7 @@ const StatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Số lượng bài đăng</div>
+                      <div className={styles.summaryCardTitle}>Số đơn đã bán</div>
                       <div className={styles.summaryCardValue}>{totalSales.toLocaleString()}</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#52c41a' }}>
@@ -283,7 +284,7 @@ const StatisticReport = () => {
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
                       <div className={styles.summaryCardTitle}>Lợi nhuận</div>
-                      <div className={styles.summaryCardValue}>{totalRevenue.toLocaleString()}</div>
+                      <div className={styles.summaryCardValue}>{totalProfit.toLocaleString()} VNĐ</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#13c2c2' }}>
                       <DollarOutlined />
@@ -398,65 +399,10 @@ const StatisticReport = () => {
               </Card>
             </div>
 
-            {/* Section 3: Thống kê lượt bán theo phân loại hàng (Mock Data) */}
+            {/* Section 3: Thống kê doanh thu và lợi nhuận */}
             <div className={styles.section}>
               <h2 className={styles.sectionTitle}>
-                Thống kê lượt bán theo phân loại hàng
-              </h2>
-              
-              <Card style={{ marginBottom: 16 }}>
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} lg={12}>
-                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>Phân bố theo danh mục</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Pie
-                          data={categorySalesData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          outerRadius={100}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {categorySalesData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip formatter={(value: number, name: string) => [`${((value / totalSales) * 100).toFixed(1)}%`, name]} />
-                        <Legend 
-                          verticalAlign="middle" 
-                          align="right"
-                          layout="vertical"
-                          wrapperStyle={{ paddingLeft: 20 }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </Col>
-                  <Col xs={24} lg={12}>
-                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>Số lượng theo danh mục</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={categorySalesData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                          {categorySalesData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Col>
-                </Row>
-              </Card>
-            </div>
-
-            {/* Section 4: Thống kê lợi nhuận (Mock Data) */}
-            <div className={styles.section}>
-              <h2 className={styles.sectionTitle}>
-                Thống kê lợi nhuận
+                Thống kê doanh thu và lợi nhuận
               </h2>
               
               <Card style={{ marginBottom: 16 }}>
