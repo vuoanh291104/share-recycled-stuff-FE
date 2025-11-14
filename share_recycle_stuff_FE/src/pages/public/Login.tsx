@@ -50,13 +50,13 @@ const Login = () => {
         switch (user.role) {
           case 'CUSTOMER':
           case 'PROXY_SELLER':
-            navigate("/"); // về trang home
+            navigate("/");
             break;
           case 'ADMIN':
-            navigate("/admin"); // về trang admin
+            navigate("/admin/accounts");
             break;
           default:
-            navigate("/"); // fallback về home nếu role lạ
+            navigate("/");
         }
       }, 1500);
     } catch (err : any) {

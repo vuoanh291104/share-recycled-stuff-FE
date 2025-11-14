@@ -85,31 +85,6 @@ const EditPostModal = ({ user, post, open, onClose, onSubmit }: EditPostModalPro
     setFileList(newFileList);
   };
 
-  // Khi nhấn nút "Cập nhật"
-  // const handleSubmit = () => {
-  //   const imageUrls = fileList
-  //     .map((file) => file.thumbUrl || file.url || (file.response && file.response.url))
-  //     .filter(Boolean) as string[];
-    
-  //     const selectedCategory = Categories.find((c) => c.id === categoryId);
-  //     const selectedPurpose = PostPurposeValues.find((p) => p.id === purposeCode);
-  //   onSubmit(post.id, {
-  //     title,
-  //     content,
-  //     price: parseFloat(price) || 0,
-  //     category: selectedCategory!, // thêm "!" nếu chắc chắn có giá trị
-  //     purpose: selectedPurpose!,
-  //     images: imageUrls.map((url, idx) => ({
-  //       id: idx + 1,
-  //       imageUrl: url,
-  //       displayOrder: idx
-  //     })),
-  //     updatedAt: new Date().toISOString(),
-  //     status: PostStatusValues.ACTIVE as PostStatus,
-  //   });
-  //   onClose();
-  // };
-
   const handleSubmit = async () => {
     if (!categoryId || !purposeCode) {
       showMessage({ type: 'error', message: 'Vui lòng chọn danh mục và mục đích!' });
@@ -117,17 +92,14 @@ const EditPostModal = ({ user, post, open, onClose, onSubmit }: EditPostModalPro
     }
 
     try {
-      // Xử lý ảnh: giữ id cũ, upload mới
       const uploadedImages = await Promise.all(
         fileList.map(async (file) => {
           if (file.url) {
-            // Ảnh cũ
             return {
               id: file.uid ? parseInt(file.uid) : undefined,
               imageUrl: file.url,
             };
           } else if (file.originFileObj) {
-            // Ảnh mới upload
             const uploadedUrl = await uploadToCloudinary(file.originFileObj as File);
             return { imageUrl: uploadedUrl };
           }

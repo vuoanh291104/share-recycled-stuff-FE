@@ -47,8 +47,6 @@ const Sidebar = () => {
     setLoading(true);
 
     try {
-      // const res = await postData <{message : string }>('/api/auth/logout', {});
-      // showMessage({type: "success" , message: res.message})
       setTimeout(() => {      
         localStorage.removeItem('userInfo');
         localStorage.removeItem('accessToken');
@@ -85,10 +83,7 @@ const Sidebar = () => {
 
   const roleItems : Record <string, MenuItem []> = {
     ADMIN: [
-      { id: 'notificationsMana', label: 'Thông báo', icon: () => <MdNotifications size={24} />, path: '/admin/notifications' },
       { id: 'accountMana', label: 'Quản lí tài khoản', icon: () => <MdTextSnippet size={24} />, path: '/admin/accounts' },
-      { id: 'postsMana', label: 'Kiểm duyệt bài đăng', icon: () => <MdTextSnippet size={24} />, path: '/admin/posts' },
-      { id: 'reportsMana', label: 'Quản lí khiếu nại', icon: () => <MdReportGmailerrorred size={24} />, path: '/admin/reports' },
       { id: 'statisticsMana', label: 'Báo cáo & thống kê', icon: () => <MdCurrencyExchange size={24} />, path: '/admin/statistics' },
       { id: 'revenueMana', label: 'Quản lý doanh thu', icon: () => <MdHandshake size={24} />, path: '/admin/revenues' },
       { id: 'upgradeMana', label: 'Yêu cầu nâng cấp',  icon: () => <TbArrowBigUpLines size={24} />, path: '/admin/upgradeRequests' },

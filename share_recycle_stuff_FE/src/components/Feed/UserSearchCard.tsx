@@ -21,7 +21,6 @@ const UserSearchCard = ({ user }: UserSearchCardProps) => {
     navigate(`/profile/${user.id}`);
   };
 
-  // Fix avatar URL - add https:// if missing
   const getAvatarUrl = (url: string | null | undefined): string | undefined => {
     if (!url) return undefined;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;

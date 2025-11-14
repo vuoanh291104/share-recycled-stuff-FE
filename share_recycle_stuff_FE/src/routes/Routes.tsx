@@ -111,6 +111,10 @@ const router = createBrowserRouter([
                 element: <AdminLayout />,
                 children: [
                     {
+                        path: '/',
+                        element: <AccountManagement />
+                    },
+                    {
                         path: '/admin/upgradeRequests',
                         children: [{ index: true, element: <RequestUpgradeManagement /> }],
                     },

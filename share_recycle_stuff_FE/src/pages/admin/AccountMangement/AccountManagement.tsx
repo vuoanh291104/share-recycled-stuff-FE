@@ -23,7 +23,6 @@ const AccountManagement = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
 
-  // Fetch all users
   const getAllUsers = async (role?: string, status?: string) => {
     setLoading(true);
     try {
@@ -69,7 +68,6 @@ const AccountManagement = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Bulk lock accounts
   const handleBulkLock = async () => {
     if (selectedUserIds.length === 0) {
       showMessage({ type: 'error', message: 'Vui lòng chọn ít nhất một tài khoản' });
@@ -82,7 +80,6 @@ const AccountManagement = () => {
       return;
     }
 
-    // Optimistic update: Cập nhật UI ngay lập tức
     const previousUserList = [...userList];
     const LOCKED_STATUS = 'LOCKED' as const;
     const updatedList = userList.map(user => 
@@ -94,31 +91,26 @@ const AccountManagement = () => {
     setSelectedUserIds([]);
     showMessage({ type: 'success', message: `Đang khóa ${selectedUserIds.length} tài khoản...` });
 
-    // Gọi API trong background
     try {
       await postData('/api/admin/accounts/bulk/lock', {
         accountIds: selectedUserIds,
         reason: reason.trim(),
         durationMinutes: null
       });
-      // API thành công, refresh để lấy data chính xác từ server
       await getAllUsers(selectedRole, selectedStatus);
     } catch (error) {
-      // API thất bại, revert lại UI
       setUserList(previousUserList);
       const errorData = error as ErrorResponse;
       showMessage({ type: 'error', message: errorData.message, code: errorData.status });
     }
   };
 
-  // Bulk unlock accounts
   const handleBulkUnlock = async () => {
     if (selectedUserIds.length === 0) {
       showMessage({ type: 'error', message: 'Vui lòng chọn ít nhất một tài khoản' });
       return;
     }
 
-    // Optimistic update: Cập nhật UI ngay lập tức
     const previousUserList = [...userList];
     const ACTIVE_STATUS = 'ACTIVE' as const;
     const updatedList = userList.map(user => 
@@ -130,15 +122,12 @@ const AccountManagement = () => {
     setSelectedUserIds([]);
     showMessage({ type: 'success', message: `Đang mở khóa ${selectedUserIds.length} tài khoản...` });
 
-    // Gọi API trong background
     try {
       await postData('/api/admin/accounts/bulk/unlock', {
         accountIds: selectedUserIds
       });
-      // API thành công, refresh để lấy data chính xác từ server
       await getAllUsers(selectedRole, selectedStatus);
     } catch (error) {
-      // API thất bại, revert lại UI
       setUserList(previousUserList);
       const errorData = error as ErrorResponse;
       showMessage({ type: 'error', message: errorData.message, code: errorData.status });

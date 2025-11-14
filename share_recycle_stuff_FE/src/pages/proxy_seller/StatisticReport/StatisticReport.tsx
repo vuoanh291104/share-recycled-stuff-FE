@@ -47,8 +47,8 @@ interface PostStats {
 
 interface SalesAndRevenueStats {
   totalCompletedOrders: number;
-  totalRevenue: number;
-  totalProfit: number;
+  totalSalesAmount: number;
+  totalProxyCommission: number;
 }
 
 interface StatisticsReportResponse {
@@ -129,19 +129,17 @@ const StatisticReport = () => {
     return null;
   }
 
-  // Delegation stats chart data
   const delegationChartData = stats ? [
-    { name: 'Đang chờ', value: stats.delegationStats.pending, color: '#faad14' },        // Vàng cam
-    { name: 'Đã chấp nhận', value: stats.delegationStats.approved, color: '#52c41a' },    // Xanh lá
-    { name: 'Đã từ chối', value: stats.delegationStats.rejected, color: '#ff4d4f' },      // Đỏ
-    { name: 'Đang giao', value: stats.delegationStats.inTransit, color: '#1890ff' },      // Xanh dương
-    { name: 'Đã nhận hàng', value: stats.delegationStats.productReceived, color: '#13c2c2' }, // Xanh cyan
-    { name: 'Đang bán', value: stats.delegationStats.selling, color: '#722ed1' },         // Tím
-    { name: 'Đã bán', value: stats.delegationStats.sold, color: '#fa8c16' },              // Cam
-    { name: 'Đã thanh toán', value: stats.delegationStats.paymentCompleted, color: '#389e0d' }, // Xanh lá đậm
+    { name: 'Đang chờ', value: stats.delegationStats.pending, color: '#faad14' },
+    { name: 'Đã chấp nhận', value: stats.delegationStats.approved, color: '#52c41a' },
+    { name: 'Đã từ chối', value: stats.delegationStats.rejected, color: '#ff4d4f' },
+    { name: 'Đang giao', value: stats.delegationStats.inTransit, color: '#1890ff' },
+    { name: 'Đã nhận hàng', value: stats.delegationStats.productReceived, color: '#13c2c2' },
+    { name: 'Đang bán', value: stats.delegationStats.selling, color: '#722ed1' },
+    { name: 'Đã bán', value: stats.delegationStats.sold, color: '#fa8c16' },
+    { name: 'Đã thanh toán', value: stats.delegationStats.paymentCompleted, color: '#389e0d' },
   ] : [];
 
-  // Post stats chart data
   const postChartData = stats ? [
     { name: 'Đang hoạt động', value: stats.postStats.activePosts, color: '#52c41a' },
     { name: 'Yêu cầu chỉnh sửa', value: stats.postStats.editRequestPosts, color: '#faad14' },
@@ -152,14 +150,19 @@ const StatisticReport = () => {
   const totalDelegations = stats ? stats.delegationStats.totalReceived : 0;
   const totalPosts = stats ? stats.postStats.totalPosts : 0;
   const totalSales = stats ? stats.salesAndRevenueStats.totalCompletedOrders : 0;
-  const totalRevenue = stats ? stats.salesAndRevenueStats.totalRevenue : 0;
-  const totalProfit = stats ? stats.salesAndRevenueStats.totalProfit : 0;
+  const totalRevenue = stats ? stats.salesAndRevenueStats.totalSalesAmount : 0;
+  const totalProfit = stats ? stats.salesAndRevenueStats.totalProxyCommission : 0;
+  const totalCost = totalRevenue - totalProfit;
 
-  // Revenue chart data (Dùng data thực từ API)
   const revenueChartData = stats ? [
-    { name: 'Doanh thu', value: stats.salesAndRevenueStats.totalRevenue, color: '#52c41a' },
-    { name: 'Chi phí', value: stats.salesAndRevenueStats.totalRevenue - stats.salesAndRevenueStats.totalProfit, color: '#ff4d4f' },
-    { name: 'Lợi nhuận', value: stats.salesAndRevenueStats.totalProfit, color: '#1890ff' },
+    { name: 'Hoa hồng', value: stats.salesAndRevenueStats.totalProxyCommission, color: '#52c41a' },
+    { name: 'Chi phí', value: stats.salesAndRevenueStats.totalSalesAmount - stats.salesAndRevenueStats.totalProxyCommission, color: '#ff4d4f' },
+  ] : [];
+
+  const barChartData = stats ? [
+    { name: 'Doanh thu', value: stats.salesAndRevenueStats.totalSalesAmount, color: '#1890ff' },
+    { name: 'Hoa hồng', value: stats.salesAndRevenueStats.totalProxyCommission, color: '#52c41a' },
+    { name: 'Chi phí', value: stats.salesAndRevenueStats.totalSalesAmount - stats.salesAndRevenueStats.totalProxyCommission, color: '#ff4d4f' },
   ] : [];
 
   return (
@@ -283,7 +286,7 @@ const StatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Lợi nhuận</div>
+                      <div className={styles.summaryCardTitle}>Hoa hồng nhận được</div>
                       <div className={styles.summaryCardValue}>{totalProfit.toLocaleString()} VNĐ</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#13c2c2' }}>
@@ -406,8 +409,9 @@ const StatisticReport = () => {
               </h2>
               
               <Card style={{ marginBottom: 16 }}>
-                <Row gutter={16}>
+                <Row gutter={[16, 16]}>
                   <Col xs={24} lg={12}>
+                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>Phân bổ doanh thu</h3>
                     <ResponsiveContainer width="100%" height={300}>
                       <PieChart>
                         <Pie
@@ -419,7 +423,7 @@ const StatisticReport = () => {
                           fill="#8884d8"
                           dataKey="value"
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(1)}%`}
                         >
                           {revenueChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -431,14 +435,15 @@ const StatisticReport = () => {
                     </ResponsiveContainer>
                   </Col>
                   <Col xs={24} lg={12}>
+                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>So sánh số tiền</h3>
                     <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={revenueChartData}>
+                      <BarChart data={barChartData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis dataKey="name" stroke="#999" />
                         <YAxis stroke="#999" />
                         <Tooltip formatter={(value) => value.toLocaleString() + ' VNĐ'} />
                         <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                          {revenueChartData.map((entry, index) => (
+                          {barChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Bar>
