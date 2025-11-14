@@ -33,14 +33,40 @@ interface PostStats {
   deletedPosts: number;
 }
 
+interface DelegationStats {
+  totalReceived: number;
+  pending: number;
+  approved: number;
+  rejected: number;
+  inTransit: number;
+  productReceived: number;
+  selling: number;
+  sold: number;
+  paymentCompleted: number;
+}
+
+interface SalesAndRevenueStats {
+  totalCompletedOrders: number;
+  totalSalesAmount: number;
+  totalProxyCommission: number;
+}
+
+interface MonthlyData {
+  month: string;
+  count: number;
+}
+
 interface StatisticsReportResponse {
   postStats: PostStats;
+  delegationStats: DelegationStats;
+  salesAndRevenueStats: SalesAndRevenueStats;
 }
 
 const AdminStatisticReport = () => {
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<StatisticsReportResponse | null>(null);
+  const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   const [filterType, setFilterType] = useState<string>('all');
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
@@ -61,8 +87,44 @@ const AdminStatisticReport = () => {
     }
   };
 
+  const fetchMonthlyData = async (endDate?: Date) => {
+    try {
+      const now = endDate || new Date();
+      
+      // Tạo array các promises để gọi song song
+      const promises = [];
+      for (let i = 5; i >= 0; i--) {
+        const targetDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const month = targetDate.getMonth() + 1;
+        const year = targetDate.getFullYear();
+        
+        promises.push(
+          getData<{ result: StatisticsReportResponse }>('/api/admin/statistics/report', {
+            month,
+            year
+          }).then(res => ({
+            month: `${month}/${year}`,
+            count: res.result.postStats.totalPosts
+          }))
+        );
+      }
+      
+      // Gọi tất cả API cùng lúc
+      const results = await Promise.all(promises);
+      setMonthlyData(results);
+    } catch (error) {
+      const err = error as { message?: string; status?: number };
+      showMessage({ 
+        type: 'error', 
+        message: err.message || 'Không thể tải dữ liệu theo tháng', 
+        code: err.status 
+      });
+    }
+  };
+
   useEffect(() => {
     fetchStatistics();
+    fetchMonthlyData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -78,6 +140,7 @@ const AdminStatisticReport = () => {
   const handleApplyFilter = () => {
     if (filterType === 'all' || !selectedDate) {
       fetchStatistics();
+      fetchMonthlyData(); // Fetch 6 tháng mới nhất
       return;
     }
 
@@ -90,6 +153,8 @@ const AdminStatisticReport = () => {
     } else if (filterType === 'month') {
       params.month = selectedDate.month() + 1;
       params.year = selectedDate.year();
+      // Fetch 6 tháng trước tháng được chọn
+      fetchMonthlyData(selectedDate.toDate());
     } else if (filterType === 'year') {
       params.year = selectedDate.year();
     }
@@ -101,36 +166,43 @@ const AdminStatisticReport = () => {
     setFilterType('all');
     setSelectedDate(null);
     fetchStatistics();
+    fetchMonthlyData(); // Reset về 6 tháng mới nhất
   };
 
-  if (!stats && !loading) {
-    return null;
-  }
-
-  if (!stats && !loading) {
-    return null;
-  }
-
-  // Mock data for category sales (will be replaced when backend is ready)
-  const categorySalesData = [
-    { name: 'Điện tử', value: 450, color: '#1890ff' },
-    { name: 'Thời trang', value: 320, color: '#52c41a' },
-    { name: 'Đồ gia dụng', value: 280, color: '#faad14' },
-    { name: 'Sách & văn phòng', value: 150, color: '#722ed1' },
-    { name: 'Khác', value: 120, color: '#13c2c2' },
-  ];
-
-  // Post stats chart data
   const postChartData = stats ? [
     { name: 'Đang hoạt động', value: stats.postStats.activePosts, color: '#52c41a' },
     { name: 'Yêu cầu chỉnh sửa', value: stats.postStats.editRequestPosts, color: '#faad14' },
     { name: 'Đã xóa', value: stats.postStats.deletedPosts, color: '#ff4d4f' },
   ] : [];
 
-  // Calculate stats
-  const totalPosts = stats ? stats.postStats.totalPosts : 0;
-  const totalSales = categorySalesData.reduce((sum, item) => sum + item.value, 0);
-  const totalRevenue = 8900000; // Mock data
+  const delegationChartData = stats ? [
+    { name: 'Đang chờ', value: stats.delegationStats.pending, color: '#faad14' },
+    { name: 'Đã chấp nhận', value: stats.delegationStats.approved, color: '#52c41a' },
+    { name: 'Đã từ chối', value: stats.delegationStats.rejected, color: '#ff4d4f' },
+    { name: 'Đang giao', value: stats.delegationStats.inTransit, color: '#1890ff' },
+    { name: 'Đã nhận hàng', value: stats.delegationStats.productReceived, color: '#13c2c2' },
+    { name: 'Đang bán', value: stats.delegationStats.selling, color: '#722ed1' },
+    { name: 'Đã bán', value: stats.delegationStats.sold, color: '#fa8c16' },
+    { name: 'Đã thanh toán', value: stats.delegationStats.paymentCompleted, color: '#389e0d' },
+  ] : [];
+
+  const totalPosts = stats?.postStats?.totalPosts ?? 0;
+  const totalCompletedOrders = stats?.salesAndRevenueStats?.totalCompletedOrders ?? 0;
+  const totalRevenue = stats?.salesAndRevenueStats?.totalSalesAmount ?? 0;
+  const totalProfit = stats?.salesAndRevenueStats?.totalProxyCommission ?? 0;
+  const totalDelegations = stats?.delegationStats?.totalReceived ?? 0;
+  const totalCost = totalRevenue - totalProfit;
+
+  const revenueChartData = stats ? [
+    { name: 'Lợi nhuận', value: stats.salesAndRevenueStats.totalProxyCommission, color: '#52c41a' },
+    { name: 'Chi phí', value: stats.salesAndRevenueStats.totalSalesAmount - stats.salesAndRevenueStats.totalProxyCommission, color: '#ff4d4f' },
+  ] : [];
+
+  const barChartData = stats ? [
+    { name: 'Doanh thu', value: stats.salesAndRevenueStats.totalSalesAmount, color: '#1890ff' },
+    { name: 'Lợi nhuận', value: stats.salesAndRevenueStats.totalProxyCommission, color: '#52c41a' },
+    { name: 'Chi phí', value: stats.salesAndRevenueStats.totalSalesAmount - stats.salesAndRevenueStats.totalProxyCommission, color: '#ff4d4f' },
+  ] : [];
 
   return (
     <div className={styles.container}>
@@ -211,8 +283,8 @@ const AdminStatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Tổng số bài đăng</div>
-                      <div className={styles.summaryCardValue}>{totalPosts.toLocaleString()}</div>
+                      <div className={styles.summaryCardTitle}>Tổng số ủy thác</div>
+                      <div className={styles.summaryCardValue}>{totalDelegations.toLocaleString()}</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#1890ff' }}>
                       <FileTextOutlined />
@@ -225,7 +297,7 @@ const AdminStatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Lượng bài trong tháng</div>
+                      <div className={styles.summaryCardTitle}>Tổng số bài đăng</div>
                       <div className={styles.summaryCardValue}>{totalPosts.toLocaleString()}</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#faad14' }}>
@@ -239,8 +311,8 @@ const AdminStatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Số lượng bài đăng</div>
-                      <div className={styles.summaryCardValue}>{totalSales.toLocaleString()}</div>
+                      <div className={styles.summaryCardTitle}>Lượt bán thành công</div>
+                      <div className={styles.summaryCardValue}>{totalCompletedOrders.toLocaleString()}</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#52c41a' }}>
                       <ShopOutlined />
@@ -253,8 +325,8 @@ const AdminStatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Lợi nhuận</div>
-                      <div className={styles.summaryCardValue}>{totalRevenue.toLocaleString()}</div>
+                      <div className={styles.summaryCardTitle}>Phí chiết khấu</div>
+                      <div className={styles.summaryCardValue}>{totalProfit.toLocaleString()}</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#13c2c2' }}>
                       <DollarOutlined />
@@ -314,20 +386,20 @@ const AdminStatisticReport = () => {
               </Card>
             </div>
 
-            {/* Section 3: Thống kê lượt bán theo phân loại hàng (Mock Data) */}
+            {/* Section 3: Thống kê yêu cầu ủy thác */}
             <div className={styles.section}>
               <h2 className={styles.sectionTitle}>
-                Thống kê lượt bán theo phân loại hàng
+                Thống kê yêu cầu ủy thác
               </h2>
               
               <Card style={{ marginBottom: 16 }}>
                 <Row gutter={[16, 16]}>
                   <Col xs={24} lg={12}>
-                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>Phân bố theo danh mục</h3>
+                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>Phân bố trạng thái ủy thác</h3>
                     <ResponsiveContainer width="100%" height={300}>
                       <PieChart>
                         <Pie
-                          data={categorySalesData}
+                          data={delegationChartData}
                           cx="50%"
                           cy="50%"
                           labelLine={false}
@@ -335,11 +407,11 @@ const AdminStatisticReport = () => {
                           fill="#8884d8"
                           dataKey="value"
                         >
-                          {categorySalesData.map((entry, index) => (
+                          {delegationChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value: number, name: string) => [`${((value / totalSales) * 100).toFixed(1)}%`, name]} />
+                        <Tooltip formatter={(value: number) => value.toLocaleString()} />
                         <Legend 
                           verticalAlign="middle" 
                           align="right"
@@ -350,15 +422,15 @@ const AdminStatisticReport = () => {
                     </ResponsiveContainer>
                   </Col>
                   <Col xs={24} lg={12}>
-                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>Số lượng theo danh mục</h3>
+                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>Số lượng theo trạng thái</h3>
                     <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={categorySalesData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
+                      <BarChart data={delegationChartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="name" stroke="#999" />
+                        <YAxis stroke="#999" />
+                        <Tooltip formatter={(value) => value.toLocaleString()} />
                         <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                          {categorySalesData.map((entry, index) => (
+                          {delegationChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Bar>
@@ -369,38 +441,101 @@ const AdminStatisticReport = () => {
               </Card>
             </div>
 
-            {/* Section 5: Thống kê phí chiết khấu thu được từ trung gian (Mock) */}
+            {/* Section 4: Thống kê doanh thu và lợi nhuận */}
             <div className={styles.section}>
               <h2 className={styles.sectionTitle}>
-                Thống kê phí chiết khấu thu được từ trung gian
+                Thống kê doanh thu và lợi nhuận
               </h2>
               
-              <Card>
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <DollarOutlined style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }} />
-                  <h3 style={{ fontSize: 32, fontWeight: 600, color: '#52c41a', margin: 0 }}>
-                    {totalRevenue.toLocaleString()} VNĐ
-                  </h3>
-                  <p style={{ color: '#8c8c8c', marginTop: 8 }}>Tổng phí chiết khấu thu được</p>
-                </div>
+              <Card style={{ marginBottom: 16 }}>
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} lg={12}>
+                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>Phân bổ doanh thu</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={revenueChartData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(1)}%`}
+                        >
+                          {revenueChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value: number) => value.toLocaleString() + ' VNĐ'} />
+                        <Legend verticalAlign="bottom" align="center" />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Col>
+                  <Col xs={24} lg={12}>
+                    <h3 style={{ marginBottom: 20, fontSize: 16, fontWeight: 600, textAlign: 'center' }}>So sánh số tiền</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={barChartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="name" stroke="#999" />
+                        <YAxis stroke="#999" />
+                        <Tooltip formatter={(value) => value.toLocaleString() + ' VNĐ'} />
+                        <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                          {barChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Col>
+                </Row>
               </Card>
             </div>
 
-            {/* Section 6: Phân tích tỷ lệ tăng giảm bài đăng so với kỳ trước (Mock) */}
+            {/* Section 5: Phân tích tỷ lệ tăng giảm bài đăng so với kỳ trước */}
             <div className={styles.section}>
               <h2 className={styles.sectionTitle}>
-                Phân tích tỷ lệ tăng giảm bài đăng so với kỳ trước (tháng, năm)
+                Phân tích số lượng bài đăng theo tháng (6 tháng gần nhất)
               </h2>
               
               <Card>
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <p style={{ fontSize: 16, color: '#8c8c8c', marginBottom: 16 }}>
-                    Chức năng đang được phát triển
-                  </p>
-                  <p style={{ fontSize: 14, color: '#d9d9d9' }}>
-                    Sẽ hiển thị biểu đồ so sánh tăng giảm theo thời gian
-                  </p>
-                </div>
+                {monthlyData.length > 0 ? (
+                  <div>
+                    <ResponsiveContainer width="100%" height={350}>
+                      <BarChart data={monthlyData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis 
+                          dataKey="month" 
+                          stroke="#999"
+                          angle={-45}
+                          textAnchor="end"
+                          height={80}
+                        />
+                        <YAxis stroke="#999" />
+                        <Tooltip 
+                          formatter={(value) => [`${value} bài đăng`, 'Số lượng']}
+                          labelFormatter={(label) => `Tháng ${label}`}
+                        />
+                        <Legend />
+                        <Bar 
+                          dataKey="count" 
+                          name="Số lượng bài đăng"
+                          fill="#1890ff" 
+                          radius={[8, 8, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                    <h3 style={{ fontSize: 16, fontWeight: 600, marginTop: 20, textAlign: 'center' }}>
+                      Biểu đồ xu hướng 6 tháng gần nhất
+                    </h3>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                    <Spin size="large" />
+                    <p style={{ fontSize: 14, color: '#999', marginTop: 16 }}>Đang tải dữ liệu so sánh...</p>
+                  </div>
+                )}
               </Card>
             </div>
           </>

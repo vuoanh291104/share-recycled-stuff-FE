@@ -41,7 +41,7 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
                     <Button type="primary" onClick={() => {
                         switch (user.role) {
                         case "ADMIN":
-                            navigate("/admin");  //fix sau
+                            navigate("/admin/accounts");
                             break;
                         case "CUSTOMER":
                         case "PROXY_SELLER":

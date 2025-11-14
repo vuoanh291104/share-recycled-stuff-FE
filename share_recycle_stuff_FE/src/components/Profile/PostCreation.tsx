@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { UserInfo } from '../../types/schema';
 import type { PostPurpose } from '../../types/enums';
 import styles from './PostCreation.module.css';
-import CreationPostModal from './CreationPostModal'; // Modal tạo bài viết
+import CreationPostModal from './CreationPostModal';
 
 interface PostCreationProps {
   user: UserInfo;

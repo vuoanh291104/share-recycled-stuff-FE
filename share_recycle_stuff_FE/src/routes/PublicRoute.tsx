@@ -15,7 +15,7 @@ const PublicRoute = () => {
         case "PROXY_SELLER":
             return <Navigate to="/" replace />;
         case "ADMIN":
-            return <Navigate to="/admin" replace />;  //fix sau
+            return <Navigate to="/admin/accounts" replace />;
         default:
             return <Navigate to="/" replace />;
     }
