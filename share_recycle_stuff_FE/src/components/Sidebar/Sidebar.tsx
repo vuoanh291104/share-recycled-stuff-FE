@@ -101,11 +101,11 @@ const Sidebar = () => {
 
     PROXY_SELLER: [
       { id: 'home', label: 'Trang chủ', icon: HomeIcon, path: '/' },
+      { id: 'profile', label: 'Profile', icon: () => <MdAccountBox size={24} />, path: '/profile' },
       { id: 'notifications', label: 'Thông báo', icon: () => <MdNotifications size={24} />, path: '/notifications' },
       { id: 'delegation', label: 'Quản lí ủy thác', icon: () => <MdHandshake size={24} />, path: '/managedelegations' },
       { id: 'statistic', label: 'Báo cáo & thống kê', icon: () => <MdCurrencyExchange size={24} />, path: '/statistic' },
-      { id: 'profile', label: 'Profile', icon: () => <MdAccountBox size={24} />, path: '/profile' },
-      { id: 'paid', label: 'Thanh toán', icon: () => <MdCurrencyExchange size={24} />, path: 'proxy/paid' },
+      { id: 'payment', label: 'Thanh toán', icon: () => <MdCurrencyExchange size={24} />, path: '/payment' },
     ]
   }
 

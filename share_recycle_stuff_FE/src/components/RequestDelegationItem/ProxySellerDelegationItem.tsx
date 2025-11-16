@@ -22,6 +22,9 @@ const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySelle
   const [actionLoading, setActionLoading] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSoldPriceModalOpen, setIsSoldPriceModalOpen] = useState(false);
+  const [soldPrice, setSoldPrice] = useState('');
+  const [soldRecord, setSoldRecord] = useState<RequestDelegationItemProps | null>(null);
   const pageSize = 10;
   const { message } = App.useApp();
 
@@ -88,6 +91,13 @@ const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySelle
 
   // Xử lý thay đổi trạng thái từ dropdown
   const handleStatusSelect = async (value: string, record: RequestDelegationItemProps) => {
+    // Nếu chọn SOLD, hiển thị modal nhập giá bán
+    if (value === 'SOLD') {
+      setSoldRecord(record);
+      setIsSoldPriceModalOpen(true);
+      return;
+    }
+
     setUpdatingId(record.id);
     try {
       let endpoint = '';
@@ -98,9 +108,6 @@ const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySelle
           break;
         case 'SELLING':
           endpoint = `/api/delegation-requests/${record.id}/selling`;
-          break;
-        case 'SOLD':
-          endpoint = `/api/delegation-requests/${record.id}/sold`;
           break;
         case 'PAYMENT_COMPLETED':
           endpoint = `/api/delegation-requests/${record.id}/payment-completed`;
@@ -120,6 +127,35 @@ const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySelle
       message.error(errorData.message || 'Có lỗi xảy ra khi cập nhật trạng thái');
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  // Xử lý xác nhận đã bán với giá bán
+  const handleConfirmSold = async () => {
+    if (!soldRecord) return;
+    
+    const price = parseFloat(soldPrice);
+    if (!soldPrice || isNaN(price) || price <= 0) {
+      message.warning('Vui lòng nhập giá bán hợp lệ');
+      return;
+    }
+
+    setActionLoading(true);
+    try {
+      await patchData(`/api/delegation-requests/${soldRecord.id}/sold`, {
+        soldPrice: price
+      });
+      
+      message.success('Cập nhật trạng thái "Đã bán" thành công');
+      setIsSoldPriceModalOpen(false);
+      setSoldPrice('');
+      setSoldRecord(null);
+      await getAll();
+    } catch (error) {
+      const errorData = error as ErrorResponse;
+      message.error(errorData.message || 'Có lỗi xảy ra khi cập nhật trạng thái');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -301,6 +337,47 @@ const ProxySellerDelegationItem = ({ data, getAll, loading = false }: ProxySelle
             )}
           </div>
         )}
+      </Modal>
+
+      {/* Sold Price Modal */}
+      <Modal
+        title="Nhập giá đã bán"
+        open={isSoldPriceModalOpen}
+        onCancel={() => {
+          setIsSoldPriceModalOpen(false);
+          setSoldPrice('');
+          setSoldRecord(null);
+        }}
+        footer={[
+          <Button 
+            key="cancel" 
+            onClick={() => {
+              setIsSoldPriceModalOpen(false);
+              setSoldPrice('');
+              setSoldRecord(null);
+            }}
+          >
+            Hủy
+          </Button>,
+          <Button 
+            key="submit" 
+            type="primary" 
+            onClick={handleConfirmSold}
+            loading={actionLoading}
+          >
+            Xác nhận
+          </Button>
+        ]}
+      >
+        <Input
+          type="number"
+          placeholder="Nhập giá bán thực tế"
+          value={soldPrice}
+          onChange={(e) => setSoldPrice(e.target.value)}
+          style={{ marginTop: 16 }}
+          min={0}
+          addonAfter="VNĐ"
+        />
       </Modal>
     </>
   );
