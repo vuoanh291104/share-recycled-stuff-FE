@@ -258,7 +258,7 @@ const StatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Lượng bài trong tháng</div>
+                      <div className={styles.summaryCardTitle}>Số lượng bài đăng</div>
                       <div className={styles.summaryCardValue}>{totalPosts.toLocaleString()}</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#faad14' }}>
@@ -286,7 +286,7 @@ const StatisticReport = () => {
                 <Card className={styles.summaryCard}>
                   <div className={styles.summaryCardContent}>
                     <div className={styles.summaryCardLeft}>
-                      <div className={styles.summaryCardTitle}>Hoa hồng nhận được</div>
+                      <div className={styles.summaryCardTitle}>Hoa hồng</div>
                       <div className={styles.summaryCardValue}>{totalProfit.toLocaleString()} VNĐ</div>
                     </div>
                     <div className={styles.summaryCardIcon} style={{ color: '#13c2c2' }}>

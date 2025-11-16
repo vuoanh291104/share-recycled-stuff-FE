@@ -63,41 +63,51 @@
 
 .summaryCardContent {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
+  height: 100%;
   min-height: 88px;
 }
 
 .summaryCardLeft {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  justify-content: flex-start;
+  gap: 2px;
+  text-align: left;
 }
 
 .summaryCardTitle {
   font-size: 14px;
   color: #8c8c8c;
+  font-weight: 500;
+  line-height: 1.5;
   height: 21px;
-  line-height: 21px;
 }
 
 .summaryCardValue {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
   color: #262626;
+  word-break: break-word;
+  max-width: 180px;
   height: 34px;
-  line-height: 34px;
+  display: flex;
+  align-items: center;
 }
 
 .summaryCardIcon {
   font-size: 48px;
   opacity: 0.15;
-  width: 48px;
-  height: 48px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  margin-left: 16px;
+  height: 48px;
+  width: 48px;
+  flex-shrink: 0;
 }
 
 /* Responsive design */
