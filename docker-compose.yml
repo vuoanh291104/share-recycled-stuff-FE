@@ -1,0 +1,11 @@
+services:
+  fe:
+    build:
+      context: ./share_recycle_stuff_FE   
+    container_name: fe-container
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./share_recycle_stuff_FE:/app
+      - /app/node_modules
+    command: npm run dev -- --host
