@@ -209,7 +209,7 @@ const CreationPostModal = ({ user, open, onClose, onSubmit }: CreationPostModalP
           onClick={handleSubmit}
           size="large"
         >
-          Post
+          Đăng
         </Button>
       </div>
     </Modal>

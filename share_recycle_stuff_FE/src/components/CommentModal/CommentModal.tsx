@@ -253,15 +253,15 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
         {/* Right side - Comments */}
         <div className={styles.commentsSection}>
           <div className={styles.commentsHeader}>
-            <h3 className={styles.commentsTitle}>Comments</h3>
+            <h3 className={styles.commentsTitle}>Bình luận</h3>
             <span className={styles.commentsCount}>
-              {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
+              {comments.length} {comments.length === 1 ? 'bình luận' : 'bình luận'}
             </span>
           </div>
 
           <div className={styles.commentsList}>
             {isLoading ? (
-              <div className={styles.loading}>Loading comments...</div>
+              <div className={styles.loading}>Đang tải bình luận...</div>
             ) : comments.length > 0 ? (
               (() => {
                 // Separate main comments and replies
@@ -283,14 +283,14 @@ const CommentModal = ({ isOpen, post, onClose }: CommentModalProps) => {
               })()
             ) : (
               <div className={styles.noComments}>
-                No comments yet. Be the first to comment!
+                Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
               </div>
             )}
           </div>
 
           <div className={styles.commentInputSection}>
             <CommentInput
-              placeholder="Add a comment..."
+              placeholder="Thêm bình luận..."
               onSubmit={handleAddComment}
               isLoading={isAddingComment}
             />

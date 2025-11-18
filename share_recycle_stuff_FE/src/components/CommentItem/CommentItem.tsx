@@ -46,12 +46,12 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
       ? [
           {
             key: 'edit',
-            label: 'Edit',
+            label: 'Chỉnh sửa',
             onClick: () => setIsEditing(true)
           },
           {
             key: 'delete',
-            label: 'Delete',
+            label: 'Xóa',
             onClick: () => onDelete(comment.id),
             danger: true
           }
@@ -59,7 +59,7 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
       : [
           {
             key: 'report',
-            label: 'Report'
+            label: 'Báo cáo'
           }
         ]),
     
@@ -95,7 +95,7 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
               />
               <div className={styles.editActions}>
                 <Button size="small" onClick={handleCancelEdit}>
-                  Cancel
+                  Hủy
                 </Button>
                 <Button 
                   type="primary" 
@@ -103,7 +103,7 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
                   onClick={handleEdit}
                   disabled={!editContent.trim()}
                 >
-                  Save
+                  Lưu
                 </Button>
               </div>
             </div>
@@ -118,7 +118,7 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
               className={styles.actionButton}
               onClick={() => setShowReplyInput(!showReplyInput)}
             >
-              Reply
+              Trả lời
             </button>
           </div>
         </div>
@@ -133,7 +133,7 @@ const CommentItem = ({ comment, onReply, onDelete, onEdit, isReply = false }: Co
       {showReplyInput && (
         <div className={styles.replyInputSection}>
           <CommentInput
-            placeholder="Write a reply..."
+            placeholder="Viết phản hồi..."
             onSubmit={handleReply}
             autoFocus
           />

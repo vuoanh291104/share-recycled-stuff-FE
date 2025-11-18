@@ -1,11 +1,11 @@
 export const formatLikes = (count: number): string => {
   if (count >= 1000000) {
-    return `${(count / 1000000).toFixed(1)}M likes`;
+    return `${(count / 1000000).toFixed(1)}M lượt thích`;
   }
   if (count >= 1000) {
-    return `${(count / 1000).toFixed(1)}K likes`;
+    return `${(count / 1000).toFixed(1)}K lượt thích`;
   }
-  return `${count.toLocaleString()} likes`;
+  return `${count.toLocaleString()} lượt thích`;
 };
 
 export const formatViews = (count: number): string => {
