@@ -194,7 +194,7 @@ const updateLike = async (postID: number, newLiked: boolean) => {
 
 
   const truncatedDescription = post.content.length > 50 
-    ? `${post.content.substring(0, 50)}...more`
+    ? `${post.content.substring(0, 50)}...`
     : post.content;
 
   return (
@@ -298,9 +298,9 @@ const updateLike = async (postID: number, newLiked: boolean) => {
             {formatLikes(likeCount ?? 0)}
           </span>
         )}
-        <span className={styles.statsText}>
+        {/* <span className={styles.statsText}>
           {formatViews(post.viewCount ?? 0)}
-        </span>
+        </span> */}
       </div>
 
       {/* Post Content */}
@@ -324,14 +324,14 @@ const updateLike = async (postID: number, newLiked: boolean) => {
               className={styles.moreButton}
               onClick={handleDescriptionToggle}
             >
-              {showFullDescription ? 'less' : 'more'}
+              {showFullDescription ? 'Thu gọn' : 'Xem thêm'}
             </button>
           )}
         </p>
       </div>
         {/* View Comments */}
         <button className={styles.viewCommentsButton} onClick={handleOpenComments}>
-        View all comment
+        Xem tất cả bình luận
       </button>
       {/* Comment Modal */}
       <CommentModal

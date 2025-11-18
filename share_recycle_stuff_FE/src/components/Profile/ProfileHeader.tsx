@@ -102,7 +102,7 @@ const ProfileHeader = ({  activeTab, onTabChange }: ProfileHeaderProps) => {
               component={StarIcon} 
               className={styles.starIcon}
             />
-            <span className={styles.reviewCount}>{profileInfo?.totalRatings} reviews</span>
+            <span className={styles.reviewCount}>{profileInfo?.totalRatings} Đánh giá </span>
           </div>
         </div>
 
@@ -114,7 +114,7 @@ const ProfileHeader = ({  activeTab, onTabChange }: ProfileHeaderProps) => {
               type="default"
               onClick={() => navigate ('/profile/edit')}
             >
-              Edit Profile
+              Chỉnh sửa
             </Button>         
           }
 

@@ -8,7 +8,7 @@ import HomeIcon from '../icons/HomeIcon';
 import LanguageIcon from '../icons/LanguageIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import styles from "./Sidebar.module.css";
-import { getData, type ErrorResponse } from '../../api/api';
+import { getData, postData, type ErrorResponse } from '../../api/api';
 import { useMessage } from '../../context/MessageProvider';
 import { useNotification } from '../../context/NotificationContext';
 
@@ -43,26 +43,38 @@ const Sidebar = () => {
     setOpen(true);
   };
 
-  const onOK = async () => {
-    setLoading(true);
+const onOK = async () => {
+  setLoading(true);
 
-    try {
-      setTimeout(() => {      
-        localStorage.removeItem('userInfo');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        navigate('/login');
-      }, 1500);
+  try {
+    const start = Date.now();
 
-    } catch (error : any) {
-      const errData : ErrorResponse = error;
-      showMessage({type: "error" , message: errData.message || "Đăng xuất thất bại" , code: errData.status}) 
-    } finally {
+    await postData('/api/auth/logout', {});
+
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(1500 - elapsed, 0);
+
+    setTimeout(() => {
+      localStorage.removeItem('userInfo');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+
       setLoading(false);
       setOpen(false);
-    }
-    setOpen(false);
+      navigate('/login');
+    }, remaining);
+
+  } catch (error: any) {
+    const errData: ErrorResponse = error;
+    showMessage({
+      type: "error",
+      message: errData.message || "Đăng xuất thất bại",
+      code: errData.status
+    });
+    setLoading(false);
   }
+};
+
 
   const hideModal = () => {
     setOpen(false);
@@ -167,6 +179,7 @@ const Sidebar = () => {
             onCancel={hideModal}
             okText="OK"
             cancelText="Hủy"
+            confirmLoading={loading}
           >
             <p>Bạn chắc chắn muốn đăng xuất không ?</p>
           </Modal>

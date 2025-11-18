@@ -49,7 +49,7 @@ const CommentInput = ({
         disabled={!content.trim()}
         className={styles.submitButton}
       >
-        Post
+        Đăng
       </Button>
     </div>
   );
